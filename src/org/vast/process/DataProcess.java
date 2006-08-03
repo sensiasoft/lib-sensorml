@@ -490,7 +490,10 @@ public abstract class DataProcess implements Runnable
     //////////////////////////////////////
 	public String getName()
 	{
-		return name;
+		if (this.name == null)
+            return this.getClass().getSimpleName();
+        else
+            return name;
 	}
 	
 	public void setName(String name)
@@ -501,7 +504,10 @@ public abstract class DataProcess implements Runnable
     
     public String getType()
     {
-        return type;
+        if (this.type == null)
+            return this.getClass().getSimpleName();
+        else
+            return type;
     }
 
 

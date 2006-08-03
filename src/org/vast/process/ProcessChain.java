@@ -248,6 +248,30 @@ public class ProcessChain extends DataProcess
     }
     
     
+    @Override
+    public void createNewOutputBlocks()
+    {
+        // make sure sub processes connected to the output
+        // also uses these new DataBlocks for their output
+        for (int i=0; i<internalOutputConnections.size(); i++)
+        {
+            ConnectionList connectionList = internalOutputConnections.get(i);
+            
+            if (connectionList.needed)
+            {
+                // loop through all connections
+                for (int j=0; j<connectionList.size(); j++)
+                {
+                    // renew source process outputs
+                    // they will be transfered to destination automatically during execution
+                    DataConnection connection = connectionList.get(j);
+                    connection.getSourceProcess().createNewOutputBlocks();
+                }
+            }
+        }
+    }
+    
+    
     /**
      * Transfers data to chain output in sync mode (not threaded)
      * Also checks for data availability on each connection
