@@ -102,6 +102,25 @@ public class ProcessReader extends SMLReader
     
     
     /**
+     * Parses all metadata content and add it to the given DataProcess object
+     * @param processElement
+     * @param process
+     */
+    protected void parseMetadata(Element processElement, DataProcess dataProcess) throws SMLException
+    {
+        // read metadata if needed
+        if (readMetadata)
+        {
+            if (metadataReader == null)
+                metadataReader = new MetadataReader(dom);
+            
+            Metadata metadata = metadataReader.readMetadata(processElement);
+            dataProcess.setProperty(DataProcess.METADATA, metadata);
+        }
+    }
+    
+    
+    /**
      * Reads any Process (ProcessModel, ProcessChain or derived versions)
      * @param processDefElement
      * @return
@@ -117,16 +136,7 @@ public class ProcessReader extends SMLReader
         else
             dataProcess = readProcessModel(processElement);
 
-        // read metadata if needed
-        if (readMetadata)
-        {
-            if (metadataReader == null)
-                metadataReader = new MetadataReader(dom);
-            
-            Metadata metadata = metadataReader.readMetadata(processElement);
-            dataProcess.setProperty(DataProcess.METADATA, metadata);
-        }
-        
+        // get default name from element
         dataProcess.setName(processElement.getLocalName());
             
         return dataProcess;
@@ -151,6 +161,9 @@ public class ProcessReader extends SMLReader
         else
             newProcess = new Dummy_Process();
         
+        // read metadata
+        parseMetadata(processModelElement, newProcess);
+        
         // read output/output/parameter structures
         readProcessIO(processModelElement, newProcess);
         
@@ -170,7 +183,12 @@ public class ProcessReader extends SMLReader
     public DataProcess readDataSource(Element dataSourceElement) throws SMLException
     {
         // TODO parse DataSource structure
-        return new Dummy_Process();
+        DataProcess newProcess = new Dummy_Process();
+        
+        // read metadata
+        parseMetadata(dataSourceElement, newProcess);
+        
+        return newProcess;
     }
     
     
@@ -279,6 +297,9 @@ public class ProcessReader extends SMLReader
             // also add the connection to the main list
             processChain.getInternalConnections().add(dataQueue);
         }
+        
+        // read metadata
+        parseMetadata(processChainElement, processChain);
         
         return processChain;
     }
