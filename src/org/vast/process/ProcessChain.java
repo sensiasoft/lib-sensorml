@@ -292,7 +292,7 @@ public class ProcessChain extends DataProcess
                     
                     if (!needSync || connection.dataAvailable == true)
                     {
-                        connection.checkDataBlocks();
+                        connection.transferDataBlocks();
                         connection.dataAvailable = false;
                     }
                 }
@@ -319,7 +319,7 @@ public class ProcessChain extends DataProcess
                 {
                     // transfer datablock to destination component if needed
                     DataConnection connection = connectionList.get(j);
-                    connection.checkDataBlocks();
+                    connection.transferDataBlocks();
                     connection.dataAvailable = false;
                 }
             }

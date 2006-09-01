@@ -45,15 +45,15 @@ public class DataConnection
     protected DataProcess destinationProcess;
     protected DataComponent sourceComponent;
     protected DataComponent destinationComponent;
+    protected String name;
     protected boolean dataAvailable;
-	String name;
 	
 	
     /**
      * Makes sure source and destination datablocks are the same
      * This is used in synchronous mode
      */
-    public void checkDataBlocks()
+    public void transferDataBlocks()
     {
         DataBlock srcBlock = sourceComponent.getData();
         DataBlock destBlock = destinationComponent.getData();

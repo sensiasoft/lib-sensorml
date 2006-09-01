@@ -216,7 +216,7 @@ public abstract class DataProcess implements Runnable
                         return false;
                     
                     // make sure src & dest datablocks are the same
-                    connection.checkDataBlocks();
+                    connection.transferDataBlocks();
                 }
             }
         }
@@ -249,7 +249,7 @@ public abstract class DataProcess implements Runnable
                         return false;
                     
                     // make sure src & dest datablocks are the same
-                    connection.checkDataBlocks();
+                    connection.transferDataBlocks();
                 }
             }
         }
@@ -275,7 +275,7 @@ public abstract class DataProcess implements Runnable
             {
                 // make sure src & dest datablocks are the same
                 DataConnection connection = connectionList.get(j);                    
-                connection.checkDataBlocks();
+                connection.transferDataBlocks();
             }
         }
     }
@@ -298,7 +298,7 @@ public abstract class DataProcess implements Runnable
             {
                 // make sure src & dest datablocks are the same
                 DataConnection connection = connectionList.get(j);                    
-                connection.checkDataBlocks();
+                connection.transferDataBlocks();
             }
         }
     }
