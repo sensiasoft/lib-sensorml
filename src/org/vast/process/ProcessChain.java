@@ -24,6 +24,8 @@
 package org.vast.process;
 
 import org.ogc.cdm.common.DataComponent;
+import org.vast.data.DataGroup;
+
 import java.util.*;
 
 
@@ -233,6 +235,9 @@ public class ProcessChain extends DataProcess
                         // transfer data to chain outputs when sub processes are done
                         this.transferData(internalOutputConnections);
                         
+                        // combine output blocks
+                        this.combineOutputBlocks();
+                        
                         // determine what inputs are needed for next run
                         for (int i=0; i<inputConnections.size(); i++)
                             inputConnections.get(i).needed = isNewDataNeeded(internalInputConnections.get(i));
@@ -287,6 +292,19 @@ public class ProcessChain extends DataProcess
                     connection.getSourceProcess().createNewOutputBlocks();
                 }
             }
+        }
+    }
+    
+    
+    public void combineOutputBlocks()
+    {
+        // make sure sub processes connected to the output
+        // also uses these new DataBlocks for their output
+        for (int i=0; i<outputData.getComponentCount(); i++)
+        {
+            DataComponent output = outputData.getComponent(i);
+            if (output instanceof DataGroup)
+                ((DataGroup)output).combineDataBlocks();
         }
     }
     
