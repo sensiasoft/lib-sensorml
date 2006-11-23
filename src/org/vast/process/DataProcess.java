@@ -49,6 +49,7 @@ import java.util.*;
 public abstract class DataProcess implements Runnable
 {
     public static final String METADATA = "METADATA";
+    protected static final String ioError = "Invalid I/O Structure";
 
     protected String name;
     protected String type;
@@ -108,29 +109,85 @@ public abstract class DataProcess implements Runnable
     
     
     /**
-     * Check that all needed outputs are available in sync mode (not threaded).
-     * @return true if so and false if at least one connection is not available.
+     * Override to dispose of all resources allocated
+     * for the process (stop threads, OS resources, etc...)
+     * Default method does nothing.
+     */
+    public void dispose()
+    {        
+    }
+    
+    
+    /**
+     * Check that all needed connections are ready for the process
+     * to run in sync mode (not threaded).
+     * @return true if so and false if at least one connection is not ready.
      */
     protected boolean canRun()
     {
-        // check that all needed outputs are free 
-        for (int i=firstNeededOutput; i<outputConnections.size(); i++)
+        if (!hasNeededData(inputConnections))
+            return false;
+        
+        if (!hasNeededData(paramConnections))
+            return false;
+        
+        if (!hasNoData(outputConnections))
+            return false;
+        
+        return true;
+    }
+    
+    
+    /**
+     * Checks if all input connections marked as needed
+     * have data available.
+     * @return true if all needed inputs are ready, false otherwise
+     */
+    protected boolean hasNeededData(List<ConnectionList> allConnections)
+    {
+        // loop through all inputs
+        for (int i=0; i<allConnections.size(); i++)
         {
-            ConnectionList connectionList = outputConnections.get(i);
+            ConnectionList connectionList = allConnections.get(i);
             
-            // check output only if needed
             if (connectionList.needed)
             {
                 // loop through all connections
                 for (int j=0; j<connectionList.size(); j++)
                 {
-                    DataConnection dataConnection = (DataConnection)connectionList.get(j);
-                    if (dataConnection.dataAvailable)
+                    DataConnection connection = connectionList.get(j);                    
+                    if (!connection.dataAvailable)
                         return false;
                 }
             }
+        }
+        
+        return true;
+    }
+    
+    
+    /**
+     * Checks if all output connections marked as needed
+     * are availabe to accept new data.
+     * @return true if all needed outputs are ready, false otherwise
+     */
+    protected boolean hasNoData(List<ConnectionList> allConnections)
+    {
+        // loop through all inputs
+        for (int i=0; i<allConnections.size(); i++)
+        {
+            ConnectionList connectionList = allConnections.get(i);
             
-            firstNeededOutput++;
+            if (connectionList.needed)
+            {
+                // loop through all connections
+                for (int j=0; j<connectionList.size(); j++)
+                {
+                    DataConnection connection = connectionList.get(j);                    
+                    if (connection.dataAvailable)
+                        return false;
+                }
+            }
         }
         
         return true;
@@ -141,12 +198,12 @@ public abstract class DataProcess implements Runnable
      * Fetch new data from input queues in async mode (threaded)
      * Thread will wait until each queue needing data receives next block
      */
-    protected void fetchInputData() throws InterruptedException
+    protected void fetchData(List<ConnectionList> allConnections) throws InterruptedException
     {
         // go through all connections and get next dataBlock from them
-        for (int i=0; i<inputConnections.size(); i++)
+        for (int i=0; i<allConnections.size(); i++)
         {
-            ConnectionList connectionList = inputConnections.get(i);
+            ConnectionList connectionList = allConnections.get(i);
             
             if (connectionList.needed)
             {
@@ -167,11 +224,11 @@ public abstract class DataProcess implements Runnable
     /**
      * Writes new data to output queues in async mode (threaded)
      */
-    protected void writeOutputData() throws InterruptedException
+    protected void writeData(List<ConnectionList> allConnections) throws InterruptedException
     {
-        for (int i=0; i<outputConnections.size(); i++)
+        for (int i=0; i<allConnections.size(); i++)
         {
-            ConnectionList connectionList = outputConnections.get(i);
+            ConnectionList connectionList = allConnections.get(i);
             
             if (connectionList.needed)
             {
@@ -194,15 +251,13 @@ public abstract class DataProcess implements Runnable
     
     /**
      * Transfers input data in sync mode (not threaded)
-     * Also checks for data availability on each connection
-     * @return true if all data was available, false otherwise
      */
-    protected boolean transferInputData()
+    protected void transferData(List<ConnectionList> allConnections)
     {
         // loop through all inputs
-        for (int i=firstNeededInput; i<inputConnections.size(); i++)
+        for (int i=0; i<allConnections.size(); i++)
         {
-            ConnectionList connectionList = inputConnections.get(i);
+            ConnectionList connectionList = allConnections.get(i);
             
             if (connectionList.needed)
             {
@@ -210,110 +265,27 @@ public abstract class DataProcess implements Runnable
                 for (int j=0; j<connectionList.size(); j++)
                 {
                     DataConnection connection = connectionList.get(j);
-                    
-                    // check availability flag
-                    if (!connection.dataAvailable)
-                        return false;
-                    
-                    // make sure src & dest datablocks are the same
                     connection.transferDataBlocks();
                 }
             }
         }
-        
-        return true;
     }
     
     
     /**
-     * Transfers param data in sync mode (not threaded)
-     * Also checks for data availability on each connection
-     * @return true if all data was available, false otherwise
+     * Updates i/o availability flags in sync mode (not threaded)
+     * This default method just resets all needed flags to the
+     * specified state.
+     * It must be overriden by processes needing a different behavior.
+     * @param allConnections
+     * @param flagState
      */
-    protected boolean transferParamData()
-    {
-        // loop through all parameters
-        for (int i=firstNeededParam; i<paramConnections.size(); i++)
-        {
-            ConnectionList connectionList = paramConnections.get(i);
-            
-            if (connectionList.needed)
-            {
-                // loop through all connections
-                for (int j=0; j<connectionList.size(); j++)
-                {
-                    DataConnection connection = connectionList.get(j);
-                    
-                    // check availability flag
-                    if (!connection.dataAvailable)
-                        return false;
-                    
-                    // make sure src & dest datablocks are the same
-                    connection.transferDataBlocks();
-                }
-            }
-        }
-        
-        return true;
-    }
-       
-    
-    /**
-     * Transfers input data in sync mode (not threaded)
-     * No check for data availability on connections
-     * Should be used as a fast variant of the method above
-     * when no check needs to be done (chains with no flow control)
-     */
-    protected void transferInputDataLight()
-    {
-        // loop through all inputs
-        for (int i=0; i<inputConnections.size(); i++)
-        {
-            ConnectionList connectionList = inputConnections.get(i);
-            
-            for (int j=0; j<connectionList.size(); j++)
-            {
-                // make sure src & dest datablocks are the same
-                DataConnection connection = connectionList.get(j);                    
-                connection.transferDataBlocks();
-            }
-        }
-    }
-    
-    
-    /**
-     * Transfers param data in sync mode (not threaded)
-     * No check for data availability on connections
-     * Should be used as a fast variant of the method above
-     * when no check needs to be done (chains with no flow control)
-     */
-    protected void transferParamDataLight()
-    {
-        // loop through all parameters
-        for (int i=0; i<paramConnections.size(); i++)
-        {
-            ConnectionList connectionList = paramConnections.get(i);
-            
-            for (int j=0; j<connectionList.size(); j++)
-            {
-                // make sure src & dest datablocks are the same
-                DataConnection connection = connectionList.get(j);                    
-                connection.transferDataBlocks();
-            }
-        }
-    }
-    
-    
-    /**
-     * Updates input and output flags in sync mode (not threaded)
-     * Should be called right before execute by a ProcessChain
-     */
-    protected void updateIOFlags()
+    protected void resetAvailabilityFlags(List<ConnectionList> allConnections, boolean flagState)
     {
         // update input flags
-        for (int i=0; i<inputConnections.size(); i++)
+        for (int i=0; i<allConnections.size(); i++)
         {
-            ConnectionList connectionList = inputConnections.get(i);
+            ConnectionList connectionList = allConnections.get(i);
             
             if (connectionList.needed)
             {
@@ -321,33 +293,12 @@ public abstract class DataProcess implements Runnable
                 for (int j=0; j<connectionList.size(); j++)
                 {
                     DataConnection connection = connectionList.get(j);
-                    connection.dataAvailable = false;
+                    connection.dataAvailable = flagState;
                 }
             }
         }
-        
-        // update output flags
-        for (int i=0; i<outputConnections.size(); i++)
-        {
-            ConnectionList connectionList = outputConnections.get(i);
-            
-            if (connectionList.needed)
-            {
-                // loop through all connections
-                for (int j=0; j<connectionList.size(); j++)
-                {
-                    // set available flag to true
-                    DataConnection connection = connectionList.get(j);
-                    connection.dataAvailable = true;
-                }
-            }
-        }
-        
-        // reset needed i/o counters
-        firstNeededInput = 0;
-        firstNeededOutput = 0;
     }
-    
+   
     
     /**
      * Creates new DataBlock for each output signal
@@ -385,10 +336,10 @@ public abstract class DataProcess implements Runnable
             try
             {
             	// fetch inputs, execute process and write outputs
-            	this.fetchInputData();
-                //this.fetchInputData(this.paramConnections);
+            	this.fetchData(inputConnections);
+                this.fetchData(paramConnections);
                 this.execute();
-                this.writeOutputData();                    
+                this.writeData(outputConnections);                    
             }
             catch (ProcessException e)
             {
@@ -607,7 +558,7 @@ public abstract class DataProcess implements Runnable
 	}
 	
 	
-	public List<ConnectionList> getParameterConnections()
+	public List<ConnectionList> getParamConnections()
 	{
 		return this.paramConnections;
 	}

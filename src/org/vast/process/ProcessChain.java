@@ -71,9 +71,9 @@ public class ProcessChain extends DataProcess
         processList = new ArrayList<DataProcess>(memberCount);
         processExecList = new ArrayList<DataProcess>(memberCount);
         
-        this.internalInputConnections = new ArrayList<ConnectionList>();
-        this.internalOutputConnections = new ArrayList<ConnectionList>();
+        this.internalInputConnections = new ArrayList<ConnectionList>();        
         this.internalParamConnections = new ArrayList<ConnectionList>();
+        this.internalOutputConnections = new ArrayList<ConnectionList>();
         this.internalConnections = new ArrayList<DataConnection>();
     }
     
@@ -83,31 +83,9 @@ public class ProcessChain extends DataProcess
     {        
         if (!childrenThreadsOn)
     	{
-            // clear process execution list
+            // build process execution list
 	        processExecList.clear();
-            
-            // loop through all needed outputs (internally)
-	        for (int i=0; i<internalOutputConnections.size(); i++)
-	    	{
-                ConnectionList connectionList = internalOutputConnections.get(i);
-                
-                if (connectionList.needed)
-                {
-                    // loop through all queues connected to this output
-                    for (int j=0; j<connectionList.size(); j++)
-                    {
-                        DataProcess upStreamProcess = (DataProcess)connectionList.get(j).getSourceProcess();
-                    
-                        // order processes feeding this output
-        	    		if (upStreamProcess != this)
-        	    		{
-        	    			processExecList.add(upStreamProcess);
-                            addUpstreamProcesses(upStreamProcess, upStreamProcess.getInputConnections());
-                            addUpstreamProcesses(upStreamProcess, upStreamProcess.getParameterConnections());
-        	    		}
-                    }
-                }
-	    	}
+            addUpstreamProcesses(this, internalOutputConnections);
             
             // init needed processes
             for (int i=0; i<processExecList.size(); i++)
@@ -131,14 +109,22 @@ public class ProcessChain extends DataProcess
             }
         }
     }
+    
+    
+    @Override
+    public void dispose()
+    {
+        for (int i=0; i<processExecList.size(); i++)
+            processExecList.get(i).dispose();
+    }
        
     
-    private void addUpstreamProcesses(DataProcess process, List<ConnectionList> inputConnections)
+    private void addUpstreamProcesses(DataProcess process, List<ConnectionList> connectionLists)
     {
         // loop through all inputs
-    	for (int i=0; i<inputConnections.size(); i++)
+    	for (int i=0; i<connectionLists.size(); i++)
     	{
-            List<DataConnection> connectionList = inputConnections.get(i);
+            List<DataConnection> connectionList = connectionLists.get(i);
             
             // loop through all queues connected to this input
             for (int j=0; j<connectionList.size(); j++)
@@ -150,17 +136,25 @@ public class ProcessChain extends DataProcess
         			if (!processExecList.contains(upStreamProcess))
     	    		{
     	    			processExecList.add(upStreamProcess);
-    	    			addUpstreamProcesses(upStreamProcess, upStreamProcess.getInputConnections());
-                        addUpstreamProcesses(upStreamProcess, upStreamProcess.getParameterConnections());
+    	    			addUpstreamProcesses(upStreamProcess, upStreamProcess.inputConnections);
+                        addUpstreamProcesses(upStreamProcess, upStreamProcess.paramConnections);
     	    		}
     	    		
-    	    		ensureOrder(upStreamProcess, process);
+                    if (process != this)
+                        ensureOrder(upStreamProcess, process);
         		}
             }
     	}   	
     }
     
     
+    /**
+     * Ensure that sub processes are pre sorted in the exec list
+     * Each time process1 has inputs connected to process2 outputs
+     * process2 is placed before process1 in the list.
+     * @param processBefore
+     * @param processAfter
+     */
     private void ensureOrder(DataProcess processBefore, DataProcess processAfter)
     {
     	int before = processExecList.indexOf(processBefore);
@@ -182,12 +176,16 @@ public class ProcessChain extends DataProcess
 			// if child threads are off, run all child processes
 			if (!childrenThreadsOn)
 	    	{
-                // execute all sub processes in order                
+                // execute all sub processes in order
                 if (processExecList != null)
                 {
                     if (needSync)
                     {
                         boolean moreToRun;
+                        
+                        // set available flag for all needed internal inputs
+                        // since if chain can run it means values are available
+                        this.resetAvailabilityFlags(internalInputConnections, true);
                         
                         // loop until no more processes can run
                         do
@@ -197,43 +195,51 @@ public class ProcessChain extends DataProcess
         		    		{
         		    			DataProcess nextProcess = processExecList.get(i);
                                 
-                                // continue only if all input data is available
-                                if (   nextProcess.transferInputData()
-                                    && nextProcess.transferParamData())
+                                // continue only if process can run
+                                if (nextProcess.canRun())
                                 {
-                                    // run process only if all outputs are available
-                                    if (nextProcess.canRun())
-                                    {
-                                        nextProcess.updateIOFlags();
-                                        nextProcess.execute();
-                                        moreToRun = true;
-                                        //System.out.println("Running: " + nextProcess.getName());
-                                    }
+                                    System.out.println("--> Running: " + nextProcess.getName());
+                                    nextProcess.transferData(nextProcess.inputConnections);
+                                    nextProcess.transferData(nextProcess.paramConnections);
+                                    nextProcess.execute();
+                                    nextProcess.resetAvailabilityFlags(nextProcess.inputConnections, false);
+                                    nextProcess.resetAvailabilityFlags(nextProcess.outputConnections, true);
+                                    moreToRun = true;
+                                    this.resetAvailabilityFlags(internalOutputConnections, false);
                                 }
+                                else
+                                    System.out.println("--> Waiting: " + nextProcess.getName());
         		    		}
                         }
                         while (moreToRun);
                         
-                        this.transferOutputData();
+                        // reset flag of all internal output connections since
+                        // the chain is done executing
+                        this.resetAvailabilityFlags(internalOutputConnections, false);
+                        
+                        // transfer data to chain outputs when sub processes are done
+                        this.transferData(internalOutputConnections);
                     }
                     else
                     {
                         for (int i=0; i<processExecList.size(); i++)
                         {
-                            DataProcess nextProcess = processExecList.get(i);                        
-                            nextProcess.transferInputDataLight();
-                            nextProcess.transferParamDataLight();
+                            DataProcess nextProcess = processExecList.get(i);
+                            nextProcess.transferData(nextProcess.inputConnections);
+                            nextProcess.transferData(nextProcess.paramConnections);
                             nextProcess.execute();
                         }
                         
-                        this.transferOutputDataLight();
+                        // transfer data to chain outputs when sub processes are done
+                        this.transferData(internalOutputConnections);
                     }
-                    
-                    
                 }
                 
                 // determine what input are needed for next run
-                
+                for (int i=0; i<inputConnections.size(); i++)
+                {
+                    internalInputConnections.get(i).needed = inputConnections.get(i).needed;
+                } 
 	    	}
             else
             {
@@ -242,8 +248,9 @@ public class ProcessChain extends DataProcess
                 //super.fetchInputData(this.internalOutputConnections);
             }			
 		}
-		catch (InterruptedException e)
+		catch (Exception e)
 		{
+            throw new ProcessException("Error while executing: " + name, e);
 		}
     }
     
@@ -271,62 +278,7 @@ public class ProcessChain extends DataProcess
         }
     }
     
-    
-    /**
-     * Transfers data to chain output in sync mode (not threaded)
-     * Also checks for data availability on each connection
-     */
-    protected void transferOutputData() throws InterruptedException
-    {
-        for (int i=0; i<internalOutputConnections.size(); i++)
-        {
-            ConnectionList connectionList = internalOutputConnections.get(i);
-            
-            if (connectionList.needed)
-            {
-                // loop through all connections
-                for (int j=0; j<connectionList.size(); j++)
-                {
-                    // transfer datablock to destination component if needed
-                    DataConnection connection = connectionList.get(j);
-                    
-                    if (!needSync || connection.dataAvailable == true)
-                    {
-                        connection.transferDataBlocks();
-                        connection.dataAvailable = false;
-                    }
-                }
-            }
-        }
-    }
-    
-    
-    /**
-     * Transfers data to chain output in sync mode (not threaded)
-     * Should be used as a fast variant of the method above
-     * when no check needs to be done (chains with no flow control)
-     */
-    protected void transferOutputDataLight() throws InterruptedException
-    {
-        for (int i=0; i<internalOutputConnections.size(); i++)
-        {
-            ConnectionList connectionList = internalOutputConnections.get(i);
-            
-            if (connectionList.needed)
-            {
-                // loop through all connections
-                for (int j=0; j<connectionList.size(); j++)
-                {
-                    // transfer datablock to destination component if needed
-                    DataConnection connection = connectionList.get(j);
-                    connection.transferDataBlocks();
-                    connection.dataAvailable = false;
-                }
-            }
-        }
-    }
-    
-    
+ 
     public void connectInternalInput(String dataPath, DataConnection connection) throws ProcessException
     {
     	IOSelector selector = new IOSelector(inputData, dataPath);
@@ -443,6 +395,8 @@ public class ProcessChain extends DataProcess
         DataProcess process = processTable.get(name);
         processTable.remove(name);
         processList.remove(process);
+        
+        // TODO remove connections to and from this process ??
     }
     
     
@@ -505,17 +459,5 @@ public class ProcessChain extends DataProcess
     public void setOutputNeeded(int outputIndex, boolean needed)
     {
         internalOutputConnections.get(outputIndex).needed = needed;
-    }
-    
-    
-    public void setInputReady(int inputIndex)
-    {
-        ConnectionList connectionList = internalInputConnections.get(inputIndex);
-        
-        for (int i=0; i<connectionList.size(); i++)
-        {
-            DataConnection connection = connectionList.get(i);
-            connection.dataAvailable = true;
-        }
     }
 }
