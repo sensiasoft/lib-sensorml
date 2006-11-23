@@ -168,6 +168,20 @@ public class ProcessChain extends DataProcess
     }
     
     
+    protected boolean isNewDataNeeded(ConnectionList connectionList)
+    {
+        // loop through all connections
+        for (int j=0; j<connectionList.size(); j++)
+        {
+            DataConnection connection = connectionList.get(j);
+            if (connection.dataAvailable)
+                return false;
+        }
+        
+        return true;
+    }
+    
+    
     @Override
     public void execute() throws ProcessException
     {
@@ -198,17 +212,16 @@ public class ProcessChain extends DataProcess
                                 // continue only if process can run
                                 if (nextProcess.canRun())
                                 {
-                                    System.out.println("--> Running: " + nextProcess.getName());
+                                    //System.out.println("--> Running: " + nextProcess.getName());
                                     nextProcess.transferData(nextProcess.inputConnections);
                                     nextProcess.transferData(nextProcess.paramConnections);
                                     nextProcess.execute();
                                     nextProcess.resetAvailabilityFlags(nextProcess.inputConnections, false);
                                     nextProcess.resetAvailabilityFlags(nextProcess.outputConnections, true);
                                     moreToRun = true;
-                                    this.resetAvailabilityFlags(internalOutputConnections, false);
                                 }
-                                else
-                                    System.out.println("--> Waiting: " + nextProcess.getName());
+                                //else
+                                //    System.out.println("--> Waiting: " + nextProcess.getName());
         		    		}
                         }
                         while (moreToRun);
@@ -219,12 +232,17 @@ public class ProcessChain extends DataProcess
                         
                         // transfer data to chain outputs when sub processes are done
                         this.transferData(internalOutputConnections);
+                        
+                        // determine what inputs are needed for next run
+                        for (int i=0; i<inputConnections.size(); i++)
+                            inputConnections.get(i).needed = isNewDataNeeded(internalInputConnections.get(i));
                     }
                     else
                     {
                         for (int i=0; i<processExecList.size(); i++)
                         {
                             DataProcess nextProcess = processExecList.get(i);
+                            //System.out.println("--> Running: " + nextProcess.getName());
                             nextProcess.transferData(nextProcess.inputConnections);
                             nextProcess.transferData(nextProcess.paramConnections);
                             nextProcess.execute();
@@ -234,12 +252,6 @@ public class ProcessChain extends DataProcess
                         this.transferData(internalOutputConnections);
                     }
                 }
-                
-                // determine what input are needed for next run
-                for (int i=0; i<inputConnections.size(); i++)
-                {
-                    internalInputConnections.get(i).needed = inputConnections.get(i).needed;
-                } 
 	    	}
             else
             {
