@@ -125,13 +125,13 @@ public abstract class DataProcess implements Runnable
      */
     protected boolean canRun()
     {
-        if (!hasNeededData(inputConnections))
+        if (!checkAvailability(inputConnections, true))
             return false;
         
-        if (!hasNeededData(paramConnections))
+        if (!checkAvailability(paramConnections, true))
             return false;
         
-        if (!hasNoData(outputConnections))
+        if (!checkAvailability(outputConnections, false))
             return false;
         
         return true;
@@ -140,23 +140,23 @@ public abstract class DataProcess implements Runnable
     
     /**
      * Checks if all input connections marked as needed
-     * have data available.
-     * @return true if all needed inputs are ready, false otherwise
+     * have the specified availability state.
+     * @return true if all needed connections satisfy the condition, false otherwise
      */
-    protected boolean hasNeededData(List<ConnectionList> allConnections)
+    protected boolean checkAvailability(List<ConnectionList> allConnections, boolean availability)
     {
-        // loop through all inputs
+        // loop through all connection lists
         for (int i=0; i<allConnections.size(); i++)
         {
             ConnectionList connectionList = allConnections.get(i);
             
             if (connectionList.needed)
             {
-                // loop through all connections
+                // loop through all connections in each list
                 for (int j=0; j<connectionList.size(); j++)
                 {
                     DataConnection connection = connectionList.get(j);                    
-                    if (!connection.dataAvailable)
+                    if (connection.dataAvailable != availability)
                         return false;
                 }
             }
@@ -167,30 +167,68 @@ public abstract class DataProcess implements Runnable
     
     
     /**
-     * Checks if all output connections marked as needed
-     * are availabe to accept new data.
-     * @return true if all needed outputs are ready, false otherwise
+     * Checks that the availability flags of all connections
+     * in the list is equal to the specified state.
+     * @param connectionList
+     * @param availability
+     * @return true if all connections satisfy the condition, false otherwise.
      */
-    protected boolean hasNoData(List<ConnectionList> allConnections)
+    protected boolean checkAvailability(ConnectionList connectionList, boolean availability)
     {
-        // loop through all inputs
+        // loop through all connections in the list
+        for (int j=0; j<connectionList.size(); j++)
+        {
+            DataConnection connection = connectionList.get(j);                    
+            if (connection.dataAvailable != availability)
+                return false;
+        }
+        
+        return true;
+    }
+    
+    
+    /**
+     * Sets i/o availability flags in sync mode (not threaded)
+     * This default method just sets all needed flags to the
+     * specified state. It must be overriden by processes needing
+     * a different behavior.
+     * @param allConnections (inputs, outputs or parameters)
+     * @param flagState
+     */
+    protected void setAvailability(List<ConnectionList> allConnections, boolean availability)
+    {
+        // loop through all connection lists
         for (int i=0; i<allConnections.size(); i++)
         {
             ConnectionList connectionList = allConnections.get(i);
             
             if (connectionList.needed)
             {
-                // loop through all connections
+                // loop through all connections in each list
                 for (int j=0; j<connectionList.size(); j++)
                 {
-                    DataConnection connection = connectionList.get(j);                    
-                    if (connection.dataAvailable)
-                        return false;
+                    DataConnection connection = connectionList.get(j);
+                    connection.dataAvailable = availability;
                 }
             }
         }
-        
-        return true;
+    }
+    
+    
+    /**
+     * Sets the availability flags of all connections in the list
+     * to the specified state. (even if not needed!)
+     * @param connectionList
+     * @param availability
+     */
+    protected void setAvailability(ConnectionList connectionList, boolean availability)
+    {
+        // loop through all connections in the list
+        for (int j=0; j<connectionList.size(); j++)
+        {
+            DataConnection connection = connectionList.get(j);
+            connection.dataAvailable = availability;
+        }
     }
     
     
@@ -269,35 +307,7 @@ public abstract class DataProcess implements Runnable
                 }
             }
         }
-    }
-    
-    
-    /**
-     * Updates i/o availability flags in sync mode (not threaded)
-     * This default method just resets all needed flags to the
-     * specified state.
-     * It must be overriden by processes needing a different behavior.
-     * @param allConnections
-     * @param flagState
-     */
-    protected void resetAvailabilityFlags(List<ConnectionList> allConnections, boolean flagState)
-    {
-        // update input flags
-        for (int i=0; i<allConnections.size(); i++)
-        {
-            ConnectionList connectionList = allConnections.get(i);
-            
-            if (connectionList.needed)
-            {
-                // loop through all connections
-                for (int j=0; j<connectionList.size(); j++)
-                {
-                    DataConnection connection = connectionList.get(j);
-                    connection.dataAvailable = flagState;
-                }
-            }
-        }
-    }
+    }    
    
     
     /**

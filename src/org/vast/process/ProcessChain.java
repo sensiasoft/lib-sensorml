@@ -170,20 +170,6 @@ public class ProcessChain extends DataProcess
     }
     
     
-    protected boolean isNewDataNeeded(ConnectionList connectionList)
-    {
-        // loop through all connections
-        for (int j=0; j<connectionList.size(); j++)
-        {
-            DataConnection connection = connectionList.get(j);
-            if (connection.dataAvailable)
-                return false;
-        }
-        
-        return true;
-    }
-    
-    
     @Override
     public void execute() throws ProcessException
     {
@@ -200,8 +186,13 @@ public class ProcessChain extends DataProcess
                         boolean moreToRun;
                         
                         // set available flag for all needed internal inputs
-                        // since if chain can run it means values are available
-                        this.resetAvailabilityFlags(internalInputConnections, true);
+                        // if chain can run it means values are available
+                        this.setAvailability(internalInputConnections, true);
+                        this.setAvailability(internalParamConnections, true);
+                        
+                        // set available flag for all needed internal outputs
+                        // if chain can run it means outputs are free (no value available)
+                        this.setAvailability(internalOutputConnections, false);
                         
                         // loop until no more processes can run
                         do
@@ -218,8 +209,9 @@ public class ProcessChain extends DataProcess
                                     nextProcess.transferData(nextProcess.inputConnections);
                                     nextProcess.transferData(nextProcess.paramConnections);
                                     nextProcess.execute();
-                                    nextProcess.resetAvailabilityFlags(nextProcess.inputConnections, false);
-                                    nextProcess.resetAvailabilityFlags(nextProcess.outputConnections, true);
+                                    nextProcess.setAvailability(nextProcess.inputConnections, false);
+                                    nextProcess.setAvailability(nextProcess.paramConnections, false);
+                                    nextProcess.setAvailability(nextProcess.outputConnections, true);
                                     moreToRun = true;
                                 }
                                 //else
@@ -228,10 +220,6 @@ public class ProcessChain extends DataProcess
                         }
                         while (moreToRun);
                         
-                        // reset flag of all internal output connections since
-                        // the chain is done executing
-                        this.resetAvailabilityFlags(internalOutputConnections, false);
-                        
                         // transfer data to chain outputs when sub processes are done
                         this.transferData(internalOutputConnections);
                         
@@ -239,8 +227,9 @@ public class ProcessChain extends DataProcess
                         this.combineOutputBlocks();
                         
                         // determine what inputs are needed for next run
+                        // (THIS CONDITION MAY NOT BE 100% NECESSARY)
                         for (int i=0; i<inputConnections.size(); i++)
-                            inputConnections.get(i).needed = isNewDataNeeded(internalInputConnections.get(i));
+                            inputConnections.get(i).needed = this.checkAvailability(internalInputConnections.get(i), false);
                     }
                     else
                     {
