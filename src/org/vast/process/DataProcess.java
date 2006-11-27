@@ -626,4 +626,12 @@ public abstract class DataProcess implements Runnable
     {
         return needSync;
     }
+    
+    
+    @Override
+    protected void finalize() throws Throwable
+    {
+        super.finalize();
+        this.dispose();
+    }
 }
