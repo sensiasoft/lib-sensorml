@@ -50,6 +50,7 @@ public abstract class DataProcess implements Runnable
 {
     public static final String METADATA = "METADATA";
     protected static final String ioError = "Invalid I/O Structure";
+    protected static final String initError = "Error while initializing process ";
     protected static final String execError = "Error while executing process ";
     
     protected String name;
@@ -110,7 +111,26 @@ public abstract class DataProcess implements Runnable
     
     
     /**
-     * Public method to call to run the process
+     * Public method to call to init the process
+     * @throws ProcessException
+     */
+    public void initProcess() throws ProcessException
+    {
+        try
+        {
+            this.init();
+        }
+        catch(ProcessException e)
+        {
+            String errMsg = initError + this.getName() +
+                            " (" + this.getType() + ")";
+            throw new ProcessException(errMsg, e);
+        }
+    }
+    
+    
+    /**
+     * Public method to call to run the process once
      * @throws ProcessException
      */
     public void runProcess() throws ProcessException
@@ -121,7 +141,9 @@ public abstract class DataProcess implements Runnable
         }
         catch(ProcessException e)
         {
-            throw new ProcessException(execError + this.getName(), e);
+            String errMsg = execError + this.getName() +
+                            " (" + this.getType() + ")";
+            throw new ProcessException(errMsg, e);
         }
     }
     
@@ -484,7 +506,7 @@ public abstract class DataProcess implements Runnable
     public String getType()
     {
         if (this.type == null)
-            return this.getClass().getSimpleName();
+            return this.getClass().getName();
         else
             return type;
     }

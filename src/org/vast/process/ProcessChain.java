@@ -93,7 +93,7 @@ public class ProcessChain extends DataProcess
             for (int i=0; i<processExecList.size(); i++)
             {
                 DataProcess process = processExecList.get(i);
-                process.init();
+                process.initProcess();
                 process.createNewOutputBlocks();
                 
                 if (process.needSync())
@@ -106,7 +106,7 @@ public class ProcessChain extends DataProcess
             for (int i=0; i<processList.size(); i++)
             {
                 DataProcess process = processList.get(i);
-                process.init();
+                process.initProcess();
                 process.createNewOutputBlocks();
             }
         }
