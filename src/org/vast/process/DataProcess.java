@@ -50,7 +50,8 @@ public abstract class DataProcess implements Runnable
 {
     public static final String METADATA = "METADATA";
     protected static final String ioError = "Invalid I/O Structure";
-
+    protected static final String execError = "Error while executing process ";
+    
     protected String name;
     protected String type;
     protected Hashtable<String, Object> properties = null;
@@ -106,6 +107,23 @@ public abstract class DataProcess implements Runnable
      * @throws ProcessException
      */
     public abstract void execute() throws ProcessException;
+    
+    
+    /**
+     * Public method to call to run the process
+     * @throws ProcessException
+     */
+    public void runProcess() throws ProcessException
+    {
+        try
+        {
+            this.execute();
+        }
+        catch(ProcessException e)
+        {
+            throw new ProcessException(execError + this.getName(), e);
+        }
+    }
     
     
     /**

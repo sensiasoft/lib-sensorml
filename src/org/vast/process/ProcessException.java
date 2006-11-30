@@ -41,11 +41,13 @@ public class ProcessException extends Exception
 {
     static final long serialVersionUID = 0;
     
+    
     public ProcessException(String message)
     {
         super(message);
     }
-
+    
+    
     public ProcessException(String message, Throwable cause)
     {
         super(message, cause);

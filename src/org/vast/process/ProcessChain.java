@@ -173,7 +173,9 @@ public class ProcessChain extends DataProcess
     @Override
     public void execute() throws ProcessException
     {
-    	try
+        DataProcess nextProcess = null;
+        
+        try
 		{
 			// if child threads are off, run all child processes
 			if (!childrenThreadsOn)
@@ -200,7 +202,7 @@ public class ProcessChain extends DataProcess
                             moreToRun = false;                            
                             for (int i=0; i<processExecList.size(); i++)
         		    		{
-        		    			DataProcess nextProcess = processExecList.get(i);
+        		    			nextProcess = processExecList.get(i);
                                 
                                 // continue only if process can run
                                 if (nextProcess.canRun())
@@ -208,7 +210,7 @@ public class ProcessChain extends DataProcess
                                     //System.out.println("--> Running: " + nextProcess.getName());
                                     nextProcess.transferData(nextProcess.inputConnections);
                                     nextProcess.transferData(nextProcess.paramConnections);
-                                    nextProcess.execute();
+                                    nextProcess.runProcess();
                                     nextProcess.setAvailability(nextProcess.inputConnections, false);
                                     nextProcess.setAvailability(nextProcess.paramConnections, false);
                                     nextProcess.setAvailability(nextProcess.outputConnections, true);
@@ -235,11 +237,11 @@ public class ProcessChain extends DataProcess
                     {
                         for (int i=0; i<processExecList.size(); i++)
                         {
-                            DataProcess nextProcess = processExecList.get(i);
+                            nextProcess = processExecList.get(i);
                             //System.out.println("--> Running: " + nextProcess.getName());
                             nextProcess.transferData(nextProcess.inputConnections);
                             nextProcess.transferData(nextProcess.paramConnections);
-                            nextProcess.execute();
+                            nextProcess.runProcess();
                         }
                         
                         // transfer data to chain outputs when sub processes are done
@@ -254,9 +256,13 @@ public class ProcessChain extends DataProcess
                 //super.fetchInputData(this.internalOutputConnections);
             }			
 		}
+        catch (ProcessException e)
+        {
+            throw e;
+        }
 		catch (Exception e)
 		{
-            throw new ProcessException("Error while executing: " + name, e);
+            throw new ProcessException(e.getMessage(), e.getCause());
 		}
     }
     
