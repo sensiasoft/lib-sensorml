@@ -28,9 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.*;
-import org.ogc.cdm.common.CDMException;
-import org.ogc.cdm.common.DataEncoding;
 import org.vast.process.*;
+import org.vast.cdm.common.CDMException;
+import org.vast.cdm.common.DataEncoding;
 import org.vast.cdm.reader.EncodingReader;
 import org.vast.io.xml.DOMReader;
 import org.vast.sensorML.SMLException;

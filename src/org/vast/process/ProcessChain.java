@@ -23,7 +23,7 @@
 
 package org.vast.process;
 
-import org.ogc.cdm.common.DataComponent;
+import org.vast.cdm.common.DataComponent;
 import org.vast.data.DataGroup;
 
 import java.util.*;

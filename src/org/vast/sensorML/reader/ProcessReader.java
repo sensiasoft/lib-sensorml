@@ -25,8 +25,8 @@ package org.vast.sensorML.reader;
 
 import org.w3c.dom.*;
 import org.vast.process.*;
+import org.vast.cdm.common.CDMException;
 import org.vast.cdm.reader.DataComponentsReader;
-import org.ogc.cdm.common.*;
 import org.vast.data.*;
 import org.vast.io.xml.DOMReader;
 import org.vast.sensorML.Dummy_Process;

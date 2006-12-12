@@ -24,8 +24,9 @@
 package org.vast.sensorML.reader;
 
 import java.net.URI;
-import org.ogc.cdm.common.CDMException;
-import org.ogc.cdm.common.DataComponent;
+
+import org.vast.cdm.common.CDMException;
+import org.vast.cdm.common.DataComponent;
 import org.vast.cdm.reader.DataComponentsReader;
 import org.vast.io.xml.DOMReader;
 import org.vast.process.DataProcess;

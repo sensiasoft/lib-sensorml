@@ -24,8 +24,9 @@
 package org.vast.sensorML.system;
 
 import java.util.List;
-import org.ogc.cdm.common.DataComponent;
-import org.ogc.cdm.common.DataEncoding;
+
+import org.vast.cdm.common.DataComponent;
+import org.vast.cdm.common.DataEncoding;
 
 
 /**

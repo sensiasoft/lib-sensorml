@@ -23,7 +23,7 @@
 
 package org.vast.sensorML.system;
 
-import org.ogc.cdm.common.DataComponent;
+import org.vast.cdm.common.DataComponent;
 
 
 /**

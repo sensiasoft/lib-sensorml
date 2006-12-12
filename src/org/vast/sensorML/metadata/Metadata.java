@@ -24,7 +24,8 @@
 package org.vast.sensorML.metadata;
 
 import java.util.List;
-import org.ogc.cdm.common.DataComponent;
+
+import org.vast.cdm.common.DataComponent;
 import org.vast.util.DateTime;
 
 
