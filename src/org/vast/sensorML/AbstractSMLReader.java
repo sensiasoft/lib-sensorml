@@ -21,12 +21,11 @@
  
 ******************************* END LICENSE BLOCK ***************************/
 
-package org.vast.sensorML.reader;
+package org.vast.sensorML;
 
 import org.w3c.dom.*;
 import java.net.*;
-import org.vast.io.xml.*;
-import org.vast.sensorML.SMLException;
+import org.vast.xml.*;
 
 
 /**
@@ -43,18 +42,17 @@ import org.vast.sensorML.SMLException;
  * @date Feb 16, 2006
  * @version 1.0
  */
-public abstract class SMLReader
+public abstract class AbstractSMLReader
 {
-    public DOMReader dom;
     
     
     /**
-     * Resolve the anyURI ref attribute of the given element
+     * Resolve the IDREF attribute of the given element to a full URI 
      * @param elt Element to look into
      * @param refAttributeName Name of argument used to reference the ID (ex: href)
-     * @return complete URI
+     * @return URI complete uri#id
      */
-    public URI getResolvedIDRef(Element elt, String refAttributeName) throws SMLException
+    public URI getResolvedIDRef(DOMHelper dom, Element elt, String refAttributeName) throws SMLException
     {
         String uriText = dom.getAttributeValue(elt, refAttributeName);
         URI uri;
@@ -68,25 +66,25 @@ public abstract class SMLReader
             throw new SMLException("Invalid URI (ID reference)", e);
         }
         
-        URI docUri = dom.getXmlDocument(elt).getUri();
+        URI docUri = dom.getParentDocument(elt).getUri();
         return docUri.resolve(uri);
     }
 
 
 
     /**
-     * 
+     * Resolve the ID attribute of the given element to a full URI
      * @param elt Element to look into
-     * @return String complete uri#id
+     * @return URI complete uri#id
      */
-    public URI getResolvedID(Element elt, String idAttributeName) throws SMLException
+    public URI getResolvedID(DOMHelper dom, Element elt, String idAttributeName) throws SMLException
     {
         String idText = dom.getAttributeValue(elt, idAttributeName);
 
         if (idText == null)
             return null;
 
-        URI docUri = dom.getXmlDocument(elt).getUri();
+        URI docUri = dom.getParentDocument(elt).getUri();
         return docUri.resolve("#" + idText);
     }
 }

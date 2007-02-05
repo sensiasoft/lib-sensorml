@@ -21,17 +21,15 @@
  
 ******************************* END LICENSE BLOCK ***************************/
 
-package org.vast.sensorML.reader;
+package org.vast.sensorML;
 
 import org.w3c.dom.*;
 import org.vast.process.*;
 import org.vast.cdm.common.CDMException;
-import org.vast.cdm.reader.DataComponentsReader;
-import org.vast.data.*;
-import org.vast.io.xml.DOMReader;
-import org.vast.sensorML.Dummy_Process;
-import org.vast.sensorML.SMLException;
+import org.vast.cdm.common.DataComponent;
+import org.vast.xml.DOMHelper;
 import org.vast.sensorML.metadata.Metadata;
+import org.vast.sweCommon.SWECommonUtils;
 import org.vast.util.*;
 
 
@@ -49,12 +47,12 @@ import org.vast.util.*;
  * @author Alexandre Robin
  * @version 1.0
  */
-public class ProcessReader extends SMLReader
+public class ProcessReaderV0 extends AbstractSMLReader
 {
     protected static final String dataSeparator = "/"; 
-    protected DataComponentsReader dataComponentReader;
-    protected MetadataReader metadataReader;
+    protected MetadataReaderV0 metadataReader;
     protected ProcessLoader processLoader;
+    protected SWECommonUtils utils;
     protected boolean readMetadata = false;
     protected boolean createExecutableProcess = true;
         
@@ -63,10 +61,9 @@ public class ProcessReader extends SMLReader
      * Constructs a ProcessReader using the specified DOMReader
      * @param dom
      */
-    public ProcessReader(DOMReader dom)
+    public ProcessReaderV0()
     {
-        this.dom = dom;
-        dataComponentReader = new DataComponentsReader(this.dom);
+        utils = new SWECommonUtils();
         processLoader = new ProcessLoader();
     }
 
@@ -77,11 +74,11 @@ public class ProcessReader extends SMLReader
      * @return
      * @throws SMLException
      */
-    public DataProcess readProcessProperty(Element propertyElement) throws SMLException
+    public DataProcess readProcessProperty(DOMHelper dom, Element propertyElement) throws SMLException
     {
         Element processElement = dom.getFirstChildElement(propertyElement);
-        DataProcess process = readProcess(processElement);
-        process.setName(dataComponentReader.readName(propertyElement));
+        DataProcess process = readProcess(dom, processElement);
+        process.setName(dom.getAttributeValue(propertyElement, "@name"));
         return process;
     }
     
@@ -92,11 +89,11 @@ public class ProcessReader extends SMLReader
      * @return
      * @throws SMLException
      */
-    public DataProcess readSourceProperty(Element propertyElement) throws SMLException
+    public DataProcess readSourceProperty(DOMHelper dom, Element propertyElement) throws SMLException
     {
         Element dataSourceElement = dom.getFirstChildElement(propertyElement);
-        DataProcess process = readDataSource(dataSourceElement);
-        process.setName(dataComponentReader.readName(propertyElement));
+        DataProcess process = readDataSource(dom, dataSourceElement);
+        process.setName(dom.getAttributeValue(propertyElement, "@name"));
         return process;
     }
     
@@ -106,15 +103,15 @@ public class ProcessReader extends SMLReader
      * @param processElement
      * @param process
      */
-    protected void parseMetadata(Element processElement, DataProcess dataProcess) throws SMLException
+    protected void parseMetadata(DOMHelper dom, Element processElement, DataProcess dataProcess) throws SMLException
     {
         // read metadata if needed
         if (readMetadata)
         {
             if (metadataReader == null)
-                metadataReader = new MetadataReader(dom);
+                metadataReader = new MetadataReaderV0();
             
-            Metadata metadata = metadataReader.readMetadata(processElement);
+            Metadata metadata = metadataReader.readMetadata(dom, processElement);
             dataProcess.setProperty(DataProcess.METADATA, metadata);
         }
     }
@@ -126,15 +123,15 @@ public class ProcessReader extends SMLReader
      * @return
      * @throws SMLException
      */
-    public DataProcess readProcess(Element processElement) throws SMLException
+    public DataProcess readProcess(DOMHelper dom, Element processElement) throws SMLException
     {
         DataProcess dataProcess;
 
         // read process core info (model or chain)
         if (dom.existElement(processElement, "processes"))
-            dataProcess = readProcessChain(processElement);
+            dataProcess = readProcessChain(dom, processElement);
         else
-            dataProcess = readProcessModel(processElement);
+            dataProcess = readProcessModel(dom, processElement);
 
         // get default name from element
         dataProcess.setName(processElement.getLocalName());
@@ -149,7 +146,7 @@ public class ProcessReader extends SMLReader
      * @return
      * @throws SMLException
      */
-    public DataProcess readProcessModel(Element processModelElement) throws SMLException
+    public DataProcess readProcessModel(DOMHelper dom, Element processModelElement) throws SMLException
     {
         // get process urn
         String uri = dom.getAttributeValue(processModelElement, "method/href");
@@ -162,10 +159,10 @@ public class ProcessReader extends SMLReader
             newProcess = new Dummy_Process();
         
         // read metadata
-        parseMetadata(processModelElement, newProcess);
+        parseMetadata(dom, processModelElement, newProcess);
         
         // read output/output/parameter structures
-        readProcessIO(processModelElement, newProcess);
+        readProcessIO(dom, processModelElement, newProcess);
         
         // set process type (=method uri)
         newProcess.setType(uri);
@@ -180,13 +177,13 @@ public class ProcessReader extends SMLReader
      * @return
      * @throws SMLException
      */
-    public DataProcess readDataSource(Element dataSourceElement) throws SMLException
+    public DataProcess readDataSource(DOMHelper dom, Element dataSourceElement) throws SMLException
     {
         // TODO parse DataSource structure
         DataProcess newProcess = new Dummy_Process();
         
         // read metadata
-        parseMetadata(dataSourceElement, newProcess);
+        parseMetadata(dom, dataSourceElement, newProcess);
         
         return newProcess;
     }
@@ -198,9 +195,9 @@ public class ProcessReader extends SMLReader
      * @throws SMLException
      * @return ProcessChain
      */
-    public ProcessChain readProcessChain(Element processChainElement) throws SMLException
+    public ProcessChain readProcessChain(DOMHelper dom, Element processChainElement) throws SMLException
     {
-        return readProcessChain(processChainElement, null);
+        return readProcessChain(dom, processChainElement, null);
     }
     
     
@@ -211,7 +208,7 @@ public class ProcessReader extends SMLReader
      * @return ProcessChain
      * @throws SMLException
      */
-    protected ProcessChain readProcessChain(Element processChainElement, ProcessChain processChain) throws SMLException
+    protected ProcessChain readProcessChain(DOMHelper dom, Element processChainElement, ProcessChain processChain) throws SMLException
     {
         NodeList processList, dataSourceList, connectionList;
         
@@ -228,7 +225,7 @@ public class ProcessReader extends SMLReader
             processChain = new ProcessChain(memberCount);
         
         // read output/output/parameter structures
-        readProcessIO(processChainElement, processChain);
+        readProcessIO(dom, processChainElement, processChain);
         
         // parse and add each process
         for (int i = 0; i < processList.getLength(); i++)
@@ -236,7 +233,7 @@ public class ProcessReader extends SMLReader
             Element processElement = (Element)processList.item(i);
             if (processElement != null)
             {
-                DataProcess childProcess = readProcessProperty(processElement);
+                DataProcess childProcess = readProcessProperty(dom, processElement);
                 processChain.addProcess(childProcess.getName(), childProcess);
             }
         }
@@ -247,7 +244,7 @@ public class ProcessReader extends SMLReader
             Element sourcePropertyElement = (Element)dataSourceList.item(i);
             if (sourcePropertyElement != null)
             {
-                DataProcess childProcess = readDataSource(sourcePropertyElement);
+                DataProcess childProcess = readDataSource(dom, sourcePropertyElement);
                 processChain.addProcess(childProcess.getName(), childProcess);
             }
         }
@@ -289,7 +286,7 @@ public class ProcessReader extends SMLReader
             }
             else if (linkType.equals("ArrayLink"))
             {
-            	this.createMuxProcess(connectionElement);
+            	this.createMuxProcess(dom, connectionElement);
             }
             else
             	throw new SMLException("Unkown link type: " + linkType);
@@ -299,7 +296,7 @@ public class ProcessReader extends SMLReader
         }
         
         // read metadata
-        parseMetadata(processChainElement, processChain);
+        parseMetadata(dom, processChainElement, processChain);
         
         return processChain;
     }
@@ -309,7 +306,7 @@ public class ProcessReader extends SMLReader
      * TODO Creates a multiplexing process implied by an ArrayLink connection
      * @param arrayLinkElement
      */
-    public void createMuxProcess(Element arrayLinkElement)
+    public void createMuxProcess(DOMHelper dom, Element arrayLinkElement)
     {
     	
     }
@@ -409,7 +406,7 @@ public class ProcessReader extends SMLReader
      * @param process
      * @throws SMLException
      */
-    public void readProcessIO(Element processElement, DataProcess process) throws SMLException
+    public void readProcessIO(DOMHelper dom, Element processElement, DataProcess process) throws SMLException
     {
         try
 		{
@@ -423,7 +420,7 @@ public class ProcessReader extends SMLReader
 			for (int i=0; i<signalCount; i++)
 			{
 			    dataElement = (Element)signalList.item(i);
-			    AbstractDataComponent inputData = dataComponentReader.readComponentProperty(dataElement);
+			    DataComponent inputData = utils.readComponentProperty(dom, dataElement);
 			    process.addInput(inputData.getName(), inputData);
 			}
 			
@@ -433,7 +430,7 @@ public class ProcessReader extends SMLReader
 			for (int i=0; i<signalCount; i++)
 			{
 			    dataElement = (Element)signalList.item(i);
-			    AbstractDataComponent outputData = dataComponentReader.readComponentProperty(dataElement);
+			    DataComponent outputData = utils.readComponentProperty(dom, dataElement);
 			    process.addOutput(outputData.getName(), outputData);
 			}	        
 			
@@ -443,7 +440,7 @@ public class ProcessReader extends SMLReader
 			for (int i=0; i<signalCount; i++)
 			{
 			    dataElement = (Element)signalList.item(i);
-			    AbstractDataComponent paramData = dataComponentReader.readComponentProperty(dataElement);
+			    DataComponent paramData = utils.readComponentProperty(dom, dataElement);
 			    process.addParameter(paramData.getName(), paramData);
 			}
 		}

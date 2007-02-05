@@ -21,14 +21,12 @@
  
 ******************************* END LICENSE BLOCK ***************************/
 
-package org.vast.sensorML.reader;
+package org.vast.sensorML;
 
 import org.w3c.dom.*;
-import org.vast.sensorML.Dummy_Process;
-import org.vast.io.xml.DOMReader;
-import org.vast.io.xml.DOMReaderException;
+import org.vast.xml.DOMHelper;
+import org.vast.xml.DOMHelperException;
 import org.vast.process.*;
-import org.vast.sensorML.SMLException;
 
 import java.lang.reflect.*;
 import java.util.Hashtable;
@@ -160,7 +158,7 @@ public class ProcessLoader
         try
         {
             // create process hashtable entries
-            DOMReader dom = new DOMReader(libFileUrl, false);
+            DOMHelper dom = new DOMHelper(libFileUrl, false);
             NodeList processElts = dom.getElements("Process");
             
             if (processMap == null)
@@ -182,7 +180,7 @@ public class ProcessLoader
                 }
             }
         }
-        catch (DOMReaderException e)
+        catch (DOMHelperException e)
         {
             throw new SMLException("Error while reading Process Map File", e);
         }

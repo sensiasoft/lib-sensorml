@@ -21,25 +21,23 @@
  
 ******************************* END LICENSE BLOCK ***************************/
 
-package org.vast.sensorML.reader;
+package org.vast.sensorML;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.w3c.dom.*;
 import org.vast.process.*;
 import org.vast.cdm.common.CDMException;
 import org.vast.cdm.common.DataEncoding;
-import org.vast.cdm.reader.EncodingReader;
-import org.vast.io.xml.DOMReader;
-import org.vast.sensorML.SMLException;
+import org.vast.xml.DOMHelper;
 import org.vast.sensorML.system.InterfaceDef;
 import org.vast.sensorML.system.Position;
 import org.vast.sensorML.system.ProtocolDef;
 import org.vast.sensorML.system.ReferenceFrame;
 import org.vast.sensorML.system.SMLSystem;
 import org.vast.sensorML.system.SMLComponent;
+import org.vast.sweCommon.SweEncodingReaderV0;
 
 
 /**
@@ -55,27 +53,26 @@ import org.vast.sensorML.system.SMLComponent;
  * @author Alexandre Robin
  * @version 1.0
  */
-public class SystemReader extends ProcessReader
+public class SystemReaderV0 extends ProcessReaderV0
 {
     protected static final String dataSeparator = "/";
-    protected PositionReader positionReader;
-    protected EncodingReader encodingReader;
+    protected PositionReaderV0 positionReader;
+    protected SweEncodingReaderV0 encodingReader;
         
     
     /**
      * Constructs a SystemReader using the specified DOMReader
      * @param dom
      */
-    public SystemReader(DOMReader dom)
+    public SystemReaderV0()
     {
-        super(dom);
-        positionReader = new PositionReader(dom);
+        positionReader = new PositionReaderV0();
         readMetadata = true;
     }
     
     
     @Override
-    public ProcessChain readProcessChain(Element processChainElement) throws SMLException
+    public ProcessChain readProcessChain(DOMHelper dom, Element processChainElement) throws SMLException
     {
         boolean isSystem = false;
         
@@ -91,18 +88,18 @@ public class SystemReader extends ProcessReader
         
         // read System or Process Chain
         if (isSystem)
-            return readSystem(processChainElement);
+            return readSystem(dom, processChainElement);
         else
-            return super.readProcessChain(processChainElement);
+            return super.readProcessChain(dom, processChainElement);
     }
 
 
 
     @Override
-    public DataProcess readProcessModel(Element processModelElement) throws SMLException
+    public DataProcess readProcessModel(DOMHelper dom, Element processModelElement) throws SMLException
     {
         // first read common process model stuffs
-        DataProcess newProcess = super.readProcessModel(processModelElement);
+        DataProcess newProcess = super.readProcessModel(dom, processModelElement);
         
         // if it is a Component also read addtional stuffs
         if (newProcess instanceof SMLComponent)
@@ -112,10 +109,10 @@ public class SystemReader extends ProcessReader
             // read position
             Element positionElt = dom.getElement(processModelElement, "position");
             if (positionElt != null)
-                component.setPosition(positionReader.readPositionProperty(positionElt));
+                component.setPosition(positionReader.readPositionProperty(dom, positionElt));
             
             // read referenceFrames
-            List<ReferenceFrame> frameList = readFrameList(processModelElement);
+            List<ReferenceFrame> frameList = readFrameList(dom, processModelElement);
             component.setReferenceFrames(frameList);
             
             // also add frames to the map
@@ -123,7 +120,7 @@ public class SystemReader extends ProcessReader
                 SMLSystem.frameToObjectMap.put(frameList.get(i), component);
             
             // read interfaces
-            List<InterfaceDef> interfaceList = readInterfaceList(processModelElement);
+            List<InterfaceDef> interfaceList = readInterfaceList(dom, processModelElement);
             component.setInterfaces(interfaceList);
         }
         
@@ -137,14 +134,14 @@ public class SystemReader extends ProcessReader
      * @return
      * @throws SMLException
      */
-    public SMLSystem readSystem(Element systemElement) throws SMLException
+    public SMLSystem readSystem(DOMHelper dom, Element systemElement) throws SMLException
     {
         // first read common process chain stuffs
         SMLSystem system = new SMLSystem();
-        super.readProcessChain(systemElement, system);
+        super.readProcessChain(dom, systemElement, system);
         
         // read referenceFrames
-        List<ReferenceFrame> frameList = readFrameList(systemElement);
+        List<ReferenceFrame> frameList = readFrameList(dom, systemElement);
         system.setReferenceFrames(frameList);
         
         // also add frames to the map
@@ -152,11 +149,11 @@ public class SystemReader extends ProcessReader
             SMLSystem.frameToObjectMap.put(frameList.get(i), system);
         
         // read interfaces
-        List<InterfaceDef> interfaceList = readInterfaceList(systemElement);
+        List<InterfaceDef> interfaceList = readInterfaceList(dom, systemElement);
         system.setInterfaces(interfaceList);
         
         // read positions
-        List<Position> positionList = readPositionList(systemElement);
+        List<Position> positionList = readPositionList(dom, systemElement);
         system.setComponentPositions(positionList);
         
         return system;
@@ -168,7 +165,7 @@ public class SystemReader extends ProcessReader
      * @param componentElement
      * @return
      */
-    public List<ReferenceFrame> readFrameList(Element componentElement) throws SMLException
+    public List<ReferenceFrame> readFrameList(DOMHelper dom, Element componentElement) throws SMLException
     {
         NodeList frameElts = dom.getElements(componentElement, "referenceFrame/*");
         int listSize = frameElts.getLength();
@@ -177,7 +174,7 @@ public class SystemReader extends ProcessReader
         for (int i=0; i<listSize; i++)
         {
             Element frameElt = (Element)frameElts.item(i);
-            ReferenceFrame frame = readFrame(frameElt);
+            ReferenceFrame frame = readFrame(dom, frameElt);
             frameList.add(frame);
         }
         
@@ -191,7 +188,7 @@ public class SystemReader extends ProcessReader
      * @return
      * @throws SMLException
      */
-    public List<InterfaceDef> readInterfaceList(Element componentElement) throws SMLException
+    public List<InterfaceDef> readInterfaceList(DOMHelper dom, Element componentElement) throws SMLException
     {
         NodeList interfaceElts = dom.getElements(componentElement, "interfaces/InterfaceList/interface");
         int listSize = interfaceElts.getLength();
@@ -201,7 +198,7 @@ public class SystemReader extends ProcessReader
         {
             Element propElt = (Element)interfaceElts.item(i);
             Element interfaceElt = dom.getFirstChildElement(propElt);
-            InterfaceDef interfaceDef = readInterface(interfaceElt);            
+            InterfaceDef interfaceDef = readInterface(dom, interfaceElt);            
             String name = dom.getAttributeValue(propElt, "name");
             interfaceDef.setName(name);            
             interfaceList.add(interfaceDef);
@@ -217,7 +214,7 @@ public class SystemReader extends ProcessReader
      * @return
      * @throws SMLException
      */
-    public List<Position> readPositionList(Element systemElement) throws SMLException
+    public List<Position> readPositionList(DOMHelper dom, Element systemElement) throws SMLException
     {
         NodeList positionElts = dom.getElements(systemElement, "positions/PositionList/position");
         int listSize = positionElts.getLength();
@@ -226,7 +223,7 @@ public class SystemReader extends ProcessReader
         for (int i=0; i<listSize; i++)
         {
             Element positionElt = (Element)positionElts.item(i);
-            Position position = positionReader.readPositionProperty(positionElt);
+            Position position = positionReader.readPositionProperty(dom, positionElt);
             positionList.add(position);
         }
         
@@ -240,7 +237,7 @@ public class SystemReader extends ProcessReader
      * @return
      * @throws SMLException
      */
-    public ReferenceFrame readFrame(Element frameElement) throws SMLException
+    public ReferenceFrame readFrame(DOMHelper dom, Element frameElement) throws SMLException
     {
         ReferenceFrame frame = new ReferenceFrame();
         String value;
@@ -266,7 +263,7 @@ public class SystemReader extends ProcessReader
         frame.setDatumDescription(value);
         
         // also add the frame to the hashtable
-        URI frameURI = this.getResolvedID(frameElement, "id");
+        URI frameURI = this.getResolvedID(dom, frameElement, "id");
         ReferenceFrame.uriToFrameMap.put(frameURI, frame);
         
         return frame;
@@ -279,37 +276,37 @@ public class SystemReader extends ProcessReader
      * @return
      * @throws SMLException
      */
-    public InterfaceDef readInterface(Element interfaceElement) throws SMLException
+    public InterfaceDef readInterface(DOMHelper dom, Element interfaceElement) throws SMLException
     {
         InterfaceDef interfaceDef = new InterfaceDef();
         Element propElt;
         
         propElt = dom.getElement(interfaceElement, "serviceLayer");
-        interfaceDef.setServiceLayerProtocol(readProtocol(propElt));
+        interfaceDef.setServiceLayerProtocol(readProtocol(dom, propElt));
         
         propElt = dom.getElement(interfaceElement, "applicationLayer");
-        interfaceDef.setApplicationLayerProtocol(readProtocol(propElt));
+        interfaceDef.setApplicationLayerProtocol(readProtocol(dom, propElt));
         
         propElt = dom.getElement(interfaceElement, "presentationLayer");
-        interfaceDef.setPresentationLayerProtocol(readProtocol(propElt));
+        interfaceDef.setPresentationLayerProtocol(readProtocol(dom, propElt));
         
         propElt = dom.getElement(interfaceElement, "sessionLayer");
-        interfaceDef.setSessionLayerProtocol(readProtocol(propElt));
+        interfaceDef.setSessionLayerProtocol(readProtocol(dom, propElt));
         
         propElt = dom.getElement(interfaceElement, "transportLayer");
-        interfaceDef.setTransportLayerProtocol(readProtocol(propElt));
+        interfaceDef.setTransportLayerProtocol(readProtocol(dom, propElt));
         
         propElt = dom.getElement(interfaceElement, "networkLayer");
-        interfaceDef.setNetworkLayerProtocol(readProtocol(propElt));
+        interfaceDef.setNetworkLayerProtocol(readProtocol(dom, propElt));
         
         propElt = dom.getElement(interfaceElement, "dataLinkLayer");
-        interfaceDef.setDataLinkLayerProtocol(readProtocol(propElt));
+        interfaceDef.setDataLinkLayerProtocol(readProtocol(dom, propElt));
         
         propElt = dom.getElement(interfaceElement, "physicalLayer");
-        interfaceDef.setPhysicalLayerProtocol(readProtocol(propElt));
+        interfaceDef.setPhysicalLayerProtocol(readProtocol(dom, propElt));
         
         propElt = dom.getElement(interfaceElement, "mechanicalLayer");
-        interfaceDef.setMechanicalLayerProtocol(readProtocol(propElt));
+        interfaceDef.setMechanicalLayerProtocol(readProtocol(dom, propElt));
         
         return interfaceDef;
     }
@@ -321,7 +318,7 @@ public class SystemReader extends ProcessReader
      * @return
      * @throws SMLException
      */
-    public ProtocolDef readProtocol(Element protocolProperty) throws SMLException
+    public ProtocolDef readProtocol(DOMHelper dom, Element protocolProperty) throws SMLException
     {
         if (protocolProperty == null)
             return null;
@@ -336,7 +333,7 @@ public class SystemReader extends ProcessReader
         
         // read list of protocol properties
         NodeList propElts = dom.getElements(protocolElement, "property");
-        protocol.setProperties(metadataReader.readPropertyList(propElts));
+        protocol.setProperties(metadataReader.readPropertyList(dom, propElts));
         
         // read encoding if present
         try
@@ -344,7 +341,7 @@ public class SystemReader extends ProcessReader
             Element encodingElt = dom.getElement(protocolElement, "encoding");
             if (encodingElt != null)
             {
-                DataEncoding encoding = encodingReader.readEncodingProperty(encodingElt);
+                DataEncoding encoding = encodingReader.readEncodingProperty(dom, encodingElt);
                 protocol.setEncoding(encoding);
             }
         }

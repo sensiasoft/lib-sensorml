@@ -21,96 +21,91 @@
  
  ******************************* END LICENSE BLOCK ***************************/
 
-package org.vast.sensorML.reader;
+package org.vast.sensorML;
 
 import java.text.ParseException;
 import java.util.*;
 import org.w3c.dom.*;
 import org.vast.cdm.common.CDMException;
 import org.vast.cdm.common.DataComponent;
-import org.vast.cdm.reader.DataComponentsReader;
-import org.vast.io.xml.DOMReader;
-import org.vast.sensorML.*;
+import org.vast.xml.DOMHelper;
 import org.vast.sensorML.metadata.Contact;
 import org.vast.sensorML.metadata.DocumentRef;
 import org.vast.sensorML.metadata.Metadata;
 import org.vast.sensorML.metadata.Person;
 import org.vast.sensorML.metadata.ResponsibleParty;
 import org.vast.sensorML.metadata.Term;
+import org.vast.sweCommon.SWECommonUtils;
 import org.vast.util.*;
 
 
 /**
  * <p><b>Title:</b><br/>
- * Metadata Reader
+ * Metadata Reader v0
  * </p>
  *
  * <p><b>Description:</b><br/>
  * Reader for Metadata group, including identifiers, classifiers,
  * constraints, contacts, documentation, characteristics and
- * capabilities.
+ * capabilities for SensorML version 0.
  * </p>
  *
  * <p>Copyright (c) 2005</p>
  * @author Alexandre Robin
  * @version 1.0
  */
-public class MetadataReader extends SMLReader
+public class MetadataReaderV0 extends AbstractSMLReader implements SMLReader, MetadataReader
 {
-    protected DataComponentsReader dataComponentReader;
+    protected SWECommonUtils utils;
 
 
     /**
      * Constructs a MetadataReader using the specified DOMReader
      * @param parentReader
      */
-    public MetadataReader(DOMReader parentReader)
+    public MetadataReaderV0()
     {
-        dom = parentReader;
-        dataComponentReader = new DataComponentsReader(this.dom);
+        utils = new SWECommonUtils();
     }
 
 
-    /**
-     * Reads all available metadata
-     * @param objectElement the object encapsulating the metadata to be read
-     * @return
-     * @throws SMLException
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.reader.MetadataReader#readMetadata(org.vast.xml.DOMHelper, org.w3c.dom.Element)
      */
-    public Metadata readMetadata(Element objectElement) throws SMLException
+    public Metadata readMetadata(DOMHelper dom, Element objectElement) throws SMLException
     {
         Metadata metadata = new Metadata();
 
         // read all identifier lists
         NodeList identifierElts = dom.getElements(objectElement, "identification/IdentifierList/identifier");
-        metadata.setIdentifiers(readTermList(identifierElts));
+        metadata.setIdentifiers(readTermList(dom, identifierElts));
 
         // read all classifier lists
         NodeList classifierElts = dom.getElements(objectElement, "classification/ClassifierList/classifier");
-        metadata.setClassifiers(readTermList(classifierElts));
+        metadata.setClassifiers(readTermList(dom, classifierElts));
 
         // read all characteristics lists
         NodeList characteristicsElts = dom.getElements(objectElement, "characteristics/PropertyList/property");
-        metadata.setCharacteristics(readPropertyList(characteristicsElts));
+        metadata.setCharacteristics(readPropertyList(dom, characteristicsElts));
 
         // read all capabilities lists
         NodeList capabilitiesElts = dom.getElements(objectElement, "capabilities/PropertyList/property");
-        metadata.setCapabilities(readPropertyList(capabilitiesElts));
+        metadata.setCapabilities(readPropertyList(dom, capabilitiesElts));
 
         // read all document lists
         NodeList documentElts = dom.getElements(objectElement, "documentation/DocumentList/member");
-        metadata.setDocuments(readDocumentList(documentElts));
+        metadata.setDocuments(readDocumentList(dom, documentElts));
 
         // read all contact lists
         NodeList contactElts = dom.getElements(objectElement, "contact/ContactList/member");
-        metadata.setContacts(readContactList(contactElts));
+        metadata.setContacts(readContactList(dom, contactElts));
         
         // read standalone documents
         NodeList docElts = dom.getElements(objectElement, "documentation/Document");
         for (int i=0; i<docElts.getLength(); i++)
         {
             Element docElt = (Element)docElts.item(i);
-            DocumentRef doc = readDocument(docElt);
+            DocumentRef doc = readDocument(dom, docElt);
             metadata.getDocuments().add(doc);
         }
         
@@ -121,7 +116,7 @@ public class MetadataReader extends SMLReader
             Element contactElt = (Element)contactElts.item(i);
             if (!contactElt.getLocalName().equals("ContactList"))
             {
-                Contact contact = readContact(contactElt);
+                Contact contact = readContact(dom, contactElt);
                 metadata.getContacts().add(contact);
             }
         }
@@ -130,12 +125,10 @@ public class MetadataReader extends SMLReader
     }
 
 
-    /**
-     * Reads a list of properties containing Term elements
-     * @param termPropertyElts the NodeList of all properties to read
-     * @return
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.reader.MetadataReader#readTermList(org.vast.xml.DOMHelper, org.w3c.dom.NodeList)
      */
-    public List<Term> readTermList(NodeList termPropertyElts) throws SMLException
+    public List<Term> readTermList(DOMHelper dom, NodeList termPropertyElts) throws SMLException
     {
         int listSize = termPropertyElts.getLength();
         List<Term> termList = new ArrayList<Term>(listSize);
@@ -144,7 +137,7 @@ public class MetadataReader extends SMLReader
         {
             Element propElt = (Element) termPropertyElts.item(i);
             Element termElt = dom.getFirstChildElement(propElt);
-            Term term = readTerm(termElt);
+            Term term = readTerm(dom, termElt);
             term.setName(dom.getAttributeValue(propElt, "name"));
             termList.add(term);
         }
@@ -153,12 +146,10 @@ public class MetadataReader extends SMLReader
     }
 
 
-    /**
-     * Reads a list of properties containing Document elements
-     * @param docPropertyElts
-     * @return
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.reader.MetadataReader#readDocumentList(org.vast.xml.DOMHelper, org.w3c.dom.NodeList)
      */
-    public List<DocumentRef> readDocumentList(NodeList docPropertyElts) throws SMLException
+    public List<DocumentRef> readDocumentList(DOMHelper dom, NodeList docPropertyElts) throws SMLException
     {
         int listSize = docPropertyElts.getLength();
         List<DocumentRef> docList = new ArrayList<DocumentRef>(listSize);
@@ -167,7 +158,7 @@ public class MetadataReader extends SMLReader
         {
             Element propElt = (Element) docPropertyElts.item(i);
             Element documentElt = dom.getFirstChildElement(propElt);
-            DocumentRef document = readDocument(documentElt);
+            DocumentRef document = readDocument(dom, documentElt);
             document.setRole(dom.getAttributeValue(propElt, "role"));
             docList.add(document);
         }
@@ -176,12 +167,10 @@ public class MetadataReader extends SMLReader
     }
 
 
-    /**
-     * Reads a list of properties containing Contact elements
-     * @param contactPropertyElts
-     * @return
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.reader.MetadataReader#readContactList(org.vast.xml.DOMHelper, org.w3c.dom.NodeList)
      */
-    public List<Contact> readContactList(NodeList contactPropertyElts) throws SMLException
+    public List<Contact> readContactList(DOMHelper dom, NodeList contactPropertyElts) throws SMLException
     {
         int listSize = contactPropertyElts.getLength();
         List<Contact> contactList = new ArrayList<Contact>(listSize);
@@ -190,7 +179,7 @@ public class MetadataReader extends SMLReader
         {
             Element propElt = (Element) contactPropertyElts.item(i);
             Element contactElt = dom.getFirstChildElement(propElt);
-            Contact contact = readContact(contactElt);
+            Contact contact = readContact(dom, contactElt);
 
             contact.setRole(dom.getAttributeValue(propElt, "role"));
 
@@ -210,12 +199,10 @@ public class MetadataReader extends SMLReader
     }
 
 
-    /**
-     * Reads a list of properties containing elements of the AnyData group
-     * @param propertyElts the NodeList of all properties to read
-     * @return
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.reader.MetadataReader#readPropertyList(org.vast.xml.DOMHelper, org.w3c.dom.NodeList)
      */
-    public List<DataComponent> readPropertyList(NodeList propertyElts) throws SMLException
+    public List<DataComponent> readPropertyList(DOMHelper dom, NodeList propertyElts) throws SMLException
     {
         int listSize = propertyElts.getLength();
         List<DataComponent> propertyList = new ArrayList<DataComponent>(listSize);
@@ -225,7 +212,7 @@ public class MetadataReader extends SMLReader
             for (int i = 0; i < listSize; i++)
             {
                 Element propElt = (Element) propertyElts.item(i);
-                DataComponent data = dataComponentReader.readComponentProperty(propElt);
+                DataComponent data = utils.readComponentProperty(dom, propElt);
                 propertyList.add(data);
             }
         }
@@ -238,12 +225,10 @@ public class MetadataReader extends SMLReader
     }
 
 
-    /**
-     * Reads a Term element
-     * @param termElt
-     * @return
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.reader.MetadataReader#readTerm(org.vast.xml.DOMHelper, org.w3c.dom.Element)
      */
-    public Term readTerm(Element termElt) throws SMLException
+    public Term readTerm(DOMHelper dom, Element termElt) throws SMLException
     {
         Term term = new Term();
 
@@ -259,12 +244,10 @@ public class MetadataReader extends SMLReader
     }
 
 
-    /**
-     * Reads a Document element
-     * @param documentElement
-     * @return
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.reader.MetadataReader#readDocument(org.vast.xml.DOMHelper, org.w3c.dom.Element)
      */
-    public DocumentRef readDocument(Element documentElement) throws SMLException
+    public DocumentRef readDocument(DOMHelper dom, Element documentElement) throws SMLException
     {
         DocumentRef document = new DocumentRef();
 
@@ -275,7 +258,7 @@ public class MetadataReader extends SMLReader
         // read date
         Element dateElement = dom.getElement(documentElement, "date");
         if (dateElement != null)
-            document.setDate(readDate(dateElement));
+            document.setDate(readDate(dom, dateElement));
 
         // read version
         String version = dom.getAttributeValue(documentElement, "version");
@@ -288,7 +271,7 @@ public class MetadataReader extends SMLReader
         // read contact
         Element contactElt = dom.getElement(documentElement, "contact/*");
         if (contactElt != null)
-            document.setContact(readContact(contactElt));
+            document.setContact(readContact(dom, contactElt));
 
         // read file location
         String fileLocation = dom.getAttributeValue(documentElement, "fileLocation/href");
@@ -298,31 +281,26 @@ public class MetadataReader extends SMLReader
     }
 
 
-    /**
-     * Reads a Contact (i.e. Person or ResponsibleParty element)
-     * @param contactElement
-     * @return
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.reader.MetadataReader#readContact(org.vast.xml.DOMHelper, org.w3c.dom.Element)
      */
-    public Contact readContact(Element contactElement) throws SMLException
+    public Contact readContact(DOMHelper dom, Element contactElement) throws SMLException
     {
         Contact contact = null;
 
         if (contactElement.getLocalName().equals("Person"))
-            contact = readPerson(contactElement);
+            contact = readPerson(dom, contactElement);
         else if (contactElement.getLocalName().equals("ResponsibleParty"))
-            contact = readResponsibleParty(contactElement);
+            contact = readResponsibleParty(dom, contactElement);
 
         return contact;
     }
 
 
-    /**
-     * Reads a Person element
-     * @param personElement
-     * @return
-     * @throws SMLException
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.reader.MetadataReader#readPerson(org.vast.xml.DOMHelper, org.w3c.dom.Element)
      */
-    public Person readPerson(Element personElement) throws SMLException
+    public Person readPerson(DOMHelper dom, Element personElement) throws SMLException
     {
         Person person = new Person();
         String value;
@@ -355,13 +333,10 @@ public class MetadataReader extends SMLReader
     }
 
 
-    /**
-     * Reads a ResponsibleParty element
-     * @param partyElement
-     * @return
-     * @throws SMLException
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.reader.MetadataReader#readResponsibleParty(org.vast.xml.DOMHelper, org.w3c.dom.Element)
      */
-    public ResponsibleParty readResponsibleParty(Element partyElement) throws SMLException
+    public ResponsibleParty readResponsibleParty(DOMHelper dom, Element partyElement) throws SMLException
     {
         ResponsibleParty party = new ResponsibleParty();
         String value;
@@ -422,12 +397,10 @@ public class MetadataReader extends SMLReader
     }
 
 
-    /**
-     * Reads an element containing an ISO date value
-     * @param dateElement
-     * @return
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.reader.MetadataReader#readDate(org.vast.xml.DOMHelper, org.w3c.dom.Element)
      */
-    public DateTime readDate(Element dateElement) throws SMLException
+    public DateTime readDate(DOMHelper dom, Element dateElement) throws SMLException
     {       
         try
         {

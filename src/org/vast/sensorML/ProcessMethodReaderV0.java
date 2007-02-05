@@ -21,12 +21,10 @@
  
 ******************************* END LICENSE BLOCK ***************************/
 
-package org.vast.sensorML.reader;
+package org.vast.sensorML;
 
 import org.w3c.dom.*;
-import org.vast.cdm.reader.DataComponentsReader;
-import org.vast.io.xml.DOMReader;
-import org.vast.sensorML.SMLException;
+import org.vast.xml.DOMHelper;
 import org.vast.sensorML.system.ProcessMethod;
 
 
@@ -44,28 +42,25 @@ import org.vast.sensorML.system.ProcessMethod;
  * @date Feb 15, 2006
  * @version 1.0
  */
-public class ProcessMethodReader extends SMLReader
+public class ProcessMethodReaderV0 extends AbstractSMLReader
 {
     protected static final String dataSeparator = "/"; 
-    protected DataComponentsReader dataComponentReader;
         
     
-    public ProcessMethodReader(DOMReader dom)
+    public ProcessMethodReaderV0()
     {
-        this.dom = dom;
-        dataComponentReader = new DataComponentsReader(this.dom);
     }
 
     
-    public ProcessMethod readMethodProperty(Element propertyElement) throws SMLException
+    public ProcessMethod readMethodProperty(DOMHelper dom, Element propertyElement) throws SMLException
     {
         Element methodElement = dom.getFirstChildElement(propertyElement);
-        ProcessMethod method = readMethod(methodElement);
+        ProcessMethod method = readMethod(dom, methodElement);
         return method;
     }
     
     
-    public ProcessMethod readMethod(Element processElement) throws SMLException
+    public ProcessMethod readMethod(DOMHelper dom, Element processElement) throws SMLException
     {
         // TODO implement readMethod in ProcessMethodReader
         return null;

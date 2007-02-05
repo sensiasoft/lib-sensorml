@@ -21,22 +21,20 @@
  
 ******************************* END LICENSE BLOCK ***************************/
 
-package org.vast.sensorML.reader;
+package org.vast.sensorML;
 
 import java.net.URI;
-
 import org.vast.cdm.common.CDMException;
 import org.vast.cdm.common.DataComponent;
-import org.vast.cdm.reader.DataComponentsReader;
-import org.vast.io.xml.DOMReader;
+import org.vast.xml.DOMHelper;
 import org.vast.process.DataProcess;
-import org.vast.sensorML.SMLException;
 import org.vast.sensorML.system.Position;
 import org.vast.sensorML.system.PositionData;
 import org.vast.sensorML.system.PositionProcess;
 import org.vast.sensorML.system.ReferenceFrame;
 import org.vast.sensorML.system.SMLSystem;
 import org.vast.sensorML.system.SMLComponent;
+import org.vast.sweCommon.SWECommonUtils;
 import org.w3c.dom.Element;
 
 
@@ -53,21 +51,20 @@ import org.w3c.dom.Element;
  * @author Alexandre Robin
  * @version 1.0
  */
-public class PositionReader extends SMLReader
+public class PositionReaderV0 extends AbstractSMLReader
 {
-    protected DataComponentsReader dataComponentReader;
-    protected ProcessReader processReader;
+    protected SWECommonUtils utils;
+    protected ProcessReaderV0 processReader;
         
     
     /**
      * Constructs a PositionReader using the specified DOMReader
      * @param dom
      */
-    public PositionReader(DOMReader dom)
+    public PositionReaderV0()
     {
-        this.dom = dom;
-        dataComponentReader = new DataComponentsReader(this.dom);
-        processReader = new ProcessReader(this.dom);
+        utils = new SWECommonUtils();
+        processReader = new ProcessReaderV0();
     }
 
     
@@ -77,10 +74,10 @@ public class PositionReader extends SMLReader
      * @return
      * @throws SMLException
      */
-    public Position readPositionProperty(Element positionPropertyElt) throws SMLException
+    public Position readPositionProperty(DOMHelper dom, Element positionPropertyElt) throws SMLException
     {
         Element positionElt = dom.getFirstChildElement(positionPropertyElt);
-        Position position = readPosition(positionElt);
+        Position position = readPosition(dom, positionElt);
         
         // read name
         String name = dom.getAttributeValue(positionPropertyElt, "name");
@@ -96,14 +93,14 @@ public class PositionReader extends SMLReader
      * @return
      * @throws SMLException
      */
-    public Position readPosition(Element positionElement) throws SMLException
+    public Position readPosition(DOMHelper dom, Element positionElement) throws SMLException
     {
         Position position;
         
         if (dom.existElement(positionElement, "outputs"))
-            position = readPositionProcess(positionElement);
+            position = readPositionProcess(dom, positionElement);
         else
-            position = readPositionData(positionElement);
+            position = readPositionData(dom, positionElement);
         
         return position;
     }
@@ -115,7 +112,7 @@ public class PositionReader extends SMLReader
      * @return
      * @throws SMLException
      */
-    public PositionProcess readPositionProcess(Element positionProcessElement) throws SMLException
+    public PositionProcess readPositionProcess(DOMHelper dom, Element positionProcessElement) throws SMLException
     {
         return null;
     }
@@ -127,22 +124,22 @@ public class PositionReader extends SMLReader
      * @return
      * @throws SMLException
      */
-    public PositionData readPositionData(Element positionDataElement) throws SMLException
+    public PositionData readPositionData(DOMHelper dom, Element positionDataElement) throws SMLException
     {
         PositionData position = new PositionData();
         
         try
         {
-            DataComponent data = dataComponentReader.readDataComponents(positionDataElement);
+            DataComponent data = utils.readComponent(dom, positionDataElement);
             position.setData(data);
             
             // find reference frame object and assign it to Position
-            URI refFrameURI = this.getResolvedIDRef(positionDataElement, "referenceFrame");
+            URI refFrameURI = this.getResolvedIDRef(dom, positionDataElement, "referenceFrame");
             ReferenceFrame refFrame = ReferenceFrame.uriToFrameMap.get(refFrameURI);
             position.setReferenceFrame(refFrame);
             
             // find local frame object and assign it to Position
-            URI locFrameURI = this.getResolvedIDRef(positionDataElement, "localFrame");
+            URI locFrameURI = this.getResolvedIDRef(dom, positionDataElement, "localFrame");
             ReferenceFrame locFrame = ReferenceFrame.uriToFrameMap.get(locFrameURI);
             position.setLocalFrame(locFrame);
             
