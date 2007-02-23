@@ -47,13 +47,13 @@ import org.w3c.dom.Element;
  * @date Dec 21, 2006
  * @version 1.0
  */
-public class SML
+public class SMLUtils
 {
     protected Metadata metadata;
     protected List<SMLObject> parts;
     
     
-    public SML()
+    public SMLUtils()
     {
         parts = new ArrayList<SMLObject>();
     }
@@ -77,32 +77,32 @@ public class SML
     }
     
     
-    public static SML read(DOMHelper dom, Element objElt, String version) throws SMLException
+    public SMLUtils read(DOMHelper dom, Element objElt, String version) throws SMLException
     {
-        return new SML();
+        return new SMLUtils();
     }
     
     
-    public static SML read(DOMHelper dom, Element objElt) throws SMLException
+    public SMLUtils read(DOMHelper dom, Element objElt) throws SMLException
     {
         return read(dom, objElt, null);
     }
     
     
-    public static Element write(DOMHelper dom, SMLObject obj, String version) throws SMLException
+    public Element write(DOMHelper dom, SMLObject obj, String version) throws SMLException
     {
         // TODO write content to DOM
         return null;
     }
     
     
-    public static Element write(DOMHelper dom, SMLObject obj) throws SMLException
+    public Element write(DOMHelper dom, SMLObject obj) throws SMLException
     {
         return write(dom, obj, null);
     }
     
     
-    public static void serialize(OutputStream output, SMLObject obj) throws SMLException
+    public void serialize(OutputStream output, SMLObject obj) throws SMLException
     {
         
     }
