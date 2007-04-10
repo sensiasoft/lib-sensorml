@@ -53,7 +53,7 @@ import org.vast.sweCommon.SweEncodingReaderV0;
  * @author Alexandre Robin
  * @version 1.0
  */
-public class SystemReaderV0 extends ProcessReaderV0
+public class SystemReaderV0 extends ProcessReaderV0 implements SystemReader
 {
     protected static final String dataSeparator = "/";
     protected PositionReaderV0 positionReader;

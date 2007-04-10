@@ -35,7 +35,7 @@ import org.vast.util.*;
 
 /**
  * <p><b>Title:</b><br/>
- * Process Reader
+ * Process Reader v0.0
  * </p>
  *
  * <p><b>Description:</b><br/>
@@ -47,7 +47,7 @@ import org.vast.util.*;
  * @author Alexandre Robin
  * @version 1.0
  */
-public class ProcessReaderV0 extends AbstractSMLReader
+public class ProcessReaderV0 extends AbstractSMLReader implements ProcessReader
 {
     protected static final String dataSeparator = "/"; 
     protected MetadataReaderV0 metadataReader;

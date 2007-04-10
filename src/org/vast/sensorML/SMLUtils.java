@@ -26,7 +26,16 @@ package org.vast.sensorML;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import org.vast.cdm.common.DataComponent;
+import org.vast.cdm.common.DataComponentReader;
+import org.vast.cdm.common.DataComponentWriter;
+import org.vast.cdm.common.DataEncodingReader;
+import org.vast.cdm.common.DataEncodingWriter;
+import org.vast.ogc.DocumentType;
+import org.vast.ogc.OGCRegistry;
+import org.vast.process.DataProcess;
 import org.vast.sensorML.metadata.Metadata;
+import org.vast.sensorML.system.SMLSystem;
 import org.vast.xml.DOMHelper;
 import org.w3c.dom.Element;
 
@@ -47,63 +56,157 @@ import org.w3c.dom.Element;
  * @date Dec 21, 2006
  * @version 1.0
  */
-public class SMLUtils
+public class SMLUtils implements ProcessReader, SystemReader, MetadataReader
 {
-    protected Metadata metadata;
-    protected List<SMLObject> parts;
+    private String version = "1.0";
+    private boolean versionChanged;
+    private boolean createExecProcess;
+    private DOMHelper previousDom;
+    private ProcessReader processReader = null;
+    private SystemReader systemReader = null;
+    private MetadataReader metadataReader = null;
     
     
-    public SMLUtils()
+    public DataProcess readProcess(DOMHelper dom, Element processElement) throws SMLException
     {
-        parts = new ArrayList<SMLObject>();
+        ProcessReader reader = getProcessReader(dom, processElement);
+        return reader.readProcess(dom, processElement);
     }
     
     
-    public Metadata getMetadata()
+    public DataProcess readProcessProperty(DOMHelper dom, Element propertyElement) throws SMLException
     {
-        return metadata;
+        Element processElement = dom.getFirstChildElement(propertyElement);
+        ProcessReader reader = getProcessReader(dom, processElement);
+        return reader.readProcessProperty(dom, propertyElement);
     }
     
     
-    public void setMetadata(Metadata metadata)
+    public SMLSystem readSystem(DOMHelper dom, Element systemElement) throws SMLException
     {
-        this.metadata = metadata;
+        SystemReader reader = getSystemReader(dom, systemElement);
+        return reader.readSystem(dom, systemElement);
     }
     
     
-    public List<SMLObject> getParts()
+    public Metadata readMetadata(DOMHelper dom, Element objectElement) throws SMLException
     {
-        return parts;
+        MetadataReader reader = getMetadataReader(dom, objectElement);
+        return reader.readMetadata(dom, objectElement);
     }
     
     
-    public SMLUtils read(DOMHelper dom, Element objElt, String version) throws SMLException
+    /**
+     * Reuses or creates the ProcessReader corresponding to
+     * the version specified by the SensorML namespace URI
+     * @param dom
+     * @param processElt
+     * @return
+     */
+    private ProcessReader getProcessReader(DOMHelper dom, Element processElt)
     {
-        return new SMLUtils();
+        if (dom == previousDom && processReader != null)
+        {
+            return processReader;
+        }
+        else
+        {
+            ProcessReader reader = (ProcessReader)OGCRegistry.createReader(
+                                                  DocumentType.SENSORML.name(),
+                                                  DocumentType.PROCESS.name(),
+                                                  getVersion(dom, processElt));
+            processReader = reader;
+            processReader.setCreateExecutableProcess(createExecProcess);
+            return reader;
+        }
     }
     
     
-    public SMLUtils read(DOMHelper dom, Element objElt) throws SMLException
+    /**
+     * Reuses or creates the SystemReader corresponding to
+     * the version specified by the SensorML namespace URI
+     * @param dom
+     * @param systemElt
+     * @return
+     */
+    private SystemReader getSystemReader(DOMHelper dom, Element systemElt)
     {
-        return read(dom, objElt, null);
+        if (dom == previousDom && systemReader != null)
+        {
+            return systemReader;
+        }
+        else
+        {
+            SystemReader reader = (SystemReader)OGCRegistry.createReader(
+                                                DocumentType.SENSORML.name(),
+                                                DocumentType.SYSTEM.name(),
+                                                getVersion(dom, systemElt));
+            systemReader = reader;
+            systemReader.setCreateExecutableProcess(createExecProcess);
+            return reader;
+        }
     }
     
     
-    public Element write(DOMHelper dom, SMLObject obj, String version) throws SMLException
+    /**
+     * Reuses or creates the MetadataReader corresponding to
+     * the version specified by the SensorML namespace URI
+     * @param dom
+     * @param smlobjElt
+     * @return
+     */
+    private MetadataReader getMetadataReader(DOMHelper dom, Element smlobjElt)
     {
-        // TODO write content to DOM
-        return null;
+        if (dom == previousDom && processReader != null)
+        {
+            return metadataReader;
+        }
+        else
+        {
+            MetadataReader reader = (MetadataReader)OGCRegistry.createReader(
+                                                    DocumentType.SENSORML.name(),
+                                                    DocumentType.METADATA.name(),
+                                                    getVersion(dom, smlobjElt));
+            metadataReader = reader;
+            return reader;
+        }
     }
     
     
-    public Element write(DOMHelper dom, SMLObject obj) throws SMLException
+    /**
+     * Logic to guess SensorML version from namespace
+     * @param dom
+     * @return
+     */
+    public String getVersion(DOMHelper dom, Element smlElt)
     {
-        return write(dom, obj, null);
-    }
-    
-    
-    public void serialize(OutputStream output, SMLObject obj) throws SMLException
-    {
+        // get version from the last part of namespace URI
+        //String sweUri = dom.getXmlDocument().getNSUri("swe");
+        String smlUri = smlElt.getNamespaceURI();
+        String version = smlUri.substring(smlUri.lastIndexOf('/') + 1);
         
+        // check if version is a valid version number otherwise defaults to 0
+        if (!version.matches("^\\d+(\\.\\d+)?(\\.\\d+)?$"))
+            version = "0.0";
+        
+        previousDom = dom;
+        return version;
+    }
+    
+    
+    /**
+     * Used to set the SensorML version to use for XML output
+     * @param version
+     */
+    public void setOutputVersion(String version)
+    {
+        this.version = version;
+        this.versionChanged = true;
+    }
+
+
+    public void setCreateExecutableProcess(boolean createExecProcess)
+    {
+        this.createExecProcess = createExecProcess;        
     }
 }
