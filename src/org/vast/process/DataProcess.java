@@ -458,7 +458,7 @@ public abstract class DataProcess implements Runnable
     	StringBuffer text = new StringBuffer();
     	String indent = "    ";
     	
-        text.append("DataProcess: ");
+        text.append("Process: ");
         text.append(this.name);
         text.append(" (" + this.getClass().getName() + ")\n");
         
