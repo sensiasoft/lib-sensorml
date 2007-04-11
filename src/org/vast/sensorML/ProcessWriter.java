@@ -17,24 +17,24 @@
  the Initial Developer. All Rights Reserved.
  
  Contributor(s): 
- Alexandre Robin <robin@nsstc.uah.edu>
+    Alexandre Robin <robin@nsstc.uah.edu>
  
- ******************************* END LICENSE BLOCK ***************************/
+******************************* END LICENSE BLOCK ***************************/
 
 package org.vast.sensorML;
 
-import org.vast.sensorML.metadata.Metadata;
+import org.vast.process.DataProcess;
 import org.vast.xml.DOMHelper;
 import org.w3c.dom.Element;
 
 
 /**
  * <p><b>Title:</b>
- * Metadata Reader
+ * Process Writer
  * </p>
  *
  * <p><b>Description:</b><br/>
- * Base interface for SensorML Metadata reader of all versions
+ * Base interface for SensorML Process writer of all versions
  * </p>
  *
  * <p>Copyright (c) 2007</p>
@@ -42,14 +42,14 @@ import org.w3c.dom.Element;
  * @date Apr 11, 2007
  * @version 1.0
  */
-public interface MetadataReader
+public interface ProcessWriter
 {
     /**
-     * Reads the whole metadata group from the object DOM
+     * Creates a W3C DOM element containing the given Process information
      * @param dom
-     * @param objectElement The object carrying the metadata
-     * @return the Metadata object filled with info from the DOM
+     * @param process
+     * @return
      * @throws SMLException
      */
-    public Metadata readMetadata(DOMHelper dom, Element objectElement) throws SMLException;
+    public Element writeProcess(DOMHelper dom, DataProcess process) throws SMLException;
 }

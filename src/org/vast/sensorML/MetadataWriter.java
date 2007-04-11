@@ -17,9 +17,9 @@
  the Initial Developer. All Rights Reserved.
  
  Contributor(s): 
- Alexandre Robin <robin@nsstc.uah.edu>
+    Alexandre Robin <robin@nsstc.uah.edu>
  
- ******************************* END LICENSE BLOCK ***************************/
+******************************* END LICENSE BLOCK ***************************/
 
 package org.vast.sensorML;
 
@@ -30,11 +30,11 @@ import org.w3c.dom.Element;
 
 /**
  * <p><b>Title:</b>
- * Metadata Reader
+ * Metadata Writer
  * </p>
  *
  * <p><b>Description:</b><br/>
- * Base interface for SensorML Metadata reader of all versions
+ * Base interface for SensorML Metadata writer of all versions
  * </p>
  *
  * <p>Copyright (c) 2007</p>
@@ -42,14 +42,15 @@ import org.w3c.dom.Element;
  * @date Apr 11, 2007
  * @version 1.0
  */
-public interface MetadataReader
+public interface MetadataWriter
 {
     /**
-     * Reads the whole metadata group from the object DOM
+     * Appends W3C DOM elements containing the given Metadata
+     * information to the parent DOM element. 
      * @param dom
-     * @param objectElement The object carrying the metadata
-     * @return the Metadata object filled with info from the DOM
+     * @param metadata
+     * @return
      * @throws SMLException
      */
-    public Metadata readMetadata(DOMHelper dom, Element objectElement) throws SMLException;
+    public void writeMetadata(DOMHelper dom, Element parentElement, Metadata metadata) throws SMLException;
 }

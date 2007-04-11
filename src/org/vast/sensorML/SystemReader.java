@@ -27,6 +27,21 @@ import org.vast.sensorML.system.SMLSystem;
 import org.vast.xml.DOMHelper;
 import org.w3c.dom.Element;
 
+
+/**
+ * <p><b>Title:</b>
+ * System Reader
+ * </p>
+ *
+ * <p><b>Description:</b><br/>
+ * Base interface for SensorML System reader of all versions
+ * </p>
+ *
+ * <p>Copyright (c) 2007</p>
+ * @author Alexandre Robin
+ * @date Apr 11, 2007
+ * @version 1.0
+ */
 public interface SystemReader extends ProcessReader
 {
     /**
