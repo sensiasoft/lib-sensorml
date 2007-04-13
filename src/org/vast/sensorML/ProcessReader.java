@@ -65,6 +65,14 @@ public interface ProcessReader
     
     
     /**
+     * Process Metadata will be read only if set to true
+     * default is false to reduce parsing time 
+     * @param readMetadata
+     */
+    public void setReadMetadata(boolean readMetadata);
+    
+    
+    /**
      * Executable DataProcess objects will be instantiated if set to true
      * Default is true. Set to false for simply parsing the document to Dummy Processes.
      * @param createExecutableProcess

@@ -52,6 +52,7 @@ public class SMLUtils implements ProcessReader, SystemReader, MetadataReader, Pr
 {
     private String version = "1.0";
     private boolean versionChanged;
+    private boolean readProcessMetadata;
     private boolean createExecProcess;
     private DOMHelper previousDom;
     private ProcessReader processReader = null;
@@ -132,6 +133,7 @@ public class SMLUtils implements ProcessReader, SystemReader, MetadataReader, Pr
                                                   DocumentType.PROCESS.name(),
                                                   getVersion(dom, processElt));
             processReader = reader;
+            processReader.setReadMetadata(readProcessMetadata);
             processReader.setCreateExecutableProcess(createExecProcess);
             return reader;
         }
@@ -158,7 +160,8 @@ public class SMLUtils implements ProcessReader, SystemReader, MetadataReader, Pr
                                                 DocumentType.SYSTEM.name(),
                                                 getVersion(dom, systemElt));
             systemReader = reader;
-            systemReader.setCreateExecutableProcess(createExecProcess);
+            systemReader.setReadMetadata(readProcessMetadata);
+            systemReader.setCreateExecutableProcess(createExecProcess);            
             return reader;
         }
     }
@@ -290,6 +293,12 @@ public class SMLUtils implements ProcessReader, SystemReader, MetadataReader, Pr
     {
         this.version = version;
         this.versionChanged = true;
+    }
+    
+    
+    public void setReadMetadata(boolean readMetadata)
+    {
+        this.readProcessMetadata = readMetadata;
     }
 
 
