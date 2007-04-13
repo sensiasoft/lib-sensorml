@@ -183,6 +183,9 @@ public class ProcessChain extends DataProcess
                 // execute all sub processes in order
                 if (processExecList != null)
                 {
+                    // combine input blocks
+                    this.combineInputBlocks();
+                    
                     if (needSync)
                     {
                         boolean moreToRun;
@@ -287,6 +290,17 @@ public class ProcessChain extends DataProcess
                     connection.getSourceProcess().createNewOutputBlocks();
                 }
             }
+        }
+    }
+    
+    
+    public void combineInputBlocks()
+    {
+        for (int i=0; i<inputData.getComponentCount(); i++)
+        {
+            DataComponent input = inputData.getComponent(i);
+            if (input instanceof DataGroup)
+                ((DataGroup)input).combineDataBlocks();
         }
     }
     
