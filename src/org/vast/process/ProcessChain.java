@@ -99,6 +99,10 @@ public class ProcessChain extends DataProcess
                 if (process.needSync())
                     this.needSync = true;
             }
+            
+            // clear all connections
+            for (int i=0; i<internalConnections.size(); i++)
+                internalConnections.get(i).setDataAvailable(false);
     	}
         else
         {
@@ -190,22 +194,26 @@ public class ProcessChain extends DataProcess
                     {
                         boolean moreToRun;
                         
-                        // set available flag for all needed internal inputs
+                        // reset available flag for all needed internal inputs
                         // if chain can run it means values are available
-                        this.setAvailability(internalInputConnections, true);
+                        for (int i=0; i<inputConnections.size(); i++)
+                            this.setAvailability(internalInputConnections.get(i), inputConnections.get(i).isNeeded());
+                        //this.setAvailability(internalInputConnections, true);
                         this.setAvailability(internalParamConnections, true);
                         
-                        // set available flag for all needed internal outputs
+                        // reset available flag for all needed internal outputs
                         // if chain can run it means outputs are free (no value available)
                         this.setAvailability(internalOutputConnections, false);
                         
                         // loop until no more processes can run
                         do
                         {
-                            moreToRun = false;                            
+                            moreToRun = false;
+                            
+                            // execute all child processes if they can run
                             for (int i=0; i<processExecList.size(); i++)
-        		    		{
-        		    			nextProcess = processExecList.get(i);
+                            {
+                                nextProcess = processExecList.get(i);
                                 
                                 // continue only if process can run
                                 if (nextProcess.canRun())
@@ -221,7 +229,7 @@ public class ProcessChain extends DataProcess
                                 }
                                 //else
                                 //    System.out.println("--> Waiting: " + nextProcess.getName());
-        		    		}
+                            }
                         }
                         while (moreToRun);
                         
@@ -232,9 +240,12 @@ public class ProcessChain extends DataProcess
                         this.combineOutputBlocks();
                         
                         // determine what inputs are needed for next run
-                        // (THIS CONDITION MAY NOT BE 100% NECESSARY)
                         for (int i=0; i<inputConnections.size(); i++)
                             inputConnections.get(i).needed = this.checkAvailability(internalInputConnections.get(i), false);
+                        
+                        // determine what outputs are needed for next run
+                        for (int i=0; i<outputConnections.size(); i++)
+                            outputConnections.get(i).needed = this.checkAvailability(internalOutputConnections.get(i), true);
                     }
                     else
                     {
