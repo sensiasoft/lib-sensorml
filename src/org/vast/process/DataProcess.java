@@ -103,51 +103,24 @@ public abstract class DataProcess implements Runnable
     
     
     /**
+     * Resets the process (especially asnchronous ones) before it can be run again
+     * Should initialize all process state variables
+     * @throws ProcessException
+     */
+    public void reset() throws ProcessException
+    {
+        // DO NOTHING BY DEFAULT
+    }
+    
+    
+    /**
      * Execute is typically called several times on a process and should
      * contain all the logic to transform input/parameter values to 
      * output values. This method should be optimized as much as possible.
      * @throws ProcessException
      */
     public abstract void execute() throws ProcessException;
-    
-    
-    /**
-     * Public method to call to init the process
-     * @throws ProcessException
-     */
-    public void initProcess() throws ProcessException
-    {
-        try
-        {
-            this.init();
-        }
-        catch(ProcessException e)
-        {
-            String errMsg = initError + this.getName() +
-                            " (" + this.getType() + ")";
-            throw new ProcessException(errMsg, e);
-        }
-    }
-    
-    
-    /**
-     * Public method to call to run the process once
-     * @throws ProcessException
-     */
-    public void runProcess() throws ProcessException
-    {
-        try
-        {
-            this.execute();
-        }
-        catch(ProcessException e)
-        {
-            String errMsg = execError + this.getName() +
-                            " (" + this.getType() + ")";
-            throw new ProcessException(errMsg, e);
-        }
-    }
-    
+      
     
     /**
      * Override to dispose of all resources allocated

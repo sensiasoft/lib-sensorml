@@ -83,37 +83,54 @@ public class ProcessChain extends DataProcess
     @Override
     public void init() throws ProcessException
     {        
-        if (!childrenThreadsOn)
-    	{
-            // build process execution list
-	        processExecList.clear();
-            addUpstreamProcesses(this, internalOutputConnections);
-            
-            // init needed processes
-            for (int i=0; i<processExecList.size(); i++)
-            {
-                DataProcess process = processExecList.get(i);
-                process.initProcess();
-                process.createNewOutputBlocks();
-                
-                if (process.needSync())
-                    this.needSync = true;
-            }
-            
-            // clear all connections
-            for (int i=0; i<internalConnections.size(); i++)
-                internalConnections.get(i).setDataAvailable(false);
-    	}
-        else
+        DataProcess childProcess = null;
+        
+        try
         {
-            // init all child processes and create output data blocks
-            for (int i=0; i<processList.size(); i++)
+            if (!childrenThreadsOn)
             {
-                DataProcess process = processList.get(i);
-                process.initProcess();
-                process.createNewOutputBlocks();
+                // build process execution list
+                processExecList.clear();
+                addUpstreamProcesses(this, internalOutputConnections);
+                
+                // init needed processes
+                for (int i=0; i<processExecList.size(); i++)
+                {
+                    childProcess = processExecList.get(i);
+                    childProcess.init();
+                    childProcess.createNewOutputBlocks();
+                    
+                    if (childProcess.needSync())
+                        this.needSync = true;
+                }
+                
+                // clear all connections
+                for (int i=0; i<internalConnections.size(); i++)
+                    internalConnections.get(i).setDataAvailable(false);
+            }
+            else
+            {
+                // init all child processes and create output data blocks
+                for (int i=0; i<processList.size(); i++)
+                {
+                    childProcess = processList.get(i);
+                    childProcess.init();
+                    childProcess.createNewOutputBlocks();
+                }
             }
         }
+        catch (Exception e)
+        {
+            String errMsg = initError + childProcess.getName() + " (" + childProcess.getType() + ")";
+            throw new ProcessException(errMsg, e);
+        }
+    }
+    
+    
+    @Override
+    public void reset() throws ProcessException
+    {
+        
     }
     
     
@@ -177,7 +194,7 @@ public class ProcessChain extends DataProcess
     @Override
     public void execute() throws ProcessException
     {
-        DataProcess nextProcess = null;
+        DataProcess childProcess = null;
         
         try
 		{
@@ -213,18 +230,18 @@ public class ProcessChain extends DataProcess
                             // execute all child processes if they can run
                             for (int i=0; i<processExecList.size(); i++)
                             {
-                                nextProcess = processExecList.get(i);
+                                childProcess = processExecList.get(i);
                                 
                                 // continue only if process can run
-                                if (nextProcess.canRun())
+                                if (childProcess.canRun())
                                 {
                                     //System.out.println("--> Running: " + nextProcess.getName());
-                                    nextProcess.transferData(nextProcess.inputConnections);
-                                    nextProcess.transferData(nextProcess.paramConnections);
-                                    nextProcess.runProcess();
-                                    nextProcess.setAvailability(nextProcess.inputConnections, false);
-                                    nextProcess.setAvailability(nextProcess.paramConnections, false);
-                                    nextProcess.setAvailability(nextProcess.outputConnections, true);
+                                    childProcess.transferData(childProcess.inputConnections);
+                                    childProcess.transferData(childProcess.paramConnections);
+                                    childProcess.execute();
+                                    childProcess.setAvailability(childProcess.inputConnections, false);
+                                    childProcess.setAvailability(childProcess.paramConnections, false);
+                                    childProcess.setAvailability(childProcess.outputConnections, true);
                                     moreToRun = true;
                                 }
                                 //else
@@ -251,11 +268,11 @@ public class ProcessChain extends DataProcess
                     {
                         for (int i=0; i<processExecList.size(); i++)
                         {
-                            nextProcess = processExecList.get(i);
+                            childProcess = processExecList.get(i);
                             //System.out.println("--> Running: " + nextProcess.getName());
-                            nextProcess.transferData(nextProcess.inputConnections);
-                            nextProcess.transferData(nextProcess.paramConnections);
-                            nextProcess.runProcess();
+                            childProcess.transferData(childProcess.inputConnections);
+                            childProcess.transferData(childProcess.paramConnections);
+                            childProcess.execute();
                         }
                         
                         // transfer data to chain outputs when sub processes are done
@@ -270,13 +287,10 @@ public class ProcessChain extends DataProcess
                 //super.fetchInputData(this.internalOutputConnections);
             }			
 		}
-        catch (ProcessException e)
-        {
-            throw e;
-        }
 		catch (Exception e)
 		{
-            throw new ProcessException(e.getMessage(), e.getCause());
+            String errMsg = execError + childProcess.getName() + " (" + childProcess.getType() + ")";
+            throw new ProcessException(errMsg, e);
 		}
     }
     
