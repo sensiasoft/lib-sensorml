@@ -130,15 +130,16 @@ public class ProcessChain extends DataProcess
     @Override
     public void reset() throws ProcessException
     {
-        
+        for (int i=0; i<processList.size(); i++)
+            processList.get(i).reset();
     }
     
     
     @Override
     public void dispose()
     {
-        for (int i=0; i<processExecList.size(); i++)
-            processExecList.get(i).dispose();
+        for (int i=0; i<processList.size(); i++)
+            processList.get(i).dispose();
     }
        
     
