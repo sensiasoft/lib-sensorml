@@ -98,6 +98,7 @@ public class ProcessChain extends DataProcess
                 {
                     childProcess = processExecList.get(i);
                     childProcess.init();
+                    childProcess.reset();
                     childProcess.createNewOutputBlocks();
                     
                     if (childProcess.needSync())
@@ -115,6 +116,7 @@ public class ProcessChain extends DataProcess
                 {
                     childProcess = processList.get(i);
                     childProcess.init();
+                    childProcess.reset();
                     childProcess.createNewOutputBlocks();
                 }
             }
