@@ -289,12 +289,16 @@ public class ProcessChain extends DataProcess
                 // TODO deal with params
                 //super.fetchInputData(this.internalOutputConnections);
             }			
-		}
-		catch (Exception e)
-		{
+		}		
+        catch (ProcessException e)
+        {
             String errMsg = execError + childProcess.getName() + " (" + childProcess.getType() + ")";
             throw new ProcessException(errMsg, e);
 		}
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
     
     
