@@ -36,8 +36,7 @@ import java.util.ArrayList;
  * a given process input/output or parameter.
  * Derives from array list and adds a flag to specify that
  * input or output connections are needed for a process
- * to execute. The 'autoReset' flag will force the 'needed' flag
- * to be automatically reset to false at each iteration.
+ * to execute.
  * </p>
  * 
  * <p>Copyright (c) 2006</p>

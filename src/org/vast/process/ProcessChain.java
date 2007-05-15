@@ -98,16 +98,12 @@ public class ProcessChain extends DataProcess
                 {
                     childProcess = processExecList.get(i);
                     childProcess.init();
-                    childProcess.reset();
-                    childProcess.createNewOutputBlocks();
-                    
+                    childProcess.createNewOutputBlocks();                    
                     if (childProcess.needSync())
                         this.needSync = true;
                 }
-                
-                // clear all connections
-                for (int i=0; i<internalConnections.size(); i++)
-                    internalConnections.get(i).setDataAvailable(false);
+
+                reset();
             }
             else
             {
@@ -132,8 +128,13 @@ public class ProcessChain extends DataProcess
     @Override
     public void reset() throws ProcessException
     {
+        // reset all sub-processes
         for (int i=0; i<processList.size(); i++)
             processList.get(i).reset();
+        
+        // clear all internal connections
+        for (int i=0; i<internalConnections.size(); i++)
+            internalConnections.get(i).setDataAvailable(false);
     }
     
     
@@ -214,16 +215,23 @@ public class ProcessChain extends DataProcess
                     {
                         boolean moreToRun;
                         
-                        // reset available flag for all needed internal inputs
+                        // reset available flag for all needed internal input connections
                         // if chain can run it means values are available
                         for (int i=0; i<inputConnections.size(); i++)
-                            this.setAvailability(internalInputConnections.get(i), inputConnections.get(i).isNeeded());
-                        //this.setAvailability(internalInputConnections, true);
-                        this.setAvailability(internalParamConnections, true);
+                            if (inputConnections.get(i).isNeeded())
+                                this.setAvailability(internalInputConnections.get(i), true);
+                        
+                        // reset available flag for all needed internal parameter connections
+                        // if chain can run it means values are available
+                        for (int i=0; i<paramConnections.size(); i++)
+                            if (paramConnections.get(i).isNeeded())
+                                this.setAvailability(internalParamConnections.get(i), true);
                         
                         // reset available flag for all needed internal outputs
                         // if chain can run it means outputs are free (no value available)
-                        this.setAvailability(internalOutputConnections, false);
+                        for (int i=0; i<outputConnections.size(); i++)
+                            if (outputConnections.get(i).isNeeded())
+                                this.setAvailability(internalOutputConnections.get(i), false);
                         
                         // loop until no more processes can run
                         do
@@ -262,6 +270,10 @@ public class ProcessChain extends DataProcess
                         // determine what inputs are needed for next run
                         for (int i=0; i<inputConnections.size(); i++)
                             inputConnections.get(i).needed = this.checkAvailability(internalInputConnections.get(i), false);
+                        
+                        // determine what params are needed for next run
+                        for (int i=0; i<paramConnections.size(); i++)
+                            paramConnections.get(i).needed = this.checkAvailability(internalParamConnections.get(i), false);
                         
                         // determine what outputs are needed for next run
                         for (int i=0; i<outputConnections.size(); i++)
