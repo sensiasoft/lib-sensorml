@@ -233,9 +233,11 @@ public class ProcessChain extends DataProcess
                             if (outputConnections.get(i).isNeeded())
                                 this.setAvailability(internalOutputConnections.get(i), false);
                         
-                        // loop until no more processes can run
+                        //System.out.println("Exec");
+                        // loop until no more processes can run or all internalOutputs are full
                         do
                         {
+                            //System.out.println("Cycle");
                             moreToRun = false;
                             
                             // execute all child processes if they can run
@@ -246,9 +248,10 @@ public class ProcessChain extends DataProcess
                                 // continue only if process can run
                                 if (childProcess.canRun())
                                 {
-                                    //System.out.println("--> Running: " + nextProcess.getName());
+                                    //System.out.println("--> Running: " + childProcess.getName());
                                     childProcess.transferData(childProcess.inputConnections);
                                     childProcess.transferData(childProcess.paramConnections);
+                                    //childProcess.setAvailability(childProcess.outputConnections, true);
                                     childProcess.execute();
                                     childProcess.setAvailability(childProcess.inputConnections, false);
                                     childProcess.setAvailability(childProcess.paramConnections, false);
@@ -256,10 +259,10 @@ public class ProcessChain extends DataProcess
                                     moreToRun = true;
                                 }
                                 //else
-                                //    System.out.println("--> Waiting: " + nextProcess.getName());
+                                    //System.out.println("--> Waiting: " + childProcess.getName());
                             }
                         }
-                        while (moreToRun);
+                        while (moreToRun && !this.checkAvailability(internalOutputConnections, true));
                         
                         // transfer data to chain outputs when sub processes are done
                         this.transferData(internalOutputConnections);

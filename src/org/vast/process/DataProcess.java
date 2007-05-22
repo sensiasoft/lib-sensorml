@@ -137,7 +137,7 @@ public abstract class DataProcess implements Runnable
      * to run in sync mode (not threaded).
      * @return true if so and false if at least one connection is not ready.
      */
-    protected boolean canRun()
+    public boolean canRun()
     {
         if (!checkAvailability(inputConnections, true))
             return false;
@@ -153,7 +153,7 @@ public abstract class DataProcess implements Runnable
     
     
     /**
-     * Checks if all input connections marked as needed
+     * Checks if all connections in the list and marked as needed
      * have the specified availability state.
      * @return true if all needed connections satisfy the condition, false otherwise
      */
