@@ -23,7 +23,6 @@
 
 package org.vast.sensorML;
 
-import org.vast.ogc.DocumentType;
 import org.vast.ogc.OGCRegistry;
 import org.vast.process.DataProcess;
 import org.vast.sensorML.metadata.Metadata;
@@ -50,6 +49,10 @@ import org.w3c.dom.Element;
  */
 public class SMLUtils implements ProcessReader, SystemReader, MetadataReader, ProcessWriter, SystemWriter, MetadataWriter
 {
+    public final static String SENSORML = "SensorML";
+    public final static String PROCESS = "Process";
+    public final static String SYSTEM = "System";
+    public final static String METADATA = "Metadata";
     private String version = "1.0";
     private boolean versionChanged;
     private boolean readProcessMetadata;
@@ -129,8 +132,8 @@ public class SMLUtils implements ProcessReader, SystemReader, MetadataReader, Pr
         else
         {
             ProcessReader reader = (ProcessReader)OGCRegistry.createReader(
-                                                  DocumentType.SENSORML.name(),
-                                                  DocumentType.PROCESS.name(),
+                                                  SENSORML,
+                                                  PROCESS,
                                                   getVersion(dom, processElt));
             processReader = reader;
             processReader.setReadMetadata(readProcessMetadata);
@@ -156,8 +159,8 @@ public class SMLUtils implements ProcessReader, SystemReader, MetadataReader, Pr
         else
         {
             SystemReader reader = (SystemReader)OGCRegistry.createReader(
-                                                DocumentType.SENSORML.name(),
-                                                DocumentType.SYSTEM.name(),
+                                                SENSORML,
+                                                SYSTEM,
                                                 getVersion(dom, systemElt));
             systemReader = reader;
             systemReader.setReadMetadata(readProcessMetadata);
@@ -183,8 +186,8 @@ public class SMLUtils implements ProcessReader, SystemReader, MetadataReader, Pr
         else
         {
             MetadataReader reader = (MetadataReader)OGCRegistry.createReader(
-                                                    DocumentType.SENSORML.name(),
-                                                    DocumentType.METADATA.name(),
+                                                    SENSORML,
+                                                    METADATA,
                                                     getVersion(dom, smlobjElt));
             metadataReader = reader;
             return reader;
@@ -206,8 +209,8 @@ public class SMLUtils implements ProcessReader, SystemReader, MetadataReader, Pr
         else
         {
             ProcessWriter writer = (ProcessWriter)OGCRegistry.createWriter(
-                                                  DocumentType.SENSORML.name(),
-                                                  DocumentType.PROCESS.name(),
+                                                  SENSORML,
+                                                  PROCESS,
                                                   this.version);
             processWriter = writer;
             versionChanged = false;
@@ -230,8 +233,8 @@ public class SMLUtils implements ProcessReader, SystemReader, MetadataReader, Pr
         else
         {
             SystemWriter writer = (SystemWriter)OGCRegistry.createWriter(
-                                                  DocumentType.SENSORML.name(),
-                                                  DocumentType.SYSTEM.name(),
+                                                  SENSORML,
+                                                  SYSTEM,
                                                   this.version);
             systemWriter = writer;
             versionChanged = false;
@@ -254,8 +257,8 @@ public class SMLUtils implements ProcessReader, SystemReader, MetadataReader, Pr
         else
         {
             MetadataWriter writer = (MetadataWriter)OGCRegistry.createWriter(
-                                                  DocumentType.SENSORML.name(),
-                                                  DocumentType.METADATA.name(),
+                                                  SENSORML,
+                                                  METADATA,
                                                   this.version);
             metadataWriter = writer;
             versionChanged = false;
