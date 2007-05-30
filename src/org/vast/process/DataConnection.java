@@ -23,6 +23,8 @@
 
 package org.vast.process;
 
+import java.util.Hashtable;
+
 import org.vast.cdm.common.DataBlock;
 import org.vast.cdm.common.DataComponent;
 
@@ -48,7 +50,8 @@ public class DataConnection
     protected DataComponent destinationComponent;
     protected String name;
     protected boolean dataAvailable;
-	
+    protected Hashtable<String, Object> properties = null;
+    
 	
     /**
      * Makes sure source and destination datablocks are the same
@@ -132,5 +135,23 @@ public class DataConnection
     public void setDataAvailable(boolean dataAvailable)
     {
         this.dataAvailable = dataAvailable;
+    }
+    
+    
+    public Object getProperty(String propName)
+    {
+        if (properties == null)
+            return null;
+        else
+            return properties.get(propName);
+    }
+
+
+    public void setProperty(String propName, Object propValue)
+    {
+        if (properties == null)
+            properties = new Hashtable<String, Object>(1, 1.0f);
+        
+        properties.put(propName, propValue);
     }
 }
