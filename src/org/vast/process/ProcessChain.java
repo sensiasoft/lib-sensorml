@@ -400,7 +400,7 @@ public class ProcessChain extends DataProcess
     	// start all child processes
     	if (childrenThreadsOn)
     	{
-        	Enumeration childProcesses = processTable.elements();
+        	Enumeration<DataProcess> childProcesses = processTable.elements();
             while (childProcesses.hasMoreElements())
             {
                 DataProcess process = (DataProcess)childProcesses.nextElement();
@@ -416,7 +416,7 @@ public class ProcessChain extends DataProcess
     	// stop all child processes
     	if (childrenThreadsOn)
     	{
-	        Enumeration childProcesses = processTable.elements();
+	        Enumeration<DataProcess> childProcesses = processTable.elements();
 	        while (childProcesses.hasMoreElements())
 	        {
 	            DataProcess process = (DataProcess)childProcesses.nextElement();
@@ -509,7 +509,7 @@ public class ProcessChain extends DataProcess
     	StringBuffer text = new StringBuffer(super.toString());
     	
     	text.append("\n  Child Processes:\n");
-    	Enumeration children = processTable.elements();
+    	Enumeration<DataProcess> children = processTable.elements();
     	
     	while (children.hasMoreElements())
     	{
