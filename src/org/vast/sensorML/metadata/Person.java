@@ -20,6 +20,8 @@
 
 package org.vast.sensorML.metadata;
 
+import org.vast.util.Contact;
+
 /**
  * <p><b>Title:</b><br/>
  * Person

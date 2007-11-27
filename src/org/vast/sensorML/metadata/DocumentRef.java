@@ -20,6 +20,7 @@
 
 package org.vast.sensorML.metadata;
 
+import org.vast.util.Contact;
 import org.vast.util.DateTime;
 
 

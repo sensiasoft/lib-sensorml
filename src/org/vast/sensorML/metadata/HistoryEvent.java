@@ -22,6 +22,7 @@ package org.vast.sensorML.metadata;
 
 import java.util.List;
 
+import org.vast.util.Contact;
 import org.vast.util.DateTime;
 
 
