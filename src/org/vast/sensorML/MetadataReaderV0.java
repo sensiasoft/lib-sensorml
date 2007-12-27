@@ -229,7 +229,7 @@ public class MetadataReaderV0 extends AbstractSMLReader implements SMLReader, Me
 
         // read qualifier attribute
         String qualifier = dom.getAttributeValue(termElt, "qualifier");
-        term.setQualifier(qualifier);
+        term.setCodespace(qualifier);
 
         // read term value
         String value = dom.getElementValue(termElt, "");

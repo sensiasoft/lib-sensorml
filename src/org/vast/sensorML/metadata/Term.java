@@ -38,7 +38,7 @@ public class Term
 {
     protected String name;
     protected String value;
-    protected String qualifier;
+    protected String codespace;
 
 
     public String getName()
@@ -53,15 +53,15 @@ public class Term
     }
 
 
-    public String getQualifier()
+    public String getCodespace()
     {
-        return qualifier;
+        return codespace;
     }
 
 
-    public void setQualifier(String qualifier)
+    public void setCodespace(String codespace)
     {
-        this.qualifier = qualifier;
+        this.codespace = codespace;
     }
 
 
