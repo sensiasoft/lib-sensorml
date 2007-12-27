@@ -36,7 +36,7 @@ import org.vast.util.*;
 
 /**
  * <p><b>Title:</b><br/>
- * Metadata Reader v0
+ * Metadata Reader v1
  * </p>
  *
  * <p><b>Description:</b><br/>
@@ -227,12 +227,12 @@ public class MetadataReaderV1 extends AbstractSMLReader implements SMLReader, Me
     {
         Term term = new Term();
 
-        // read qualifier attribute
-        String qualifier = dom.getAttributeValue(termElt, "qualifier");
-        term.setCodespace(qualifier);
+        // read codespace href attribute
+        String codespace = dom.getAttributeValue(termElt, "codeSpace/href");
+        term.setCodespace(codespace);
 
         // read term value
-        String value = dom.getElementValue(termElt, "");
+        String value = dom.getElementValue(termElt, "value");
         term.setValue(value);
 
         return term;
