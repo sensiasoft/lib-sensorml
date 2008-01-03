@@ -34,13 +34,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.vast.math.Vector3d;
 
+
 public class SMLSerializer extends SweResponseSerializer {
 	
 	Element smlElt, systemElt;
 	public enum smlObjectType {COMPONENT,SYSTEM, PROCESS_MODEL,PROCESS_CHAIN};
 	
 	public SMLSerializer() {
-		
+		super();
 	}
 	
 	public void setTemplate(DOMHelper dom){
@@ -50,12 +51,13 @@ public class SMLSerializer extends SweResponseSerializer {
         dom.addUserPrefix("swe", OGCRegistry.getNamespaceURI(OGCRegistry.SWE, "1.0.1"));
         dom.addUserPrefix("sml", OGCRegistry.getNamespaceURI(OGCRegistry.SML, "1.0.1"));
         dom.addUserPrefix("xlink", OGCRegistry.getNamespaceURI(OGCRegistry.XLINK, "1.0"));
-        NodeList elts = dom.getDocument().getElementsByTagNameNS("http://www.opengis.net/sml/1.0.1", "SensorML");
+        NodeList elts = dom.getDocument().getElementsByTagNameNS("http://www.opengis.net/sml/1.0.1", "sml:System");
         smlElt = (Element)elts.item(0);
         
         //TODO: Check SensorML type of member (e.g. System, Component, etc.) 
         //  and set the ENUM sensorMLObjectType; right now just use System
-        systemElt = dom.getElement(smlElt, "sml:SensorML/sml:member/sml:System");
+        //systemElt = dom.getElement(smlElt, "sml:member/sml:System");
+        systemElt = smlElt;
 
 	}
 	   
@@ -85,6 +87,9 @@ public class SMLSerializer extends SweResponseSerializer {
 
 	// TODO: need to find a way to make sure these are put into the right location
 	// of the SensorML instance
+    /**
+     * @param id
+     */
     public void setID(String id){
         try
         {
@@ -94,11 +99,13 @@ public class SMLSerializer extends SweResponseSerializer {
         {
             e.printStackTrace();
         }
-   	
     }
 	
 	// TODO: need to find a way to make sure these are put into the right location
 	// of the SensorML instance
+	/**
+	 * @param name
+	 */
 	public void setName(String name){
         try
         {
