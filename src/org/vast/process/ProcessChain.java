@@ -331,7 +331,8 @@ public class ProcessChain extends DataProcess
                     // renew source process outputs
                     // they will be transfered to destination automatically during execution
                     DataConnection connection = connectionList.get(j);
-                    connection.getSourceProcess().createNewOutputBlocks();
+                    if (connection.getSourceProcess() != this)
+                    	connection.getSourceProcess().createNewOutputBlocks();
                 }
             }
         }
