@@ -27,40 +27,83 @@
 package org.vast.sensorML;
 
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.vast.ogc.OGCRegistry;
-import org.vast.ows.SweResponseSerializer;
 import org.vast.xml.DOMHelper;
+import org.vast.xml.DOMHelperException;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.vast.math.Vector3d;
+import org.apache.xml.serialize.*;
 
 
-public class SMLSerializer extends SweResponseSerializer {
+public class SMLSerializer extends XMLSerializer {
 	
+	protected DOMHelper dom;
+
 	Element smlElt, systemElt;
 	public enum smlObjectType {COMPONENT,SYSTEM, PROCESS_MODEL,PROCESS_CHAIN};
 	
-	public SMLSerializer() {
-		super();
+	public SMLSerializer(java.io.OutputStream output) {
+		super(output,new OutputFormat("xml","UTF-8",true));
+		//OutputFormat outFormat = new OutputFormat();
+		//outFormat.setMethod("xml");
+		//outFormat.setIndenting(true);
+		//outFormat.setLineWidth(0);
+		//this.setOutputFormat(outFormat);
 	}
 	
 	public void setTemplate(DOMHelper dom){
-        super.setTemplate(dom);        
+
+		this.dom = dom;
         dom.addUserPrefix("gml", OGCRegistry.getNamespaceURI(OGCRegistry.GML));
         //dom.addUserPrefix("om", OGCRegistry.getNamespaceURI(OGCRegistry.OM, "0.0"));
-        dom.addUserPrefix("swe", OGCRegistry.getNamespaceURI(OGCRegistry.SWE, "1.0.1"));
-        dom.addUserPrefix("sml", OGCRegistry.getNamespaceURI(OGCRegistry.SML, "1.0.1"));
+        dom.addUserPrefix("swe", OGCRegistry.getNamespaceURI(OGCRegistry.SWE, "1.0"));
+        dom.addUserPrefix("sml", OGCRegistry.getNamespaceURI(OGCRegistry.SML, "1.0"));
         dom.addUserPrefix("xlink", OGCRegistry.getNamespaceURI(OGCRegistry.XLINK, "1.0"));
-        NodeList elts = dom.getDocument().getElementsByTagNameNS("http://www.opengis.net/sml/1.0.1", "sml:System");
-        smlElt = (Element)elts.item(0);
+        NodeList elts = dom.getDocument().getElementsByTagNameNS("http://www.opengis.net/sml/1.0", "sml:System");
+        
+        if (elts!=null){
+        	System.out.println("number of elements = " + elts.getLength());
+        	smlElt = (Element)elts.item(0);
+        }	
+        else
+        	System.out.println("SMLSerializer: did not find root: System");
         
         //TODO: Check SensorML type of member (e.g. System, Component, etc.) 
         //  and set the ENUM sensorMLObjectType; right now just use System
         //systemElt = dom.getElement(smlElt, "sml:member/sml:System");
         systemElt = smlElt;
-
 	}
-	   
+	
+	/**
+	 * Assign the template as an xml stream
+	 * @param baseXML
+	 */
+	public void setTemplate(InputStream baseXML)
+	{
+		try
+		{
+			// load SensorML template document
+            DOMHelper newDom = new DOMHelper(baseXML, false);
+            setTemplate(newDom);
+		}
+		catch (DOMHelperException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Write xml to outputStream
+	 */
+	public void writeResponse() throws IOException
+	{
+		serialize(dom.getRootElement());
+	}
+
+	
     /**
      * NOT USED IN SENSORML - EXAMPLE FROM SOSResponseSerializer
      * @param name
@@ -93,7 +136,7 @@ public class SMLSerializer extends SweResponseSerializer {
     public void setID(String id){
         try
         {
-           dom.setAttributeValue(systemElt, "@gml:id", id);        
+           dom.setAttributeValue(systemElt, "gml:id", id);        
          }
         catch (Exception e)
         {
@@ -162,7 +205,10 @@ public class SMLSerializer extends SweResponseSerializer {
 	    	 	        dom.setElementValue(identElt,"sml:Term/sml:value", value);
 	            	}
 	            	// if does not exist, add elements and set the values as best as possible
-	            	else addIdentifier(identifierName,"",value);
+	            	else {
+	            		System.out.println("Identifier = " + identifierName + " does not exist; adding it");
+	            		addIdentifier(identifierName,"",value);
+	            	}
 	            }
 	         }
 	        catch (Exception e)
