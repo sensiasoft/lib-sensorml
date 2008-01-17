@@ -62,7 +62,8 @@ public class SMLSerializer extends XMLSerializer {
         dom.addUserPrefix("swe", OGCRegistry.getNamespaceURI(OGCRegistry.SWE, "1.0"));
         dom.addUserPrefix("sml", OGCRegistry.getNamespaceURI(OGCRegistry.SML, "1.0"));
         dom.addUserPrefix("xlink", OGCRegistry.getNamespaceURI(OGCRegistry.XLINK, "1.0"));
-        NodeList elts = dom.getDocument().getElementsByTagNameNS("http://www.opengis.net/sml/1.0", "sml:System");
+        //NodeList elts = dom.getDocument().getElementsByTagNameNS("http://www.opengis.net/sml/1.0", "sml:System");
+        NodeList elts = dom.getDocument().getElementsByTagNameNS("*", "System");
         
         if (elts!=null){
         	System.out.println("number of elements = " + elts.getLength());
@@ -181,7 +182,7 @@ public class SMLSerializer extends XMLSerializer {
 	public void addIdentifier(String identifierName, String definitionUrl, String value){
 	       try
 	        {
-	            Element identElt = dom.addElement(systemElt, "sml:identification/IdentifierList/identfier");
+	            Element identElt = dom.addElement(systemElt, "sml:identification/IdentifierList/identifier");
 	        	dom.setAttributeValue(identElt, "@name",identifierName);
 	 	        dom.setAttributeValue(identElt, "sml:Term/@definition", definitionUrl); 
 	 	        dom.setElementValue(identElt,"sml:Term/sml:value", value);
@@ -193,21 +194,24 @@ public class SMLSerializer extends XMLSerializer {
 		
 	}
 	
-	public void setIdentifierValue(String identifierName, String value){
+	public boolean setIdentifierValue(String identifierName, String value){
 	       try
 	        {
-	            Element identElt = dom.getElement(systemElt, "sml:identification/IdentifierList");
+	            Element identElt = dom.getElement(systemElt, "sml:identification/sml:IdentifierList");
 	            NodeList childs = dom.getChildElements(identElt);
-	            for (int i=0; i<childs.getLength(); i++){
+	            
+	            System.out.println("Number of children of IdentifierList = " + childs.getLength());
+	            
+	            for (int i=0; i<childs.getLength(); i++){	            	
 	            	String nameVal = dom.getAttributeValue((Element)childs.item(i),"@name");
+	            	
+	            	System.out.println("identifer name = " + nameVal);
+	            	
 	            	// if exist, set the values in existing elements
 	            	if (nameVal.equalsIgnoreCase(identifierName)){
-	    	 	        dom.setElementValue(identElt,"sml:Term/sml:value", value);
-	            	}
-	            	// if does not exist, add elements and set the values as best as possible
-	            	else {
-	            		System.out.println("Identifier = " + identifierName + " does not exist; adding it");
-	            		addIdentifier(identifierName,"",value);
+	            		System.out.println("Found: " + nameVal);
+	    	 	        dom.setElementValue((Element)childs.item(i),"sml:Term/sml:value", value);
+	    	 	        return true;
 	            	}
 	            }
 	         }
@@ -215,6 +219,8 @@ public class SMLSerializer extends XMLSerializer {
 	        {
 	            e.printStackTrace();
 	        }
+        // if does not exist, return false
+   		return false;
 	}
 
 	// TODO: need to find a way to make sure these are put into the right location
