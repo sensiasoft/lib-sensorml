@@ -173,8 +173,6 @@ public class SMLSerializer extends XMLSerializer {
         {
             e.printStackTrace();
         }
-		
-		
 	}
 	
 	// TODO: need to find a way to make sure these are put into the right location
@@ -182,6 +180,8 @@ public class SMLSerializer extends XMLSerializer {
 	public void addIdentifier(String identifierName, String definitionUrl, String value){
 	       try
 	        {
+	    	   // TODO: need to append new identifier to current list
+	    	   // currently overwriting first identifier
 	            Element identElt = dom.addElement(systemElt, "sml:identification/IdentifierList/identifier");
 	        	dom.setAttributeValue(identElt, "@name",identifierName);
 	 	        dom.setAttributeValue(identElt, "sml:Term/@definition", definitionUrl); 
@@ -241,25 +241,33 @@ public class SMLSerializer extends XMLSerializer {
 	}
 
 	
-	public void setClassifierValue(String classifierName, String value){
+	public boolean setClassifierValue(String classifierName, String value){
 	       try
 	        {
-	            Element classElt = dom.getElement(systemElt, "sml:classification/ClassifierList");
-	            NodeList childs = dom.getChildElements(classElt);
-	            for (int i=0; i<childs.getLength(); i++){
+	            Element classifierElt = dom.getElement(systemElt, "sml:classifier/sml:ClassifierList");
+	            NodeList childs = dom.getChildElements(classifierElt);
+	            
+	            System.out.println("Number of children in ClassifierList = " + childs.getLength());
+	            
+	            for (int i=0; i<childs.getLength(); i++){	            	
 	            	String nameVal = dom.getAttributeValue((Element)childs.item(i),"@name");
+	            	
+	            	System.out.println("classifier name = " + nameVal);
+	            	
 	            	// if exist, set the values in existing elements
 	            	if (nameVal.equalsIgnoreCase(classifierName)){
-	    	 	        dom.setElementValue(classElt,"sml:Term/sml:value", value);
+	            		System.out.println("Found: " + nameVal);
+	    	 	        dom.setElementValue((Element)childs.item(i),"sml:Term/sml:value", value);
+	    	 	        return true;
 	            	}
-	            	// if does not exist, add elements and set the values as best as possible
-	            	else addClassifier(classifierName,"",value,"");
 	            }
 	         }
 	        catch (Exception e)
 	        {
 	            e.printStackTrace();
 	        }
+       // if does not exist, return false
+  		return false;
 	}
 
 	public void addContactValue(String role, String fullName, String organization, String street,
