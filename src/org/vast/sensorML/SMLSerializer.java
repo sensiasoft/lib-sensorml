@@ -35,6 +35,7 @@ import org.vast.xml.DOMHelper;
 import org.vast.xml.DOMHelperException;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
 import org.apache.xml.serialize.*;
 
 
@@ -57,7 +58,8 @@ public class SMLSerializer extends XMLSerializer {
 	public void setTemplate(DOMHelper dom){
 
 		this.dom = dom;
-        dom.addUserPrefix("gml", OGCRegistry.getNamespaceURI(OGCRegistry.GML));
+		
+		dom.addUserPrefix("gml", OGCRegistry.getNamespaceURI(OGCRegistry.GML));
         //dom.addUserPrefix("om", OGCRegistry.getNamespaceURI(OGCRegistry.OM, "0.0"));
         dom.addUserPrefix("swe", OGCRegistry.getNamespaceURI(OGCRegistry.SWE, "1.0"));
         dom.addUserPrefix("sml", OGCRegistry.getNamespaceURI(OGCRegistry.SML, "1.0"));
@@ -175,14 +177,17 @@ public class SMLSerializer extends XMLSerializer {
         }
 	}
 	
-	// TODO: need to find a way to make sure these are put into the right location
-	// of the SensorML instance
 	public void addIdentifier(String identifierName, String definitionUrl, String value){
 	       try
 	        {
-	    	   // TODO: need to append new identifier to current list
-	    	   // currently overwriting first identifier
-	            Element identElt = dom.addElement(systemElt, "sml:identification/IdentifierList/identifier");
+	    	   // TODO If no identification element exist, this doesn't 
+	    	   //     put it into the right place
+	    	   // This adds the IdentifierList if it doesn't exist
+	    	   // otherwise just finds and returns the element for reference
+	    	    Element idListElt = dom.addElement(systemElt, "sml:identification/IdentifierList");
+	
+	    	    // append new element after the children
+	    	    Element identElt = (Element)dom.appendChild((Node)idListElt, "sml:identifier");
 	        	dom.setAttributeValue(identElt, "@name",identifierName);
 	 	        dom.setAttributeValue(identElt, "sml:Term/@definition", definitionUrl); 
 	 	        dom.setElementValue(identElt,"sml:Term/sml:value", value);
@@ -190,8 +195,7 @@ public class SMLSerializer extends XMLSerializer {
 	        catch (Exception e)
 	        {
 	            e.printStackTrace();
-	        }
-		
+	        }	
 	}
 	
 	public boolean setIdentifierValue(String identifierName, String value){
@@ -223,12 +227,17 @@ public class SMLSerializer extends XMLSerializer {
    		return false;
 	}
 
-	// TODO: need to find a way to make sure these are put into the right location
-	// of the SensorML instance
 	public void addClassifier(String classifierName, String definitionUrl, String value, String codespace){
 	       try
 	        {
-	            Element classElt = dom.addElement(systemElt, "sml:classification/ClassifierList/classifier");
+	    	   // TODO If no classification element exist, this doesn't 
+	    	   //     put it into the right place
+	    	   // This adds the IdentifierList if it doesn't exist
+	    	   // otherwise just finds and returns the element for reference
+	            Element classifierElt = dom.addElement(systemElt, "sml:classification/sml:ClassifierList");
+
+	            // append new element after the children
+	    	    Element classElt = (Element)dom.appendChild((Node)classifierElt, "sml:classifier");          
 	        	dom.setAttributeValue(classElt, "@name",classifierName);
 	 	        dom.setAttributeValue(classElt, "sml:Term/@definition", definitionUrl); 
 	 	        dom.setAttributeValue(classElt, "sml:Term/@codespace", codespace); 
@@ -273,6 +282,8 @@ public class SMLSerializer extends XMLSerializer {
 	public void addContactValue(String role, String fullName, String organization, String street,
 			String city, String state, String country, String zip, String phone, String email){
 
+ 	   // TODO If no classification element exist, this doesn't 
+ 	   //     put it into the right place
         Element contactElt = dom.addElement(systemElt, "sml:contact");
         if (!role.equalsIgnoreCase(""))
         	dom.setAttributeValue(contactElt, "@xlink:arcrole","urn:ogc:def:role:OGC::"+role);
