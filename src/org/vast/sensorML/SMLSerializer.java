@@ -107,6 +107,11 @@ public class SMLSerializer extends XMLSerializer {
 	}
 
 	
+	public Element getSystemElement() throws IOException
+	{
+		return systemElt;
+	}
+	
     /**
      * NOT USED IN SENSORML - EXAMPLE FROM SOSResponseSerializer
      * @param name
