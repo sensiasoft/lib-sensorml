@@ -46,10 +46,13 @@ import org.w3c.dom.Element;
  */
 public class SMLUtils implements ProcessReader, SystemReader, MetadataReader, ProcessWriter, SystemWriter, MetadataWriter
 {
-    public final static String SENSORML = "SensorML";
+	public final static String SML = "SML";
+	public final static String IC = "IC";
+	public final static String SENSORML = "SensorML";
     public final static String PROCESS = "Process";
     public final static String SYSTEM = "System";
     public final static String METADATA = "Metadata";
+    
     private String version = "1.0";
     private boolean versionChanged;
     private boolean readProcessMetadata;
@@ -60,7 +63,7 @@ public class SMLUtils implements ProcessReader, SystemReader, MetadataReader, Pr
     private MetadataReader metadataReader = null;
     private ProcessWriter processWriter = null;
     private SystemWriter systemWriter = null;
-    private MetadataWriter metadataWriter = null;
+    private MetadataWriter metadataWriter = null;	
     
     
     public DataProcess readProcess(DOMHelper dom, Element processElement) throws SMLException
