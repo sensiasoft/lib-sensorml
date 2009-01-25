@@ -27,13 +27,13 @@ import org.vast.xml.DOMHelper;
 public class SMLReaderFactory
 {
     public final static String defaultVersion = "_DEF_";    
-    private final static Hashtable<String, Class> metadataReaders =
-        new Hashtable<String, Class>();
+    private final static Hashtable<String, Class<?>> metadataReaders =
+        new Hashtable<String, Class<?>>();
     
     
-    private Object getObject(Hashtable<String, Class> classTable, String version)
+    private Object getObject(Hashtable<String, Class<?>> classTable, String version)
     {
-        Class objType = classTable.get(version);
+        Class<?> objType = classTable.get(version);
         Object objInstance = null;
         
         if (objType == null)

@@ -89,9 +89,9 @@ public class ProcessLoader
         try
         {
             // create corresponding DataProcess Object
-            Class readerClass = Class.forName(className);           
-            Class[] constArgTypes = {};
-            Constructor constMethod = readerClass.getConstructor(constArgTypes);
+            Class<?> readerClass = Class.forName(className);           
+            Class<?>[] constArgTypes = {};
+            Constructor<?> constMethod = readerClass.getConstructor(constArgTypes);
             Object[] constArgValues = {};
             newProcess = (DataProcess)constMethod.newInstance(constArgValues);
         }
