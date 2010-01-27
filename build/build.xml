@@ -11,6 +11,9 @@
 	<property name="dist.dir" value="." />
 	<property name="temp.dir" value="temp" />
 
+	<property name="swe-common-libs.dir" value="../../ogc-swe-common/lib" />
+	<property name="swe-common-lib" value="../../ogc-swe-common/build/swe-common-core-0.8.2.jar" />
+	
 
 	<target name="inc_major_ver_number">
 	  <propertyfile file="${dist.dir}/version.txt">
@@ -53,13 +56,20 @@
 	<!-- TARGET COMPILE_JAR -->
 	<target name="package_bin" depends="clean">
 		
-    <!-- Compile this project + dependencies source files -->
+    <!-- Compile this project using dependencies jars -->
     <javac destdir="${temp.dir}" target="1.5">
       <src>
       	<dirset dir="${src.dir}"/>
       </src>
       <classpath>
+      	<filelist>
+          <file name="${swe-common-lib}"/>
+          <file name="${sensorml-core-lib}"/>
+        </filelist>
         <fileset dir="${lib.dir}">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${swe-common-libs.dir}">
           <include name="*.jar"/>
         </fileset>
       </classpath>
