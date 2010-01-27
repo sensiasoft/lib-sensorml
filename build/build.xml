@@ -86,6 +86,8 @@
     <jar destfile="${dist.dir}/sensorml-core-${maj.ver}.${min.ver}.${build.num}.jar">
       <fileset dir="${temp.dir}"/>
     </jar>
+		
+		<delete dir="${temp.dir}" />
 			
 	</target>
 	
@@ -99,7 +101,7 @@
   <target name="build_all">     
     <antcall target="package_src"/>
     <antcall target="package_bin"/>
-    <antcall target="inc_build_number"/>      
+    <antcall target="inc_build_number"/>
   </target>
 
 </project>
