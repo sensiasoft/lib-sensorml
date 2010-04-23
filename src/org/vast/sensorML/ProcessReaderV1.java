@@ -317,8 +317,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
         
         String portName = linkString.substring(sep2 + 1);
         //String [] names = portName.split(dataSeparator);
-        
-        
+                
         // special case if 'this'
         if (processName.equalsIgnoreCase("this"))
         {
@@ -330,55 +329,67 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
         {
             // find desired process in the chain
             selectedProcess = processChain.getProcess(processName);            
-        }
-        
+        }        
         
         if (selectedProcess == null)
         {
             throw new SMLException("Process " + processName + " does't exist in ProcessChain");
-        }
-       
+        }       
         
+        // connect connection to input, output or parameter port
+        if (portType.equals("inputs"))
+        {
+            try
+            {
+                if (internalConnection)
+                    processChain.connectInternalInput(portName, dataQueue);
+                else
+                    selectedProcess.connectInput(portName, dataQueue);
+            }
+            catch (ProcessException e)
+            {
+                throw new SMLException("No input named " + portName + " in process " + processName);
+            }
+        }
+        else if (portType.equals("outputs"))
+        {
+            try
+            {
+                if (internalConnection)
+                    processChain.connectInternalOutput(portName, dataQueue);
+                else
+                    selectedProcess.connectOutput(portName, dataQueue);
+            }
+            catch (ProcessException e)
+            {
+                throw new SMLException("No output named " + portName + " in process " + processName);
+            }
+        }
+        else if (portType.equals("parameters"))
+        {
+            try
+            {
+                if (internalConnection)
+                    processChain.connectInternalParam(portName, dataQueue);
+                else
+                    selectedProcess.connectParameter(portName, dataQueue);
+            }
+            catch (ProcessException e)
+            {
+                throw new SMLException("No parameter named " + portName + " in process " + processName);
+            }
+        }
+        
+        // make sure connection is ok
         try
         {
-            if (portType.equals("inputs"))
-            {
-                if (internalConnection)
-                {
-                    processChain.connectInternalInput(portName, dataQueue);
-                }
-                else
-                {
-                    selectedProcess.connectInput(portName, dataQueue);
-                }
-            }
-            else if (portType.equals("outputs"))
-            {
-                if (internalConnection)
-                {
-                    processChain.connectInternalOutput(portName, dataQueue);
-                }
-                else
-                {
-                    selectedProcess.connectOutput(portName, dataQueue);
-                }
-            }
-            else if (portType.equals("parameters"))
-            {
-                if (internalConnection)
-                {
-                    //dataQueue.alwaysWait = false;
-                    processChain.connectInternalParam(portName, dataQueue);
-                }
-                else
-                {
-                    selectedProcess.connectParameter(portName, dataQueue);
-                }
-            }
+            dataQueue.check();
         }
         catch (ProcessException e)
         {
-            throw new SMLException("No input, output or parameter named " + portName + " found in process " + processName);
+            String srcName = dataQueue.getSourceProcess().getName();
+            String destName = dataQueue.getDestinationProcess().getName();
+            throw new SMLException("Connection on " + linkString + " cannot be made between " + srcName + " and " + destName, e);
         }
     }
 
