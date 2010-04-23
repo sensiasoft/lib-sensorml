@@ -137,6 +137,9 @@ public class DataConnection
         // apply unit conversion if needed
         if (!componentConverters.isEmpty())
         {
+            if (destBlock == null)
+                destinationComponent.assignNewDataBlock();
+            
             Iterator<ComponentConverter> it = componentConverters.iterator();
             while (it.hasNext())
                 it.next().convert();
