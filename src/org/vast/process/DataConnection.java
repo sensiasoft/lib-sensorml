@@ -107,7 +107,7 @@ public class DataConnection
             if (conv != null)
             {
                 componentConverters.add(new ComponentConverter(src, dest, conv));
-                System.out.println("Unit conversion from " + src.getName() + " to " + dest.getName());
+                //System.out.println("Unit conversion from " + src.getName() + " to " + dest.getName());
             }
         }
     }

@@ -284,7 +284,7 @@ public class ProcessChain extends DataProcess
                         for (int i=0; i<processExecList.size(); i++)
                         {
                             childProcess = processExecList.get(i);
-                            //System.out.println("--> Running: " + nextProcess.getName());
+                            //System.out.println("--> Running: " + childProcess.getName());
                             childProcess.transferData(childProcess.inputConnections);
                             childProcess.transferData(childProcess.paramConnections);
                             childProcess.execute();
