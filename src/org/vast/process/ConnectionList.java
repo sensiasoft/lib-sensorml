@@ -42,7 +42,7 @@ import java.util.ArrayList;
  */
 public class ConnectionList extends ArrayList<DataConnection>
 {
-    private final static long serialVersionUID = 0;
+    private static final long serialVersionUID = 3109406489044628512L;
     protected boolean needed = true;
     
     

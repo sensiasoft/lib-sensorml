@@ -20,6 +20,7 @@
 
 package org.vast.process;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -48,16 +49,18 @@ import org.vast.unit.UnitConverter;
  * @author Alexandre Robin
  * @version 1.0
  */
-public class DataConnection
+public class DataConnection implements Serializable
 {
+    private static final long serialVersionUID = -7283326328202447353L;
+    
     protected DataProcess sourceProcess;
     protected DataProcess destinationProcess;
     protected DataComponent sourceComponent;
     protected DataComponent destinationComponent;
     protected String name;
-    protected boolean dataAvailable;
-    protected boolean needsUnitConversion;
-    protected List<ComponentConverter> componentConverters;
+    protected transient boolean dataAvailable;
+    protected transient boolean needsUnitConversion;
+    protected transient List<ComponentConverter> componentConverters;
     protected Hashtable<String, Object> properties = null;
     
     

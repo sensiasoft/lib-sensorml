@@ -24,6 +24,7 @@ import org.vast.cdm.common.DataBlock;
 import org.vast.cdm.common.DataComponent;
 import org.vast.data.*;
 import org.vast.util.*;
+import java.io.Serializable;
 import java.util.*;
 
 
@@ -44,8 +45,10 @@ import java.util.*;
  * @date Aug 19, 2005
  * @version 1.0
  */
-public abstract class DataProcess implements Runnable
+public abstract class DataProcess implements Runnable, Serializable
 {
+    private static final long serialVersionUID = 6357229698218310392L;
+    
     public static final String METADATA = "METADATA";
     protected static final String ioError = "Invalid I/O Structure";
     protected static final String initError = "Error while initializing process ";
@@ -53,30 +56,25 @@ public abstract class DataProcess implements Runnable
     
     protected String name;
     protected String type;
-    protected Hashtable<String, Object> properties = null;
+    protected HashMap<String, Object> properties = null;
     
     // internal process thread
-    protected Thread processThread = null;
+    protected transient Thread processThread = null;
 
     // in/out/param data
-    protected AbstractDataComponent inputData;
-    protected AbstractDataComponent outputData;
-    protected AbstractDataComponent paramData;
+    protected DataGroup inputData;
+    protected DataGroup outputData;
+    protected DataGroup paramData;
 
     // in/out/param connection lists (WARNING: these are lists of lists!)
     protected List<ConnectionList> inputConnections;
     protected List<ConnectionList> outputConnections;
     protected List<ConnectionList> paramConnections;
-    
-    // index of first needed signal
-    protected int firstNeededInput = 0;
-    protected int firstNeededOutput = 0;
-    protected int firstNeededParam = 0;
 
     // boolean true when process thread is started
-    protected boolean started = false;
-    protected boolean usingQueueBuffers = false;
-    protected boolean needSync = false;
+    protected transient boolean started = false;
+    protected transient boolean usingQueueBuffers = false;
+    protected transient boolean needSync = false;
         
     
     public DataProcess()
@@ -615,7 +613,7 @@ public abstract class DataProcess implements Runnable
     public void setProperty(String propName, Object propValue)
     {
         if (properties == null)
-            properties = new Hashtable<String, Object>(1, 1.0f);
+            properties = new HashMap<String, Object>(1, 1.0f);
         
         properties.put(propName, propValue);
     }
