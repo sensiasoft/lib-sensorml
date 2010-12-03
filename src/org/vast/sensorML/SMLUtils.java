@@ -66,6 +66,19 @@ public class SMLUtils implements ProcessReader, SystemReader, MetadataReader, Pr
     private MetadataWriter metadataWriter = null;	
     
     
+    static
+    {
+    	loadRegistry();
+    }
+    
+    
+    public static void loadRegistry()
+    {
+    	String mapFileUrl = SMLUtils.class.getResource("SMLRegistry.xml").toString();
+    	OGCRegistry.loadMaps(mapFileUrl, false);
+    }
+    
+    
     public DataProcess readProcess(DOMHelper dom, Element processElement) throws SMLException
     {
         ProcessReader reader = getProcessReader(dom, processElement);

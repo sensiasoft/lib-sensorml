@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Map>
+   <!-- -->
+   <Namespace type="SML" version="0.0" uri="http://www.opengis.net/sensorML/0"/>
+   <Namespace type="SML" version="1.0" uri="http://www.opengis.net/sensorML/1.0"/>
+   <Namespace type="SML" version="1.0.1" uri="http://www.opengis.net/sensorML/1.0.1"/>
+   <Namespace type="SML" version="1.1" uri="http://www.opengis.net/sensorML/1.1"/>
+   <Namespace type="IC" uri="urn:us:gov:ic:ism:v2"/>
+	 <!-- -->
+   <Reader type="SensorML" subType="Metadata" version="0.0" class="org.vast.sensorML.MetadataReaderV0"/>
+   <Reader type="SensorML" subType="Process" version="0.0" class="org.vast.sensorML.ProcessReaderV0"/>
+   <Reader type="SensorML" subType="System" version="0.0" class="org.vast.sensorML.SystemReaderV0"/>
+   <Reader type="SensorML" subType="Metadata" version="1.0" class="org.vast.sensorML.MetadataReaderV1"/>
+   <Reader type="SensorML" subType="Process" version="1.0" class="org.vast.sensorML.ProcessReaderV1"/>
+   <Reader type="SensorML" subType="Process" version="1.0.1" class="org.vast.sensorML.ProcessReaderV1"/>
+   <Reader type="SensorML" subType="System" version="1.0" class="org.vast.sensorML.SystemReaderV1"/>
+   <!-- -->
+</Map>

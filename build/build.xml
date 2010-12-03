@@ -12,7 +12,7 @@
 	<property name="temp.dir" value="temp" />
 
 	<property name="swe-common-libs.dir" value="../../ogc-swe-common/lib" />
-	<property name="swe-common-lib" value="../../ogc-swe-common/build/swe-common-core-0.8.2.jar" />
+	<property name="swe-common-lib" value="../../ogc-swe-common/build/swe-common-core-0.8.3.jar" />
 	
 
 	<target name="inc_major_ver_number">
