@@ -25,6 +25,8 @@ import org.vast.process.DataProcess;
 import org.vast.sensorML.metadata.Metadata;
 import org.vast.sensorML.system.SMLSystem;
 import org.vast.xml.DOMHelper;
+import org.vast.xml.XMLReaderException;
+import org.vast.xml.XMLWriterException;
 import org.w3c.dom.Element;
 
 
@@ -44,7 +46,7 @@ import org.w3c.dom.Element;
  * @date Apr 10, 2007
  * @version 1.0
  */
-public class SMLUtils implements ProcessReader, SystemReader, MetadataReader, ProcessWriter, SystemWriter, MetadataWriter
+public class SMLUtils
 {
 	public final static String SML = "SML";
 	public final static String IC = "IC";
@@ -79,50 +81,42 @@ public class SMLUtils implements ProcessReader, SystemReader, MetadataReader, Pr
     }
     
     
-    public DataProcess readProcess(DOMHelper dom, Element processElement) throws SMLException
+    public DataProcess readProcess(DOMHelper dom, Element processElement) throws XMLReaderException
     {
         ProcessReader reader = getProcessReader(dom, processElement);
-        return reader.readProcess(dom, processElement);
+        return reader.read(dom, processElement);
     }
     
     
-    public DataProcess readProcessProperty(DOMHelper dom, Element propertyElement) throws SMLException
-    {
-        Element processElement = dom.getFirstChildElement(propertyElement);
-        ProcessReader reader = getProcessReader(dom, processElement);
-        return reader.readProcessProperty(dom, propertyElement);
-    }
-    
-    
-    public SMLSystem readSystem(DOMHelper dom, Element systemElement) throws SMLException
+    public SMLSystem readSystem(DOMHelper dom, Element systemElement) throws XMLReaderException
     {
         SystemReader reader = getSystemReader(dom, systemElement);
-        return reader.readSystem(dom, systemElement);
+        return (SMLSystem)reader.read(dom, systemElement);
     }
     
     
-    public Metadata readMetadata(DOMHelper dom, Element objectElement) throws SMLException
+    public Metadata readMetadata(DOMHelper dom, Element objectElement) throws XMLReaderException
     {
         MetadataReader reader = getMetadataReader(dom, objectElement);
         return reader.readMetadata(dom, objectElement);
     }
     
     
-    public Element writeProcess(DOMHelper dom, DataProcess process) throws SMLException
+    public Element writeProcess(DOMHelper dom, DataProcess process) throws XMLWriterException
     {
         ProcessWriter writer = getProcessWriter();
         return writer.writeProcess(dom, process);
     }
     
     
-    public Element writeSystem(DOMHelper dom, SMLSystem system) throws SMLException
+    public Element writeSystem(DOMHelper dom, SMLSystem system) throws XMLWriterException
     {
         SystemWriter writer = getSystemWriter();
         return writer.writeSystem(dom, system);
     }
 
 
-    public void writeMetadata(DOMHelper dom, Element parentElement, Metadata metadata) throws SMLException
+    public void writeMetadata(DOMHelper dom, Element parentElement, Metadata metadata) throws XMLWriterException
     {
         MetadataWriter writer = getMetadataWriter();
         writer.writeMetadata(dom, parentElement, metadata);        

@@ -21,8 +21,7 @@
 package org.vast.sensorML;
 
 import org.vast.process.DataProcess;
-import org.vast.xml.DOMHelper;
-import org.w3c.dom.Element;
+import org.vast.xml.IXMLReaderDOM;
 
 
 /**
@@ -39,40 +38,7 @@ import org.w3c.dom.Element;
  * @date Apr 11, 2007
  * @version 1.0
  */
-public interface ProcessReader
-{
-    /**
-     * Reads content of any SensorML Process from the given DOM element
-     * @param dom
-     * @param processElement
-     * @return
-     * @throws SMLException
-     */
-    public DataProcess readProcess(DOMHelper dom, Element processElement) throws SMLException;
-        
+public interface ProcessReader extends SMLReader, IXMLReaderDOM<DataProcess>
+{      
     
-    /**
-     * Reads data from an association containing or referencing a Process object
-     * @param dom
-     * @param propertyElement
-     * @return
-     * @throws SMLException
-     */
-    public DataProcess readProcessProperty(DOMHelper dom, Element propertyElement) throws SMLException;
-    
-    
-    /**
-     * Process Metadata will be read only if set to true
-     * default is false to reduce parsing time 
-     * @param readMetadata
-     */
-    public void setReadMetadata(boolean readMetadata);
-    
-    
-    /**
-     * Executable DataProcess objects will be instantiated if set to true
-     * Default is true. Set to false for simply parsing the document to Dummy Processes.
-     * @param createExecutableProcess
-     */
-    public void setCreateExecutableProcess(boolean createExecutableProcess);
 }

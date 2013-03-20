@@ -49,7 +49,7 @@ public abstract class AbstractSMLReader
      * @param refAttributeName Name of argument used to reference the ID (ex: href)
      * @return URI complete uri#id
      */
-    public URI getResolvedIDRef(DOMHelper dom, Element elt, String refAttributeName) throws SMLException
+    public URI getResolvedIDRef(DOMHelper dom, Element elt, String refAttributeName) throws XMLReaderException
     {
         String uriText = dom.getAttributeValue(elt, refAttributeName);
         URI uri;
@@ -60,7 +60,7 @@ public abstract class AbstractSMLReader
         }
         catch (URISyntaxException e)
         {
-            throw new SMLException("Invalid URI (ID reference)", e);
+            throw new XMLReaderException("Invalid URI (ID reference)", e);
         }
         
         URI docUri = dom.getParentDocument(elt).getUri();
@@ -74,7 +74,7 @@ public abstract class AbstractSMLReader
      * @param elt Element to look into
      * @return URI complete uri#id
      */
-    public URI getResolvedID(DOMHelper dom, Element elt, String idAttributeName) throws SMLException
+    public URI getResolvedID(DOMHelper dom, Element elt, String idAttributeName) throws XMLReaderException
     {
         String idText = dom.getAttributeValue(elt, idAttributeName);
 

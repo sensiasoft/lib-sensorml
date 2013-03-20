@@ -22,6 +22,7 @@ package org.vast.sensorML;
 
 import org.vast.sensorML.metadata.Metadata;
 import org.vast.xml.DOMHelper;
+import org.vast.xml.XMLWriterException;
 import org.w3c.dom.Element;
 
 
@@ -49,5 +50,5 @@ public interface MetadataWriter
      * @return
      * @throws SMLException
      */
-    public void writeMetadata(DOMHelper dom, Element parentElement, Metadata metadata) throws SMLException;
+    public void writeMetadata(DOMHelper dom, Element parentElement, Metadata metadata) throws XMLWriterException;
 }

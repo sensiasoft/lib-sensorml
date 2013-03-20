@@ -22,6 +22,7 @@ package org.vast.sensorML;
 
 import org.w3c.dom.*;
 import org.vast.xml.DOMHelper;
+import org.vast.xml.XMLReaderException;
 import org.vast.sensorML.system.ProcessMethod;
 
 
@@ -49,7 +50,7 @@ public class ProcessMethodReaderV0 extends AbstractSMLReader
     }
 
     
-    public ProcessMethod readMethodProperty(DOMHelper dom, Element propertyElement) throws SMLException
+    public ProcessMethod readMethodProperty(DOMHelper dom, Element propertyElement) throws XMLReaderException
     {
         Element methodElement = dom.getFirstChildElement(propertyElement);
         ProcessMethod method = readMethod(dom, methodElement);
@@ -57,7 +58,7 @@ public class ProcessMethodReaderV0 extends AbstractSMLReader
     }
     
     
-    public ProcessMethod readMethod(DOMHelper dom, Element processElement) throws SMLException
+    public ProcessMethod readMethod(DOMHelper dom, Element processElement) throws XMLReaderException
     {
         // TODO implement readMethod in ProcessMethodReader
         return null;

@@ -42,6 +42,7 @@ import org.vast.process.DataProcess;
  */
 public class SMLSystem extends ProcessChain
 {
+    private static final long serialVersionUID = -3907134965328967342L;
     public final static Hashtable<ReferenceFrame, DataProcess> frameToObjectMap = new Hashtable<ReferenceFrame, DataProcess>();
     
     protected List<ReferenceFrame> referenceFrames;

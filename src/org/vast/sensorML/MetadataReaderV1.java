@@ -23,9 +23,9 @@ package org.vast.sensorML;
 import java.text.ParseException;
 import java.util.*;
 import org.w3c.dom.*;
-import org.vast.cdm.common.CDMException;
 import org.vast.cdm.common.DataComponent;
 import org.vast.xml.DOMHelper;
+import org.vast.xml.XMLReaderException;
 import org.vast.sensorML.metadata.DocumentRef;
 import org.vast.sensorML.metadata.Metadata;
 import org.vast.sensorML.metadata.Person;
@@ -49,7 +49,7 @@ import org.vast.util.*;
  * @author Alexandre Robin
  * @version 1.0
  */
-public class MetadataReaderV1 extends AbstractSMLReader implements SMLReader, MetadataReader
+public class MetadataReaderV1 extends AbstractSMLReader implements MetadataReader
 {
     protected SWECommonUtils utils;
 
@@ -67,7 +67,7 @@ public class MetadataReaderV1 extends AbstractSMLReader implements SMLReader, Me
     /* (non-Javadoc)
      * @see org.vast.sensorML.reader.MetadataReader#readMetadata(org.vast.xml.DOMHelper, org.w3c.dom.Element)
      */
-    public Metadata readMetadata(DOMHelper dom, Element objectElement) throws SMLException
+    public Metadata readMetadata(DOMHelper dom, Element objectElement) throws XMLReaderException
     {
         Metadata metadata = new Metadata();
 
@@ -123,7 +123,7 @@ public class MetadataReaderV1 extends AbstractSMLReader implements SMLReader, Me
     /* (non-Javadoc)
      * @see org.vast.sensorML.reader.MetadataReader#readTermList(org.vast.xml.DOMHelper, org.w3c.dom.NodeList)
      */
-    public List<Term> readTermList(DOMHelper dom, NodeList termPropertyElts) throws SMLException
+    public List<Term> readTermList(DOMHelper dom, NodeList termPropertyElts) throws XMLReaderException
     {
         int listSize = termPropertyElts.getLength();
         List<Term> termList = new ArrayList<Term>(listSize);
@@ -144,7 +144,7 @@ public class MetadataReaderV1 extends AbstractSMLReader implements SMLReader, Me
     /* (non-Javadoc)
      * @see org.vast.sensorML.reader.MetadataReader#readDocumentList(org.vast.xml.DOMHelper, org.w3c.dom.NodeList)
      */
-    public List<DocumentRef> readDocumentList(DOMHelper dom, NodeList docPropertyElts) throws SMLException
+    public List<DocumentRef> readDocumentList(DOMHelper dom, NodeList docPropertyElts) throws XMLReaderException
     {
         int listSize = docPropertyElts.getLength();
         List<DocumentRef> docList = new ArrayList<DocumentRef>(listSize);
@@ -165,7 +165,7 @@ public class MetadataReaderV1 extends AbstractSMLReader implements SMLReader, Me
     /* (non-Javadoc)
      * @see org.vast.sensorML.reader.MetadataReader#readContactList(org.vast.xml.DOMHelper, org.w3c.dom.NodeList)
      */
-    public List<Contact> readContactList(DOMHelper dom, NodeList contactPropertyElts) throws SMLException
+    public List<Contact> readContactList(DOMHelper dom, NodeList contactPropertyElts) throws XMLReaderException
     {
         int listSize = contactPropertyElts.getLength();
         List<Contact> contactList = new ArrayList<Contact>(listSize);
@@ -197,23 +197,16 @@ public class MetadataReaderV1 extends AbstractSMLReader implements SMLReader, Me
     /* (non-Javadoc)
      * @see org.vast.sensorML.reader.MetadataReader#readPropertyList(org.vast.xml.DOMHelper, org.w3c.dom.NodeList)
      */
-    public List<DataComponent> readPropertyList(DOMHelper dom, NodeList propertyElts) throws SMLException
+    public List<DataComponent> readPropertyList(DOMHelper dom, NodeList propertyElts) throws XMLReaderException
     {
         int listSize = propertyElts.getLength();
         List<DataComponent> propertyList = new ArrayList<DataComponent>(listSize);
 
-        try
+        for (int i = 0; i < listSize; i++)
         {
-            for (int i = 0; i < listSize; i++)
-            {
-                Element propElt = (Element) propertyElts.item(i);
-                DataComponent data = utils.readComponentProperty(dom, propElt);
-                propertyList.add(data);
-            }
-        }
-        catch (CDMException e)
-        {
-            throw new SMLException(e.getMessage());
+            Element propElt = (Element) propertyElts.item(i);
+            DataComponent data = utils.readComponentProperty(dom, propElt);
+            propertyList.add(data);
         }
 
         return propertyList;
@@ -223,7 +216,7 @@ public class MetadataReaderV1 extends AbstractSMLReader implements SMLReader, Me
     /* (non-Javadoc)
      * @see org.vast.sensorML.reader.MetadataReader#readTerm(org.vast.xml.DOMHelper, org.w3c.dom.Element)
      */
-    public Term readTerm(DOMHelper dom, Element termElt) throws SMLException
+    public Term readTerm(DOMHelper dom, Element termElt) throws XMLReaderException
     {
         Term term = new Term();
 
@@ -242,7 +235,7 @@ public class MetadataReaderV1 extends AbstractSMLReader implements SMLReader, Me
     /* (non-Javadoc)
      * @see org.vast.sensorML.reader.MetadataReader#readDocument(org.vast.xml.DOMHelper, org.w3c.dom.Element)
      */
-    public DocumentRef readDocument(DOMHelper dom, Element documentElement) throws SMLException
+    public DocumentRef readDocument(DOMHelper dom, Element documentElement) throws XMLReaderException
     {
         DocumentRef document = new DocumentRef();
 
@@ -279,7 +272,7 @@ public class MetadataReaderV1 extends AbstractSMLReader implements SMLReader, Me
     /* (non-Javadoc)
      * @see org.vast.sensorML.reader.MetadataReader#readContact(org.vast.xml.DOMHelper, org.w3c.dom.Element)
      */
-    public Contact readContact(DOMHelper dom, Element contactElement) throws SMLException
+    public Contact readContact(DOMHelper dom, Element contactElement) throws XMLReaderException
     {
         Contact contact = null;
 
@@ -295,7 +288,7 @@ public class MetadataReaderV1 extends AbstractSMLReader implements SMLReader, Me
     /* (non-Javadoc)
      * @see org.vast.sensorML.reader.MetadataReader#readPerson(org.vast.xml.DOMHelper, org.w3c.dom.Element)
      */
-    public Person readPerson(DOMHelper dom, Element personElement) throws SMLException
+    public Person readPerson(DOMHelper dom, Element personElement) throws XMLReaderException
     {
         Person person = new Person();
         String value;
@@ -331,7 +324,7 @@ public class MetadataReaderV1 extends AbstractSMLReader implements SMLReader, Me
     /* (non-Javadoc)
      * @see org.vast.sensorML.reader.MetadataReader#readResponsibleParty(org.vast.xml.DOMHelper, org.w3c.dom.Element)
      */
-    public ResponsibleParty readResponsibleParty(DOMHelper dom, Element partyElement) throws SMLException
+    public ResponsibleParty readResponsibleParty(DOMHelper dom, Element partyElement) throws XMLReaderException
     {
         ResponsibleParty party = new ResponsibleParty();
         String value;
@@ -395,7 +388,7 @@ public class MetadataReaderV1 extends AbstractSMLReader implements SMLReader, Me
     /* (non-Javadoc)
      * @see org.vast.sensorML.reader.MetadataReader#readDate(org.vast.xml.DOMHelper, org.w3c.dom.Element)
      */
-    public DateTime readDate(DOMHelper dom, Element dateElement) throws SMLException
+    public DateTime readDate(DOMHelper dom, Element dateElement) throws XMLReaderException
     {       
         try
         {

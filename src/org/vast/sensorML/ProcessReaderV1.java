@@ -22,12 +22,11 @@ package org.vast.sensorML;
 
 import org.w3c.dom.*;
 import org.vast.process.*;
-import org.vast.cdm.common.CDMException;
 import org.vast.cdm.common.DataComponent;
 import org.vast.xml.DOMHelper;
+import org.vast.xml.XMLReaderException;
 import org.vast.sensorML.metadata.Metadata;
 import org.vast.sweCommon.SWECommonUtils;
-import org.vast.util.*;
 
 
 /**
@@ -63,20 +62,33 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
         utils = new SWECommonUtils();
         processLoader = new ProcessLoader();
     }
-
+    
     
     /**
-     * Reads a process property
-     * @param propertyElement
+     * Reads any Process (ProcessModel, ProcessChain or derived versions)
+     * @param processDefElement
      * @return
      * @throws SMLException
      */
-    public DataProcess readProcessProperty(DOMHelper dom, Element propertyElement) throws SMLException
+    public DataProcess read(DOMHelper dom, Element processElement) throws XMLReaderException
     {
-        Element processElement = dom.getFirstChildElement(propertyElement);
-        DataProcess process = readProcess(dom, processElement);
-        process.setName(dom.getAttributeValue(propertyElement, "@name"));
-        return process;
+        DataProcess dataProcess;
+
+        // read process core info (model or chain)
+        if (processElement.getLocalName().equals("DataSource"))
+            dataProcess = readDataSource(dom, processElement);
+        if (dom.existElement(processElement, "components"))
+            dataProcess = readProcessChain(dom, processElement);
+        else
+            dataProcess = readProcessModel(dom, processElement);
+
+        // get name from parent property or element
+        if (processElement.getParentNode().getNodeType() == Node.ELEMENT_NODE)
+            dataProcess.setName(dom.getAttributeValue((Element)processElement.getParentNode(), "@name"));
+        else
+            dataProcess.setName(processElement.getLocalName());
+            
+        return dataProcess;
     }
     
     
@@ -85,7 +97,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
      * @param processElement
      * @param process
      */
-    protected void parseMetadata(DOMHelper dom, Element processElement, DataProcess dataProcess) throws SMLException
+    protected void parseMetadata(DOMHelper dom, Element processElement, DataProcess dataProcess) throws XMLReaderException
     {
         // read metadata if needed
         if (readMetadata)
@@ -100,47 +112,29 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
     
     
     /**
-     * Reads any Process (ProcessModel, ProcessChain or derived versions)
-     * @param processDefElement
-     * @return
-     * @throws SMLException
-     */
-    public DataProcess readProcess(DOMHelper dom, Element processElement) throws SMLException
-    {
-        DataProcess dataProcess;
-
-        // read process core info (model or chain)
-        if (processElement.getLocalName().equals("DataSource"))
-            dataProcess = readDataSource(dom, processElement);
-        if (dom.existElement(processElement, "components"))
-            dataProcess = readProcessChain(dom, processElement);
-        else
-            dataProcess = readProcessModel(dom, processElement);
-
-        // get default name from element
-        dataProcess.setName(processElement.getLocalName());
-            
-        return dataProcess;
-    }
-    
-    
-    /**
      * Creates a DataProcess object corresponding to given method URN
      * @param processURN
      * @return
      * @throws SMLException
      */
-    public DataProcess readProcessModel(DOMHelper dom, Element processModelElement) throws SMLException
+    protected DataProcess readProcessModel(DOMHelper dom, Element processModelElement) throws XMLReaderException
     {
         // get process urn
         String uri = dom.getAttributeValue(processModelElement, "method/href");
         
         // load process
         DataProcess newProcess;
-        if (createExecutableProcess)
-            newProcess = processLoader.loadProcess(uri);
-        else
-            newProcess = new Dummy_Process();
+        try
+        {
+            if (createExecutableProcess)
+                newProcess = processLoader.loadProcess(uri);
+            else
+                newProcess = new Dummy_Process();
+        }
+        catch (Exception e)
+        {
+            throw new XMLReaderException("No implementation found for process method " + uri);
+        }
         
         // read metadata
         parseMetadata(dom, processModelElement, newProcess);
@@ -161,7 +155,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
      * @return
      * @throws SMLException
      */
-    public DataProcess readDataSource(DOMHelper dom, Element dataSourceElement) throws SMLException
+    protected DataProcess readDataSource(DOMHelper dom, Element dataSourceElement) throws XMLReaderException
     {
         // TODO parse DataSource structure
         DataProcess newProcess = new Dummy_Process();
@@ -176,10 +170,9 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
             DataComponent dataDef = utils.readComponentProperty(dom, dataDefElt);
             newProcess.addOutput(dataDef.getName(), dataDef);            
         }
-        catch (CDMException e)
+        catch (XMLReaderException e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new XMLReaderException("Error while parsing DataSource", e);
         }
         
         // TODO case of observation reference...
@@ -194,7 +187,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
      * @throws SMLException
      * @return ProcessChain
      */
-    public ProcessChain readProcessChain(DOMHelper dom, Element processChainElement) throws SMLException
+    protected ProcessChain readProcessChain(DOMHelper dom, Element processChainElement) throws XMLReaderException
     {
         return readProcessChain(dom, processChainElement, null);
     }
@@ -207,12 +200,12 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
      * @return ProcessChain
      * @throws SMLException
      */
-    protected ProcessChain readProcessChain(DOMHelper dom, Element processChainElement, ProcessChain processChain) throws SMLException
+    protected ProcessChain readProcessChain(DOMHelper dom, Element processChainElement, ProcessChain processChain) throws XMLReaderException
     {
         NodeList processList, connectionList;
         
         // get process list
-        processList = dom.getElements(processChainElement, "components/ComponentList/*");
+        processList = dom.getElements(processChainElement, "components/ComponentList/component/*");
         int memberCount = processList.getLength();
         
         // construct the process chain if it was not given
@@ -228,7 +221,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
             Element processElement = (Element)processList.item(i);
             if (processElement != null)
             {
-                DataProcess childProcess = readProcessProperty(dom, processElement);
+                DataProcess childProcess = read(dom, processElement);
                 processChain.addProcess(childProcess.getName(), childProcess);
             }
         }
@@ -250,20 +243,13 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
             	// create new DataQueue
                 dataQueue = new DataQueue();
                 
-                try
-                {
-                    // parse source
-                    String source = dom.getAttributeValue(connectionElement, "source/ref");
-                    connectSignal(processChain, dataQueue, source);
-                    
-                    // parse destination
-                    String dest = dom.getAttributeValue(connectionElement, "destination/ref");
-                    connectSignal(processChain, dataQueue, dest);
-                }
-                catch (SMLException e)
-                {
-                    ExceptionSystem.display(e);
-                }
+                // parse source
+                String source = dom.getAttributeValue(connectionElement, "source/ref");
+                connectSignal(processChain, dataQueue, source);
+                
+                // parse destination
+                String dest = dom.getAttributeValue(connectionElement, "destination/ref");
+                connectSignal(processChain, dataQueue, dest);
                             
                 // check source/destination coherency
                 //dataQueue.check();
@@ -273,7 +259,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
             	this.createMuxProcess(dom, connectionElement);
             }
             else
-            	throw new SMLException("Unkown link type: " + linkType);
+            	throw new XMLReaderException("Unkown link type: " + linkType);
             
             // also add the connection to the main list
             processChain.getInternalConnections().add(dataQueue);
@@ -303,7 +289,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
      * @param linkString
      * @throws SMLException
      */
-    public void connectSignal(ProcessChain processChain, DataQueue dataQueue, String linkString) throws SMLException
+    public void connectSignal(ProcessChain processChain, DataQueue dataQueue, String linkString) throws XMLReaderException
     {
         boolean internalConnection = false;
         DataProcess selectedProcess;        
@@ -333,7 +319,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
         
         if (selectedProcess == null)
         {
-            throw new SMLException("Process " + processName + " does't exist in ProcessChain");
+            throw new XMLReaderException("Process " + processName + " does't exist in ProcessChain");
         }       
         
         // connect connection to input, output or parameter port
@@ -348,7 +334,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
             }
             catch (ProcessException e)
             {
-                throw new SMLException("No input named " + portName + " in process " + processName);
+                throw new XMLReaderException("No input named " + portName + " in process " + processName);
             }
         }
         else if (portType.equals("outputs"))
@@ -362,7 +348,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
             }
             catch (ProcessException e)
             {
-                throw new SMLException("No output named " + portName + " in process " + processName);
+                throw new XMLReaderException("No output named " + portName + " in process " + processName);
             }
         }
         else if (portType.equals("parameters"))
@@ -376,7 +362,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
             }
             catch (ProcessException e)
             {
-                throw new SMLException("No parameter named " + portName + " in process " + processName);
+                throw new XMLReaderException("No parameter named " + portName + " in process " + processName);
             }
         }
         
@@ -389,7 +375,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
         {
             String srcName = dataQueue.getSourceProcess().getName();
             String destName = dataQueue.getDestinationProcess().getName();
-            throw new SMLException("Connection on " + linkString + " cannot be made between " + srcName + " and " + destName, e);
+            throw new XMLReaderException("Connection on " + linkString + " cannot be made between " + srcName + " and " + destName, e);
         }
     }
 
@@ -401,7 +387,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
      * @param process
      * @throws SMLException
      */
-    public void readProcessIO(DOMHelper dom, Element processElement, DataProcess process) throws SMLException
+    public void readProcessIO(DOMHelper dom, Element processElement, DataProcess process) throws XMLReaderException
     {
         try
 		{
@@ -439,9 +425,9 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
 			    process.addParameter(paramData.getName(), paramData);
 			}
 		}
-		catch (CDMException e)
+		catch (Exception e)
 		{
-			throw new SMLException("Error while parsing process I/O", e);
+			throw new XMLReaderException("Error while parsing process I/O", e);
 		}
     }
 

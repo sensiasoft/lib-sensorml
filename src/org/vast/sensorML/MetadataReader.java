@@ -22,6 +22,7 @@ package org.vast.sensorML;
 
 import org.vast.sensorML.metadata.Metadata;
 import org.vast.xml.DOMHelper;
+import org.vast.xml.XMLReaderException;
 import org.w3c.dom.Element;
 
 
@@ -48,5 +49,5 @@ public interface MetadataReader
      * @return the Metadata object filled with info from the DOM
      * @throws SMLException
      */
-    public Metadata readMetadata(DOMHelper dom, Element objectElement) throws SMLException;
+    public Metadata readMetadata(DOMHelper dom, Element objectElement) throws XMLReaderException;
 }

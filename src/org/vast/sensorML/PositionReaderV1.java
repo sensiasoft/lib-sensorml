@@ -21,9 +21,9 @@
 package org.vast.sensorML;
 
 import java.net.URI;
-import org.vast.cdm.common.CDMException;
 import org.vast.cdm.common.DataComponent;
 import org.vast.xml.DOMHelper;
+import org.vast.xml.XMLReaderException;
 import org.vast.process.DataProcess;
 import org.vast.sensorML.system.Position;
 import org.vast.sensorML.system.PositionData;
@@ -71,7 +71,7 @@ public class PositionReaderV1 extends AbstractSMLReader
      * @return
      * @throws SMLException
      */
-    public Position readPositionProperty(DOMHelper dom, Element positionPropertyElt) throws SMLException
+    public Position readPositionProperty(DOMHelper dom, Element positionPropertyElt) throws XMLReaderException
     {
         Element positionElt = dom.getFirstChildElement(positionPropertyElt);
         Position position = readPosition(dom, positionElt);
@@ -90,7 +90,7 @@ public class PositionReaderV1 extends AbstractSMLReader
      * @return
      * @throws SMLException
      */
-    public Position readPosition(DOMHelper dom, Element positionElement) throws SMLException
+    public Position readPosition(DOMHelper dom, Element positionElement) throws XMLReaderException
     {
         Position position;
         
@@ -109,7 +109,7 @@ public class PositionReaderV1 extends AbstractSMLReader
      * @return
      * @throws SMLException
      */
-    public PositionProcess readPositionProcess(DOMHelper dom, Element positionProcessElement) throws SMLException
+    public PositionProcess readPositionProcess(DOMHelper dom, Element positionProcessElement) throws XMLReaderException
     {
         return null;
     }
@@ -121,7 +121,7 @@ public class PositionReaderV1 extends AbstractSMLReader
      * @return
      * @throws SMLException
      */
-    public PositionData readPositionData(DOMHelper dom, Element positionDataElement) throws SMLException
+    public PositionData readPositionData(DOMHelper dom, Element positionDataElement) throws XMLReaderException
     {
         PositionData position = new PositionData();
         
@@ -145,9 +145,9 @@ public class PositionReaderV1 extends AbstractSMLReader
             if (component instanceof SMLComponent)
                 ((SMLComponent)component).setPosition(position);
         }
-        catch (CDMException e)
+        catch (Exception e)
         {
-            throw new SMLException(e.getMessage(), e.getCause());
+            throw new XMLReaderException("Error while reading position data", e);
         }
         
         return position;

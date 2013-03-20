@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.w3c.dom.*;
 import org.vast.process.*;
-import org.vast.cdm.common.CDMException;
 import org.vast.cdm.common.DataEncoding;
 import org.vast.xml.DOMHelper;
+import org.vast.xml.XMLReaderException;
 import org.vast.sensorML.system.InterfaceDef;
 import org.vast.sensorML.system.Position;
 import org.vast.sensorML.system.ProtocolDef;
@@ -69,31 +69,35 @@ public class SystemReaderV1 extends ProcessReaderV1 implements SystemReader
     
     
     @Override
-    public ProcessChain readProcessChain(DOMHelper dom, Element processChainElement) throws SMLException
+    public DataProcess read(DOMHelper dom, Element systemElement) throws XMLReaderException
     {
-        boolean isSystem = false;
+        // first read common process chain stuffs
+        SMLSystem system = new SMLSystem();
+        super.readProcessChain(dom, systemElement, system);
         
-        // find out if it's a System
-        if (processChainElement.getLocalName().equals("System"))
-            isSystem = true;
-        else if (dom.existElement(processChainElement, "referenceFrame"))
-            isSystem = true;        
-        else if (dom.existElement(processChainElement, "positions"))
-            isSystem = true;
-        else if (dom.existElement(processChainElement, "interfaces"))
-            isSystem = true;
+        // read referenceFrames
+        List<ReferenceFrame> frameList = readFrameList(dom, systemElement);
+        system.setReferenceFrames(frameList);
         
-        // read System or Process Chain
-        if (isSystem)
-            return readSystem(dom, processChainElement);
-        else
-            return super.readProcessChain(dom, processChainElement);
+        // also add frames to the map
+        for (int i=0; i<frameList.size(); i++)
+            SMLSystem.frameToObjectMap.put(frameList.get(i), system);
+        
+        // read interfaces
+        List<InterfaceDef> interfaceList = readInterfaceList(dom, systemElement);
+        system.setInterfaces(interfaceList);
+        
+        // read positions
+        List<Position> positionList = readPositionList(dom, systemElement);
+        system.setComponentPositions(positionList);
+        
+        return system;
     }
 
 
 
     @Override
-    public DataProcess readProcessModel(DOMHelper dom, Element processModelElement) throws SMLException
+    protected DataProcess readProcessModel(DOMHelper dom, Element processModelElement) throws XMLReaderException
     {
         // first read common process model stuffs
         DataProcess newProcess = super.readProcessModel(dom, processModelElement);
@@ -126,43 +130,11 @@ public class SystemReaderV1 extends ProcessReaderV1 implements SystemReader
     
     
     /**
-     * Reads a System element
-     * @param systemElement
-     * @return
-     * @throws SMLException
-     */
-    public SMLSystem readSystem(DOMHelper dom, Element systemElement) throws SMLException
-    {
-        // first read common process chain stuffs
-        SMLSystem system = new SMLSystem();
-        super.readProcessChain(dom, systemElement, system);
-        
-        // read referenceFrames
-        List<ReferenceFrame> frameList = readFrameList(dom, systemElement);
-        system.setReferenceFrames(frameList);
-        
-        // also add frames to the map
-        for (int i=0; i<frameList.size(); i++)
-            SMLSystem.frameToObjectMap.put(frameList.get(i), system);
-        
-        // read interfaces
-        List<InterfaceDef> interfaceList = readInterfaceList(dom, systemElement);
-        system.setInterfaces(interfaceList);
-        
-        // read positions
-        List<Position> positionList = readPositionList(dom, systemElement);
-        system.setComponentPositions(positionList);
-        
-        return system;
-    }
-    
-    
-    /**
      * Reads the whole list of reference frames attached to a given Component
      * @param componentElement
      * @return
      */
-    public List<ReferenceFrame> readFrameList(DOMHelper dom, Element componentElement) throws SMLException
+    public List<ReferenceFrame> readFrameList(DOMHelper dom, Element componentElement) throws XMLReaderException
     {
         NodeList frameElts = dom.getElements(componentElement, "referenceFrame/*");
         int listSize = frameElts.getLength();
@@ -185,7 +157,7 @@ public class SystemReaderV1 extends ProcessReaderV1 implements SystemReader
      * @return
      * @throws SMLException
      */
-    public List<InterfaceDef> readInterfaceList(DOMHelper dom, Element componentElement) throws SMLException
+    public List<InterfaceDef> readInterfaceList(DOMHelper dom, Element componentElement) throws XMLReaderException
     {
         NodeList interfaceElts = dom.getElements(componentElement, "interfaces/InterfaceList/interface");
         int listSize = interfaceElts.getLength();
@@ -211,7 +183,7 @@ public class SystemReaderV1 extends ProcessReaderV1 implements SystemReader
      * @return
      * @throws SMLException
      */
-    public List<Position> readPositionList(DOMHelper dom, Element systemElement) throws SMLException
+    public List<Position> readPositionList(DOMHelper dom, Element systemElement) throws XMLReaderException
     {
         NodeList positionElts = dom.getElements(systemElement, "positions/PositionList/position");
         int listSize = positionElts.getLength();
@@ -234,7 +206,7 @@ public class SystemReaderV1 extends ProcessReaderV1 implements SystemReader
      * @return
      * @throws SMLException
      */
-    public ReferenceFrame readFrame(DOMHelper dom, Element frameElement) throws SMLException
+    public ReferenceFrame readFrame(DOMHelper dom, Element frameElement) throws XMLReaderException
     {
         ReferenceFrame frame = new ReferenceFrame();
         String value;
@@ -273,7 +245,7 @@ public class SystemReaderV1 extends ProcessReaderV1 implements SystemReader
      * @return
      * @throws SMLException
      */
-    public InterfaceDef readInterface(DOMHelper dom, Element interfaceElement) throws SMLException
+    public InterfaceDef readInterface(DOMHelper dom, Element interfaceElement) throws XMLReaderException
     {
         InterfaceDef interfaceDef = new InterfaceDef();
         Element propElt;
@@ -315,26 +287,27 @@ public class SystemReaderV1 extends ProcessReaderV1 implements SystemReader
      * @return
      * @throws SMLException
      */
-    public ProtocolDef readProtocol(DOMHelper dom, Element protocolProperty) throws SMLException
+    public ProtocolDef readProtocol(DOMHelper dom, Element protocolProperty) throws XMLReaderException
     {
         if (protocolProperty == null)
             return null;
         
-        // get child protocol element
-        Element protocolElement = dom.getFirstChildElement(protocolProperty);
-        ProtocolDef protocol = new ProtocolDef();     
+        ProtocolDef protocol = new ProtocolDef(); 
         
-        // read definition
-        String protocolType = dom.getAttributeValue(protocolElement, "definition");
-        protocol.setDefinition(protocolType);
-        
-        // read list of protocol properties
-        NodeList propElts = dom.getElements(protocolElement, "property");
-        protocol.setProperties(metadataReader.readPropertyList(dom, propElts));
-        
-        // read encoding if present
         try
         {
+            // get child protocol element
+            Element protocolElement = dom.getFirstChildElement(protocolProperty);                
+            
+            // read definition
+            String protocolType = dom.getAttributeValue(protocolElement, "definition");
+            protocol.setDefinition(protocolType);
+            
+            // read list of protocol properties
+            NodeList propElts = dom.getElements(protocolElement, "property");
+            protocol.setProperties(metadataReader.readPropertyList(dom, propElts));
+            
+            // read encoding if present       
             Element encodingElt = dom.getElement(protocolElement, "encoding");
             if (encodingElt != null)
             {
@@ -342,9 +315,9 @@ public class SystemReaderV1 extends ProcessReaderV1 implements SystemReader
                 protocol.setEncoding(encoding);
             }
         }
-        catch (CDMException e)
+        catch (XMLReaderException e)
         {
-            throw new SMLException(e.getMessage(), e.getCause());
+            throw new XMLReaderException("Error while reading interface protocol", e);
         }
         
         return protocol;

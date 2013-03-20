@@ -20,10 +20,6 @@
 
 package org.vast.sensorML;
 
-import org.vast.sensorML.system.SMLSystem;
-import org.vast.xml.DOMHelper;
-import org.w3c.dom.Element;
-
 
 /**
  * <p><b>Title:</b>
@@ -41,12 +37,5 @@ import org.w3c.dom.Element;
  */
 public interface SystemReader extends ProcessReader
 {
-    /**
-     * Reads a System object from the given DOM element
-     * @param dom
-     * @param systemElement
-     * @return
-     * @throws SMLException
-     */
-    public SMLSystem readSystem(DOMHelper dom, Element systemElement) throws SMLException;
+
 }

@@ -22,6 +22,7 @@ package org.vast.sensorML;
 
 import org.vast.sensorML.system.SMLSystem;
 import org.vast.xml.DOMHelper;
+import org.vast.xml.XMLWriterException;
 import org.w3c.dom.Element;
 
 
@@ -48,5 +49,5 @@ public interface SystemWriter extends ProcessWriter
      * @return
      * @throws SMLException
      */
-    public Element writeSystem(DOMHelper dom, SMLSystem system) throws SMLException;
+    public Element writeSystem(DOMHelper dom, SMLSystem system) throws XMLWriterException;
 }
