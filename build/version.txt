@@ -1,4 +1,0 @@
-#Wed Jan 27 16:18:31 CET 2010
-min.ver=8
-build.num=3
-maj.ver=0
