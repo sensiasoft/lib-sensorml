@@ -6,4 +6,19 @@
     <version>1.0</version>
   </parent>
   <artifactId>sensorml-core</artifactId>
+  <dependencies>
+     <dependency>
+        <groupId>org.vast.opengis</groupId>
+        <artifactId>swe-common-core</artifactId>
+     </dependency>
+  </dependencies>
+  <dependencyManagement>
+     <dependencies>
+        <dependency>
+           <groupId>org.vast.opengis</groupId>
+           <artifactId>swe-common-core</artifactId>
+           <version>1.0</version>
+        </dependency>
+     </dependencies>
+  </dependencyManagement>
 </project>
