@@ -7,14 +7,29 @@
   <name>SensorML Library</name>
   <url>http://code.google.com/p/sensorml-data-processing/</url>
   <description>Java bindings and associated data processing framework for the SensorML language</description>
+  <licenses>
+    <license>
+      <name>Mozilla Public License Version 1.1</name>
+      <url>http://www.mozilla.org/MPL/1.1/</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
   <organization>
      <name>VAST Team / Sensia Software LLC</name>
      <url>http://www.sensiasoftware.com</url>
   </organization>
+  <developers>
+    <developer>
+      <id>alex.robin</id>
+      <name>Alexandre Robin</name>
+      <email>nospam@mydomain.com</email>
+    </developer>
+  </developers>
   <scm>
-     <url>http://sensorml-data-processing.googlecode.com/svn/</url>
-     <connection>SVN DAV</connection>
-     <developerConnection>Alexandre Robin</developerConnection>
+     <url>http://code.google.com/p/sensorml-data-processing/source/browse/</url>
+     <connection>scm:svn:http://sensorml-data-processing.googlecode.com/svn/</connection>
+     <developerConnection>scm:svn:https://sensorml-data-processing.googlecode.com/svn/</developerConnection>
+     <tag>HEAD</tag>
   </scm>
   <issueManagement>
      <url>http://code.google.com/p/sensorml-data-processing/issues/list</url>
