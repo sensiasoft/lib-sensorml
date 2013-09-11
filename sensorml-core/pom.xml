@@ -4,21 +4,20 @@
     <groupId>org.vast.opengis</groupId>
     <artifactId>sensorml-all</artifactId>
     <version>1.0</version>
+    <relativePath>../sensorml-all/pom.xml</relativePath>
   </parent>
   <artifactId>sensorml-core</artifactId>
   <dependencies>
      <dependency>
         <groupId>org.vast.opengis</groupId>
         <artifactId>swe-common-core</artifactId>
+        <version>1.0</version>
+     </dependency>
+     <dependency>
+        <groupId>xerces</groupId>
+        <artifactId>xercesImpl</artifactId>
+        <version>2.11.0</version>
      </dependency>
   </dependencies>
-  <dependencyManagement>
-     <dependencies>
-        <dependency>
-           <groupId>org.vast.opengis</groupId>
-           <artifactId>swe-common-core</artifactId>
-           <version>1.0</version>
-        </dependency>
-     </dependencies>
-  </dependencyManagement>
+  <description>Core components of SensorML library</description>
 </project>

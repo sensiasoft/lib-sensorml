@@ -44,6 +44,8 @@ import java.util.*;
  */
 public class ProcessChain extends DataProcess
 {
+    private static final long serialVersionUID = 4281881780309623789L;
+    
     protected Hashtable<String, DataProcess> processTable;
     protected List<DataProcess> processList;
     protected List<DataProcess> processExecList;

@@ -21,9 +21,7 @@
 package org.vast.sensorML.system;
 
 import java.util.List;
-
-import org.vast.process.DataProcess;
-import org.vast.process.ProcessException;
+import org.vast.sensorML.SMLProcess;
 
 
 /**
@@ -40,8 +38,10 @@ import org.vast.process.ProcessException;
  * @date Feb 16, 2006
  * @version 1.0
  */
-public class SMLComponent extends DataProcess
+public class SMLComponent extends SMLProcess implements SMLPhysicalComponent
 {
+    private static final long serialVersionUID = 8477804187421221012L;
+    
     protected List<ReferenceFrame> referenceFrames;
     protected List<InterfaceDef> interfaces;
     protected Position position;
@@ -51,51 +51,61 @@ public class SMLComponent extends DataProcess
     {        
     }
     
-    
+
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.system.SMLPhysicalComponent#getInterfaces()
+     */
     @Override
-    public void execute() throws ProcessException
-    {
-
-    }
-
-
-    @Override
-    public void init() throws ProcessException
-    {
-
-    }
-
-
     public List<InterfaceDef> getInterfaces()
     {
         return interfaces;
     }
 
 
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.system.SMLPhysicalComponent#setInterfaces(java.util.List)
+     */
+    @Override
     public void setInterfaces(List<InterfaceDef> interfaces)
     {
         this.interfaces = interfaces;
     }
 
 
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.system.SMLPhysicalComponent#getReferenceFrames()
+     */
+    @Override
     public List<ReferenceFrame> getReferenceFrames()
     {
         return referenceFrames;
     }
 
 
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.system.SMLPhysicalComponent#setReferenceFrames(java.util.List)
+     */
+    @Override
     public void setReferenceFrames(List<ReferenceFrame> referenceFrames)
     {
         this.referenceFrames = referenceFrames;
     }
 
 
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.system.SMLPhysicalComponent#getPosition()
+     */
+    @Override
     public Position getPosition()
     {
         return position;
     }
 
 
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.system.SMLPhysicalComponent#setPosition(org.vast.sensorML.system.Position)
+     */
+    @Override
     public void setPosition(Position position)
     {
         this.position = position;
