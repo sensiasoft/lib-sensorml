@@ -25,17 +25,13 @@ import org.vast.sensorML.SMLProcess;
 
 
 /**
- * <p><b>Title:</b><br/>
- * Component
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * SensorML Component
  * </p>
  *
  * <p>Copyright (c) 2005</p>
  * @author Alexandre Robin
- * @date Feb 16, 2006
+ * @since Feb 16, 2006
  * @version 1.0
  */
 public class SMLComponent extends SMLProcess implements SMLPhysicalComponent

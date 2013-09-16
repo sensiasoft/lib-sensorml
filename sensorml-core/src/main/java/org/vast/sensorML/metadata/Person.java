@@ -23,17 +23,13 @@ package org.vast.sensorML.metadata;
 import org.vast.util.Contact;
 
 /**
- * <p><b>Title:</b><br/>
- * Person
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * SensorML Person
  * </p>
  *
  * <p>Copyright (c) 2005</p>
  * @author Alexandre Robin
- * @date Feb 16, 2006
+ * @since Feb 16, 2006
  * @version 1.0
  */
 public class Person extends Contact

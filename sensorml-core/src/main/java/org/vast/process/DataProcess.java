@@ -29,11 +29,7 @@ import java.util.*;
 
 
 /**
- * <p><b>Title:</b>
- * Data Process
- * </p>
- * 
- * <p><b>Description:</b><br/>
+ * <p>
  * Abstract Implementation of the atomic ProcessModel
  * DataProcess can be run in a separate thread by calling start
  * or synchronously by calling execute or run. The execute() and
@@ -42,7 +38,7 @@ import java.util.*;
  * 
  * <p>Copyright (c) 2005</p>
  * @author Alexandre Robin
- * @date Aug 19, 2005
+ * @since Aug 19, 2005
  * @version 1.0
  */
 public abstract class DataProcess implements Runnable, Serializable

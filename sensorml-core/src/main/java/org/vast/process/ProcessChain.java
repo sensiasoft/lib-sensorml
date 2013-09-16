@@ -27,11 +27,7 @@ import java.util.*;
 
 
 /**
- * <p><b>Title:</b>
- * Process Chain
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * A ProcessChain contains one ore more child processes
  * interconnected by DataConnections. The ProcessChain contains
  * logic for sorting the processes and running them as needed.
@@ -39,7 +35,7 @@ import java.util.*;
  *
  * <p>Copyright (c) 2005</p>
  * @author Alexandre Robin
- * @date Aug 19, 2005
+ * @since Aug 19, 2005
  * @version 1.0
  */
 public class ProcessChain extends DataProcess

@@ -32,24 +32,21 @@ import org.vast.sensorML.metadata.Metadata;
 
 
 /**
- * <p><b>Title:</b>
- * SMLProcessChain
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * SensorML Process Chain
  * </p>
  *
  * <p>Copyright (c) 2012</p>
  * @author Alexandre Robin
- * @date Sep 8, 2013
+ * @since Sep 8, 2013
  * @version 1.0
  */
-public class SMLProcessChain extends ProcessChain
+public class SMLProcessChain extends ProcessChain implements SMLFeature
 {
     private static final long serialVersionUID = -50470827505522315L;
     
     protected String uniqueID;
+    protected String description;
     protected Configuration configuration;
     protected List<Mode> modes;
     
@@ -63,6 +60,18 @@ public class SMLProcessChain extends ProcessChain
     public void setUniqueID(String uniqueID)
     {
         this.uniqueID = uniqueID;
+    }
+
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+
+    public void setDescription(String description)
+    {
+        this.description = description;
     }
 
 

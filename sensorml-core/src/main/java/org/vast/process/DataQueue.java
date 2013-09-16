@@ -26,11 +26,7 @@ import org.vast.cdm.common.DataBlock;
 
 
 /**
- * <p><b>Title:</b>
- * DataQueue
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * A data queue is used to send data between processes.
  * It is synchronized to support processes in different
  * threads, even on different computers (grid computing).

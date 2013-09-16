@@ -27,17 +27,13 @@ import java.util.List;
 
 
 /**
- * <p><b>Title:</b>
- * Configuration
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * Class holding the settings for a configured process or system/sensor
  * </p>
  *
  * <p>Copyright (c) 2012</p>
  * @author Alexandre Robin
- * @date Sep 7, 2013
+ * @since Sep 7, 2013
  * @version 1.0
  */
 public class Configuration

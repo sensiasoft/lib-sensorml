@@ -38,11 +38,7 @@ import org.vast.sweCommon.SweEncodingReaderV1;
 
 
 /**
- * <p><b>Title:</b><br/>
- * System Reader
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * Reader for System, Component, Detector, Actuator.
  * </p>
  *

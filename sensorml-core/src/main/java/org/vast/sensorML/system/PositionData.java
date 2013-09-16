@@ -24,17 +24,13 @@ import org.vast.cdm.common.DataComponent;
 
 
 /**
- * <p><b>Title:</b><br/>
- * Position Data
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * SensorML Position Data backed up by a data component
  * </p>
  *
  * <p>Copyright (c) 2005</p>
  * @author Alexandre Robin
- * @date Feb 17, 2006
+ * @since Feb 17, 2006
  * @version 1.0
  */
 public class PositionData extends Position

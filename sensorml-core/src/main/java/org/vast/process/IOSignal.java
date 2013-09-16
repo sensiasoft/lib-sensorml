@@ -23,11 +23,7 @@ package org.vast.process;
 import java.util.ArrayList;
 
 /**
- * <p><b>Title:</b>
- * IO Signal
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * Object representing an input, output or parameter signal
  * used by a process or process chain. Each signal can be linked
  * to one or more other process signals using one or more connections.
@@ -39,7 +35,7 @@ import java.util.ArrayList;
  *
  * <p>Copyright (c) 2005</p>
  * @author Alexandre Robin
- * @date Dec 4, 2006
+ * @since Dec 4, 2006
  * @version 1.0
  */
 public class IOSignal

@@ -23,11 +23,7 @@ package org.vast.process;
 
 
 /**
- * <p><b>Title:</b>
- * ArrayDemuxProcess
- * </p>
- * 
- * <p><b>Description:</b><br/>
+ * <p>
  * Process used to loop through an array and send each element separately.
  * </p>
  * 

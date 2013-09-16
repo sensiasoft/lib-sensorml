@@ -27,17 +27,13 @@ import org.vast.util.DateTime;
 
 
 /**
- * <p><b>Title:</b><br/>
- * History Event
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * SensorML History Event
  * </p>
  *
  * <p>Copyright (c) 2005</p>
  * @author Alexandre Robin
- * @date Feb 16, 2006
+ * @since Feb 16, 2006
  * @version 1.0
  */
 public class HistoryEvent

@@ -25,11 +25,7 @@ import org.vast.data.*;
 
 
 /**
- * <p><b>Title:</b><br/>
- * Data Product Block
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * TODO DataProduct type description
  * </p>
  *

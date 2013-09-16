@@ -24,17 +24,13 @@ import org.vast.xml.DOMHelperException;
 
 
 /**
- * <p><b>Title:</b>
- * SML Exception
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * SML Exception thrown by SensorML Readers and Writers
  * </p>
  *
  * <p>Copyright (c) 2005</p>
  * @author Alexandre Robin
- * @date Dec 21, 2006
+ * @since Dec 21, 2006
  * @version 1.0
  */
 public class SMLException extends DOMHelperException

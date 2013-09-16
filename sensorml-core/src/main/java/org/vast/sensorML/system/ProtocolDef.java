@@ -27,18 +27,14 @@ import org.vast.cdm.common.DataEncoding;
 
 
 /**
- * <p><b>Title:</b><br/>
- * Protocol Definition
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * SensorML Protocol Definition. 
  * Provides protocol name, definition uri and parameters.
  * </p>
  *
  * <p>Copyright (c) 2005</p>
  * @author Alexandre Robin
- * @date Feb 17, 2006
+ * @since Feb 17, 2006
  * @version 1.0
  */
 public class ProtocolDef

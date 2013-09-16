@@ -24,11 +24,7 @@ import java.util.ArrayList;
 
 
 /**
- * <p><b>Title:</b>
- * Connection List
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * Represents a list of external connections associated with
  * a given process input/output or parameter.
  * Derives from array list and adds a flag to specify that

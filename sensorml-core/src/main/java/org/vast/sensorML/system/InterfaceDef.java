@@ -21,11 +21,7 @@
 package org.vast.sensorML.system;
 
 /**
- * <p><b>Title:</b><br/>
- * Interface Definition
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * SensorML Communication Interface Definition
  * Defines a protocol for each layer of the OSI stack of communication
  * protocols, and adds a mechanical layer for describing the connector
@@ -34,7 +30,7 @@ package org.vast.sensorML.system;
  *
  * <p>Copyright (c) 2005</p>
  * @author Alexandre Robin
- * @date Feb 17, 2006
+ * @since Feb 17, 2006
  * @version 1.0
  */
 public class InterfaceDef

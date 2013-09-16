@@ -30,11 +30,7 @@ import java.util.Hashtable;
 
 
 /**
- * <p><b>Title:</b><br/>
- * Process Loader
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * This class loads the right process based on the method URI
  * provided in the SensorML description. If the URI is known locally,
  * the corresponding class is instantiated, otherwise it is resolved 
@@ -45,7 +41,7 @@ import java.util.Hashtable;
  *
  * <p>Copyright (c) 2005</p>
  * @author Alexandre Robin
- * @date Feb 15, 2006
+ * @since Feb 15, 2006
  * @version 1.0
  */
 public class ProcessLoader

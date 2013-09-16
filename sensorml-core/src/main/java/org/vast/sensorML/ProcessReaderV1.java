@@ -30,11 +30,7 @@ import org.vast.sweCommon.SWECommonUtils;
 
 
 /**
- * <p><b>Title:</b><br/>
- * Process Reader v1.0
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * Reader for Process, ProcessModel, ProcessChain, ProcessList
  * Uses Reflection to create particular ProcessModel for plug'n play capability
  * </p>

@@ -26,17 +26,13 @@ import org.vast.xml.*;
 
 
 /**
- * <p><b>Title:</b><br/>
- * SensorML Reader
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * Abstract SMLReader, base for all specific readers.
  * </p>
  *
  * <p>Copyright (c) 2005</p>
  * @author Alexandre Robin
- * @date Feb 16, 2006
+ * @since Feb 16, 2006
  * @version 1.0
  */
 public abstract class AbstractSMLReader

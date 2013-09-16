@@ -32,24 +32,21 @@ import org.vast.sensorML.metadata.Metadata;
 
 
 /**
- * <p><b>Title:</b>
- * SMLProcess
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * SensorML Process
  * </p>
  *
  * <p>Copyright (c) 2012</p>
  * @author Alexandre Robin
- * @date Sep 8, 2013
+ * @since Sep 8, 2013
  * @version 1.0
  */
-public class SMLProcess extends DataProcess
+public class SMLProcess extends DataProcess implements SMLFeature
 {
     private static final long serialVersionUID = -6253151260359858061L;
 
     protected String uniqueID;
+    protected String description;
     protected Configuration configuration;
     protected List<Mode> modes;
     
@@ -63,6 +60,18 @@ public class SMLProcess extends DataProcess
     public void setUniqueID(String uniqueID)
     {
         this.uniqueID = uniqueID;
+    }
+
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+
+    public void setDescription(String description)
+    {
+        this.description = description;
     }
 
 

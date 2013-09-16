@@ -27,17 +27,13 @@ import org.w3c.dom.Element;
 
 
 /**
- * <p><b>Title:</b>
- * Metadata Reader
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * Base interface for SensorML Metadata reader of all versions
  * </p>
  *
  * <p>Copyright (c) 2007</p>
  * @author Alexandre Robin
- * @date Apr 11, 2007
+ * @since Apr 11, 2007
  * @version 1.0
  */
 public interface MetadataReader

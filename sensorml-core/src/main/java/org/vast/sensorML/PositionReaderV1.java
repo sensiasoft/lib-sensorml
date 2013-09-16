@@ -37,11 +37,7 @@ import org.w3c.dom.Element;
 
 
 /**
- * <p><b>Title:</b><br/>
- * Position Reader
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * Reader for Position Data
  * </p>
  *

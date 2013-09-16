@@ -22,17 +22,13 @@ package org.vast.sensorML;
 
 
 /**
- * <p><b>Title:</b>
- * System Reader
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * Base interface for SensorML System reader of all versions
  * </p>
  *
  * <p>Copyright (c) 2007</p>
  * @author Alexandre Robin
- * @date Apr 11, 2007
+ * @since Apr 11, 2007
  * @version 1.0
  */
 public interface SystemReader extends ProcessReader

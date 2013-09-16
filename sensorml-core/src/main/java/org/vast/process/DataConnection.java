@@ -37,11 +37,7 @@ import org.vast.unit.UnitConverter;
 
 
 /**
- * <p><b>Title:</b>
- * Data Connection
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  *
  * </p>
  * 

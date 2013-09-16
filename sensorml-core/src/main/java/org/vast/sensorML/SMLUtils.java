@@ -31,11 +31,7 @@ import org.w3c.dom.Element;
 
 
 /**
- * <p><b>Title:</b>
- * SML Utils
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * Helper class providing a version agnostic access to SensorML
  * Process/System/Metadata readers and writers. This class delegates
  * to version specific readers/writers.
@@ -43,7 +39,7 @@ import org.w3c.dom.Element;
  *
  * <p>Copyright (c) 2007</p>
  * @author Alexandre Robin
- * @date Apr 10, 2007
+ * @since Apr 10, 2007
  * @version 1.0
  */
 public class SMLUtils

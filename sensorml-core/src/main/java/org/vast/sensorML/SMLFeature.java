@@ -20,7 +20,12 @@
 
 package org.vast.sensorML;
 
-public interface SMLObject
-{
 
+public interface SMLFeature
+{
+    public String getUniqueID();
+    
+    public String getName();
+    
+    public String getDescription();
 }

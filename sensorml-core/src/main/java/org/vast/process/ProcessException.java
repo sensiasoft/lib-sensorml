@@ -22,11 +22,7 @@ package org.vast.process;
 
 
 /**
- * <p><b>Title:</b>
- * ProcessException
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * TODO ProcessException type description
  * </p>
  *

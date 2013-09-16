@@ -27,17 +27,13 @@ import org.vast.sensorML.system.ProcessMethod;
 
 
 /**
- * <p><b>Title:</b><br/>
- * Process Method Reader
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * TODO ProcessMethodReader type description
  * </p>
  *
  * <p>Copyright (c) 2005</p>
  * @author Alexandre Robin
- * @date Feb 15, 2006
+ * @since Feb 15, 2006
  * @version 1.0
  */
 public class ProcessMethodReaderV0 extends AbstractSMLReader

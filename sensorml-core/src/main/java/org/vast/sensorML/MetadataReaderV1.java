@@ -35,11 +35,7 @@ import org.vast.util.*;
 
 
 /**
- * <p><b>Title:</b><br/>
- * Metadata Reader v1
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * Reader for Metadata group, including identifiers, classifiers,
  * constraints, contacts, documentation, characteristics and
  * capabilities for SensorML version 0.

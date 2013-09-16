@@ -21,17 +21,13 @@
 package org.vast.sensorML.metadata;
 
 /**
- * <p><b>Title:</b><br/>
- * Security Constraint
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * SensorML Security Constraint
  * </p>
  *
  * <p>Copyright (c) 2005</p>
  * @author Alexandre Robin
- * @date Feb 16, 2006
+ * @since Feb 16, 2006
  * @version 1.0
  */
 public abstract class SecurityConstraint

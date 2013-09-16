@@ -24,17 +24,13 @@ import org.vast.cdm.common.DataComponent;
 
 
 /**
- * <p><b>Title:</b>
- * IO Selector Implementation
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * TODO DataSelector type description
  * </p>
  *
  * <p>Copyright (c) 2005</p>
  * @author Alexandre Robin
- * @date Sep 27, 2005
+ * @since Sep 27, 2005
  * @version 1.0
  */
 public class IOSelector

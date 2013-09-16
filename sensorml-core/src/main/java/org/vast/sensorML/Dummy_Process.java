@@ -24,18 +24,14 @@ import org.vast.process.*;
 
 
 /**
- * <p><b>Title:</b><br/>
- * Dummy_Process
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * This process does nothing. It is used when real execution
  * abilities are not desired.
  * </p>
  *
  * <p>Copyright (c) 2006</p>
  * @author Alexandre Robin
- * @date Jan 20, 2006
+ * @since Jan 20, 2006
  * @version 1.0
  */
 public class Dummy_Process extends DataProcess

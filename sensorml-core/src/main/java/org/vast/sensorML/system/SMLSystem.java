@@ -27,17 +27,13 @@ import org.vast.sensorML.SMLProcessChain;
 
 
 /**
- * <p><b>Title:</b><br/>
- * System
- * </p>
- *
- * <p><b>Description:</b><br/>
+ * <p>
  * SensorML System
  * </p>
  *
  * <p>Copyright (c) 2005</p>
  * @author Alexandre Robin
- * @date Feb 16, 2006
+ * @since Feb 16, 2006
  * @version 1.0
  */
 public class SMLSystem extends SMLProcessChain implements SMLPhysicalComponent
