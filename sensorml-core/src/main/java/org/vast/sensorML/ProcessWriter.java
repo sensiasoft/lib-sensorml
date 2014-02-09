@@ -20,7 +20,7 @@
 
 package org.vast.sensorML;
 
-import org.vast.process.DataProcess;
+import org.vast.process.IProcess;
 import org.vast.xml.DOMHelper;
 import org.vast.xml.XMLWriterException;
 import org.w3c.dom.Element;
@@ -45,5 +45,5 @@ public interface ProcessWriter
      * @return
      * @throws SMLException
      */
-    public Element writeProcess(DOMHelper dom, DataProcess process) throws XMLWriterException;
+    public Element writeProcess(DOMHelper dom, IProcess process) throws XMLWriterException;
 }

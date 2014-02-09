@@ -21,8 +21,10 @@
 package org.vast.sensorML;
 
 import org.vast.ogc.OGCRegistry;
-import org.vast.process.DataProcess;
+import org.vast.process.IProcess;
 import org.vast.sensorML.metadata.Metadata;
+import org.vast.sensorML.metadata.MetadataReader;
+import org.vast.sensorML.metadata.MetadataWriter;
 import org.vast.sensorML.system.SMLSystem;
 import org.vast.xml.DOMHelper;
 import org.vast.xml.XMLReaderException;
@@ -44,9 +46,8 @@ import org.w3c.dom.Element;
  */
 public class SMLUtils
 {
-	public final static String SML = "SML";
-	public final static String IC = "IC";
-	public final static String SENSORML = "SensorML";
+	public final static String IC;
+	public final static String SENSORML;
     public final static String PROCESS = "Process";
     public final static String SYSTEM = "System";
     public final static String METADATA = "Metadata";
@@ -66,7 +67,9 @@ public class SMLUtils
     
     static
     {
-    	loadRegistry();
+        IC = "IC";
+        SENSORML = "SensorML";
+        loadRegistry();
     }
     
     
@@ -77,7 +80,7 @@ public class SMLUtils
     }
     
     
-    public DataProcess readProcess(DOMHelper dom, Element processElement) throws XMLReaderException
+    public IProcess readProcess(DOMHelper dom, Element processElement) throws XMLReaderException
     {
         ProcessReader reader = getProcessReader(dom, processElement);
         return reader.read(dom, processElement);
@@ -98,7 +101,7 @@ public class SMLUtils
     }
     
     
-    public Element writeProcess(DOMHelper dom, DataProcess process) throws XMLWriterException
+    public Element writeProcess(DOMHelper dom, IProcess process) throws XMLWriterException
     {
         ProcessWriter writer = getProcessWriter();
         return writer.writeProcess(dom, process);

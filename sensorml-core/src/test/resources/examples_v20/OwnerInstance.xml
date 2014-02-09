@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:PhysicalComponent gml:id="WEATHER_STATION" 
+xmlns:sml="http://www.opengis.net/sensorML/2.0" 
+xmlns:swe="http://www.opengis.net/swe/2.0" 
+xmlns:gml="http://www.opengis.net/gml/3.2" 
+xmlns:gmd="http://www.isotc211.org/2005/gmd" 
+xmlns:gco="http://www.isotc211.org/2005/gco" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns:xlink="http://www.w3.org/1999/xlink"
+xsi:schemaLocation="http://www.opengis.net/sensorML/2.0 http://schemas.opengis.net/sensorML/2.0/sensorML.xsd">
+   <!-- ================================================= -->
+   <!--                  System Description               -->
+   <!-- ================================================= -->
+   <gml:description>Weather station FR-93995 on RADOME network</gml:description>
+   <!-- ================================================= -->
+   <!--                  System Identifiers               -->
+   <!-- ================================================= -->
+   <gml:identifier codeSpace="uid">urn:meteofrance:stations:FR93995</gml:identifier>
+   <sml:identification>
+      <sml:IdentifierList>
+         <sml:identifier>
+            <sml:Term definition="http://sensorml.com/def/property/ShortName">
+               <sml:label>Short Name</sml:label>
+               <sml:value>Station FR-93995</sml:value>
+            </sml:Term>
+         </sml:identifier>
+         <sml:identifier>
+            <sml:Term definition="http://sensorml.com/ont/swe/property/SerialNumber">
+               <sml:label>Serial Number</sml:label>
+               <sml:value>FT5743456566-997</sml:value>
+            </sml:Term>
+         </sml:identifier>
+         <sml:identifier>
+            <sml:Term definition="http://onto.meteo.fr/def/parameters/StationNumber">
+               <sml:label>Station Number</sml:label>
+               <sml:value>FR93995</sml:value>
+            </sml:Term>
+         </sml:identifier>
+      </sml:IdentifierList>
+   </sml:identification>
+   <!-- ================================================= -->
+   <!--                  System Classifiers               -->
+   <!-- ================================================= -->
+   <sml:classification>
+      <sml:ClassifierList>
+         <sml:classifier>
+            <sml:Term definition="http://sensorml.com/ont/swe/property/SensorType">
+               <sml:label>Sensor Type</sml:label>
+               <sml:value>Weather Station</sml:value>
+            </sml:Term>
+         </sml:classifier>
+         <sml:classifier>
+            <sml:Term definition="http://onto.meteo.fr/def/property/NetworkType">
+               <sml:label>Network</sml:label>
+               <sml:codeSpace xlink:href="http://onto.meteo.fr/def/codespaces/Networks"/>
+               <sml:value>RADOME</sml:value>
+            </sml:Term>
+         </sml:classifier>
+      </sml:ClassifierList>
+   </sml:classification>
+   <!-- ================================================= -->
+   <!--       Temporal Validity of this description       -->
+   <!-- ================================================= -->
+   <sml:validTime>
+      <gml:TimePeriod gml:id="VALIDITY_PERIOD">
+         <gml:beginPosition>2002-03-01T00:00:00Z</gml:beginPosition>
+         <gml:endPosition indeterminatePosition="now"/>
+      </gml:TimePeriod>
+   </sml:validTime>
+   <!-- ================================================= -->
+   <!--                  Relevant Contacts                -->
+   <!-- ================================================= -->
+   <sml:contacts>
+      <sml:ContactList>
+        <sml:contact xlink:role="http://sensorml.com/def/role/Operator">
+            <gmd:CI_ResponsibleParty>
+               <gmd:organisationName>
+                  <gco:CharacterString>METEO France</gco:CharacterString>
+               </gmd:organisationName>
+               <gmd:contactInfo>
+                  <gmd:CI_Contact>
+                     <gmd:phone>
+                        <gmd:CI_Telephone>
+                           <gmd:voice>
+                              <gco:CharacterString>+33 5 99 11 22 33 44</gco:CharacterString>
+                           </gmd:voice>
+                        </gmd:CI_Telephone>
+                     </gmd:phone>
+                     <gmd:address>
+                        <gmd:CI_Address>
+                           <gmd:deliveryPoint>
+                              <gco:CharacterString>42 Avenue Gaspard Coriolis</gco:CharacterString>
+                           </gmd:deliveryPoint>
+                           <gmd:city>
+                              <gco:CharacterString>TOULOUSE</gco:CharacterString>
+                           </gmd:city>
+                           <gmd:postalCode>
+                              <gco:CharacterString>31100</gco:CharacterString>
+                           </gmd:postalCode>
+                           <gmd:country>
+                              <gco:CharacterString>FRANCE</gco:CharacterString>
+                           </gmd:country>
+                        </gmd:CI_Address>
+                     </gmd:address>
+                  </gmd:CI_Contact>
+               </gmd:contactInfo>
+               <gmd:role gco:nilReason="inapplicable"/>
+            </gmd:CI_ResponsibleParty>
+         </sml:contact>
+      </sml:ContactList>
+   </sml:contacts>
+   <!-- Point to out-of-band station history -->
+   <!-- History can contain ConfigurationSettings element with a validity period in configuration events,
+   positioning event when location/position was changed, etc. -->
+   <sml:history xlink:href="SensorHistory.xml"/>
+   <!-- ================================================= -->
+   <!--                System Configuration               -->
+   <!-- ================================================= -->
+   <sml:typeOf xlink:title="urn:davis:stations:ProVantage2v4" xlink:href="http://www.sensors.ws/examples/sensorML-2.0/xml/ManufacturerDescription.xml"/>
+   <sml:configuration>
+      <sml:Settings>
+         <sml:setValue ref="base/components/raingauge/parameters/Averaging_Period">60.0</sml:setValue>
+         <sml:setConstraint ref="base/components/raingauge/parameters/Sampling_Period">
+            <swe:AllowedValues>
+               <swe:interval>30.0 60.0</swe:interval>
+            </swe:AllowedValues>            
+         </sml:setConstraint>
+         <sml:setStatus ref="base/components/raingauge">enabled</sml:setStatus>
+      </sml:Settings>
+   </sml:configuration>
+</sml:PhysicalComponent>

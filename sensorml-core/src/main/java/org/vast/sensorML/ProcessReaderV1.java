@@ -26,6 +26,7 @@ import org.vast.cdm.common.DataComponent;
 import org.vast.xml.DOMHelper;
 import org.vast.xml.XMLReaderException;
 import org.vast.sensorML.metadata.Metadata;
+import org.vast.sensorML.metadata.MetadataReaderV1;
 import org.vast.sweCommon.SWECommonUtils;
 
 
@@ -66,25 +67,25 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
      * @return
      * @throws SMLException
      */
-    public DataProcess read(DOMHelper dom, Element processElement) throws XMLReaderException
+    public SMLProcess read(DOMHelper dom, Element processElement) throws XMLReaderException
     {
-        DataProcess dataProcess;
+        SMLProcess smlProcess;
 
         // read process core info (model or chain)
         if (processElement.getLocalName().equals("DataSource"))
-            dataProcess = readDataSource(dom, processElement);
+            smlProcess = readDataSource(dom, processElement);
         if (dom.existElement(processElement, "components"))
-            dataProcess = readProcessChain(dom, processElement);
+            smlProcess = readProcessChain(dom, processElement);
         else
-            dataProcess = readProcessModel(dom, processElement);
+            smlProcess = readProcessModel(dom, processElement);
 
         // get name from parent property or element
         if (processElement.getParentNode().getNodeType() == Node.ELEMENT_NODE)
-            dataProcess.setName(dom.getAttributeValue((Element)processElement.getParentNode(), "@name"));
+            smlProcess.setName(dom.getAttributeValue((Element)processElement.getParentNode(), "@name"));
         else
-            dataProcess.setName(processElement.getLocalName());
+            smlProcess.setName(processElement.getLocalName());
             
-        return dataProcess;
+        return smlProcess;
     }
     
     
@@ -93,7 +94,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
      * @param processElement
      * @param process
      */
-    protected void parseMetadata(DOMHelper dom, Element processElement, DataProcess dataProcess) throws XMLReaderException
+    protected void parseMetadata(DOMHelper dom, Element processElement, SMLProcess dataProcess) throws XMLReaderException
     {
         // read metadata if needed
         if (readMetadata)
@@ -102,7 +103,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
                 metadataReader = new MetadataReaderV1();
             
             Metadata metadata = metadataReader.readMetadata(dom, processElement);
-            dataProcess.setProperty(DataProcess.METADATA, metadata);
+            dataProcess.setMetadata(metadata);
         }
     }
     
@@ -113,19 +114,19 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
      * @return
      * @throws SMLException
      */
-    protected DataProcess readProcessModel(DOMHelper dom, Element processModelElement) throws XMLReaderException
+    protected SMLProcess readProcessModel(DOMHelper dom, Element processModelElement) throws XMLReaderException
     {
         // get process urn
         String uri = dom.getAttributeValue(processModelElement, "method/href");
         
         // load process
-        DataProcess newProcess;
+        SMLProcess newProcess;
         try
         {
             if (createExecutableProcess)
-                newProcess = processLoader.loadProcess(uri);
+                newProcess = new SMLProcess(processLoader.loadProcess(uri));
             else
-                newProcess = new Dummy_Process();
+                newProcess = new SMLProcess();            
         }
         catch (Exception e)
         {
@@ -151,10 +152,10 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
      * @return
      * @throws SMLException
      */
-    protected DataProcess readDataSource(DOMHelper dom, Element dataSourceElement) throws XMLReaderException
+    protected SMLProcess readDataSource(DOMHelper dom, Element dataSourceElement) throws XMLReaderException
     {
         // TODO parse DataSource structure
-        DataProcess newProcess = new Dummy_Process();
+        SMLProcess newProcess = new SMLProcess();
         
         // read metadata
         parseMetadata(dom, dataSourceElement, newProcess);
@@ -183,7 +184,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
      * @throws SMLException
      * @return ProcessChain
      */
-    protected ProcessChain readProcessChain(DOMHelper dom, Element processChainElement) throws XMLReaderException
+    protected SMLProcessChain readProcessChain(DOMHelper dom, Element processChainElement) throws XMLReaderException
     {
         return readProcessChain(dom, processChainElement, null);
     }
@@ -196,7 +197,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
      * @return ProcessChain
      * @throws SMLException
      */
-    protected ProcessChain readProcessChain(DOMHelper dom, Element processChainElement, ProcessChain processChain) throws XMLReaderException
+    protected SMLProcessChain readProcessChain(DOMHelper dom, Element processChainElement, SMLProcessChain processChain) throws XMLReaderException
     {
         NodeList processList, connectionList;
         
@@ -206,7 +207,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
         
         // construct the process chain if it was not given
         if (processChain == null)
-            processChain = new ProcessChain(memberCount);
+            processChain = new SMLProcessChain(memberCount);
         
         // read output/output/parameter structures
         readProcessIO(dom, processChainElement, processChain);
@@ -217,7 +218,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
             Element processElement = (Element)processList.item(i);
             if (processElement != null)
             {
-                DataProcess childProcess = read(dom, processElement);
+                SMLProcess childProcess = read(dom, processElement);
                 processChain.addProcess(childProcess.getName(), childProcess);
             }
         }
@@ -285,10 +286,10 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
      * @param linkString
      * @throws SMLException
      */
-    public void connectSignal(ProcessChain processChain, DataQueue dataQueue, String linkString) throws XMLReaderException
+    public void connectSignal(IProcessChain processChain, DataQueue dataQueue, String linkString) throws XMLReaderException
     {
         boolean internalConnection = false;
-        DataProcess selectedProcess;        
+        IProcess selectedProcess;        
         
         // parse link path
         int sep1 = linkString.indexOf(dataSeparator, 1);
@@ -383,7 +384,7 @@ public class ProcessReaderV1 extends AbstractSMLReader implements ProcessReader
      * @param process
      * @throws SMLException
      */
-    public void readProcessIO(DOMHelper dom, Element processElement, DataProcess process) throws XMLReaderException
+    public void readProcessIO(DOMHelper dom, Element processElement, IProcess process) throws XMLReaderException
     {
         try
 		{

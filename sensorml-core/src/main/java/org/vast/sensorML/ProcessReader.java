@@ -20,9 +20,6 @@
 
 package org.vast.sensorML;
 
-import org.vast.process.DataProcess;
-import org.vast.xml.IXMLReaderDOM;
-
 
 /**
  * <p>
@@ -34,7 +31,7 @@ import org.vast.xml.IXMLReaderDOM;
  * @since Apr 11, 2007
  * @version 1.0
  */
-public interface ProcessReader extends SMLReader, IXMLReaderDOM<DataProcess>
+public interface ProcessReader extends SMLReader
 {      
     
 }

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:PhysicalComponent gml:id="MY_SENSOR" 
+   xmlns:sml="http://www.opengis.net/sensorML/2.0" 
+   xmlns:swe="http://www.opengis.net/swe/2.0" 
+   xmlns:gml="http://www.opengis.net/gml/3.2" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xsi:schemaLocation="http://www.opengis.net/sensorML/2.0 http://schemas.opengis.net/sensorML/2.0/sensorML.xsd">
+   <!-- ================================================= -->
+   <!--                  System Description               -->
+   <!-- ================================================= -->
+   <gml:description>Thermometer on the window of the Cass Building, Room 315</gml:description>
+   <gml:identifier codeSpace="uid">urn:icd:stations:FR8766</gml:identifier>
+   <!-- ================================================= -->
+   <!--                  System Identifiers               -->
+   <!-- ================================================= -->
+   <sml:identification>
+      <sml:IdentifierList>
+         <sml:identifier>
+            <sml:Term definition="http://sensorml.com/ont/swe/property/ShortName">
+               <sml:label>Short Name</sml:label>
+               <sml:value>Thermometer FR8766</sml:value>
+            </sml:Term>
+         </sml:identifier>
+         <sml:identifier>
+            <sml:Term definition="http://sensorml.com/ont/swe/property/Manufacturer">
+               <sml:label>Manufacturer Name</sml:label>
+               <sml:value>ACME Inc</sml:value>
+            </sml:Term>
+         </sml:identifier>
+         <sml:identifier>
+            <sml:Term definition="http://sensorml.com/ont/swe/property/ModelNumber">
+               <sml:label>Manufacturer Model</sml:label>
+               <sml:value>T911</sml:value>
+            </sml:Term>
+         </sml:identifier>
+         <sml:identifier>
+            <sml:Term definition="http://sensorml.com/ont/swe/property/SerialNumber">
+               <sml:label>Serial Number</sml:label>
+               <sml:value>FT5743456566-997</sml:value>
+            </sml:Term>
+         </sml:identifier>
+      </sml:IdentifierList>
+   </sml:identification>
+   <!-- ================================================= -->
+   <!--                  System Classifiers               -->
+   <!-- ================================================= -->
+   <sml:classification>
+      <sml:ClassifierList>
+         <sml:classifier>
+            <sml:Term definition="http://sensorml.com/ont/swe/property/IntendedApplication">
+               <sml:label>Intended Application</sml:label>
+               <sml:value>Atmospheric Temperature</sml:value>
+            </sml:Term>
+         </sml:classifier>
+      </sml:ClassifierList>
+   </sml:classification>
+   <!-- ================================================= -->
+   <!--             Observed Property = Output            -->
+   <!-- ================================================= -->
+   <sml:outputs>
+      <sml:OutputList>
+         <sml:output name="temp">
+            <swe:Quantity definition="http://sweet.jpl.nasa.gov/2.2/quanTemperature.owl#Temperature">
+               <swe:uom code="Cel"/>
+            </swe:Quantity>
+         </sml:output>
+      </sml:OutputList>
+   </sml:outputs>
+   <!-- ================================================= -->
+   <!--                  Station Location                 -->
+   <!-- ================================================= -->
+   <sml:position>
+      <gml:Point gml:id="stationLocation" srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+         <gml:coordinates>47.8 88.56</gml:coordinates>
+      </gml:Point>
+   </sml:position>
+</sml:PhysicalComponent>

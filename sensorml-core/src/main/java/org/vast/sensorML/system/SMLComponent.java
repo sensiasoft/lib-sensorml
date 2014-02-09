@@ -11,16 +11,19 @@
  
  The Original Code is the "SensorML DataProcessing Engine".
  
- The Initial Developer of the Original Code is the VAST team at the University of Alabama in Huntsville (UAH). <http://vast.uah.edu> Portions created by the Initial Developer are Copyright (C) 2007 the Initial Developer. All Rights Reserved. Please Contact Mike Botts <mike.botts@uah.edu> for more information.
+ The Initial Developer of the Original Code is the VAST team at the University of Alabama in Huntsville (UAH). <http://vast.uah.edu> Portions created by the Initial Developer are Copyright (C) 2007 the Initial Developer. All Rights Reserved. Please Contact Alexandre Robin <alex.robin@sensiasoftware.com> for more
+ information.
  
  Contributor(s): 
- Alexandre Robin <robin@nsstc.uah.edu>
+    Alexandre Robin <alex.robin@sensiasoftware.com>
  
  ******************************* END LICENSE BLOCK ***************************/
 
 package org.vast.sensorML.system;
 
 import java.util.List;
+import javax.xml.namespace.QName;
+import org.vast.process.IProcess;
 import org.vast.sensorML.SMLProcess;
 
 
@@ -45,6 +48,13 @@ public class SMLComponent extends SMLProcess implements SMLPhysicalComponent
 
     public SMLComponent()
     {        
+    }
+    
+    
+    public SMLComponent(IProcess processImpl)
+    {
+        super(processImpl);
+        this.qname = new QName("Component");
     }
     
 

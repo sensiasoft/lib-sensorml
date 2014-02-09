@@ -20,12 +20,36 @@
 
 package org.vast.sensorML;
 
+import org.vast.process.*;
 
-public interface SMLFeature
+
+/**
+ * <p>
+ * This process does nothing. It is used when real execution
+ * abilities are not desired.
+ * </p>
+ *
+ * <p>Copyright (c) 2006</p>
+ * @author Alexandre Robin
+ * @since Jan 20, 2006
+ * @version 1.0
+ */
+public class DummyProcess extends DataProcess
 {
-    public String getUniqueID();
-    
-    public String getName();
-    
-    public String getDescription();
+
+    public DummyProcess()
+    {
+    }
+
+
+    public void init()
+    {
+
+    }
+
+
+    public void execute()
+    {
+
+    }
 }

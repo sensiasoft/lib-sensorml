@@ -41,18 +41,15 @@ import java.util.*;
  * @since Aug 19, 2005
  * @version 1.0
  */
-public abstract class DataProcess implements Runnable, Serializable
+public abstract class DataProcess implements Runnable, Serializable, IProcess
 {
     private static final long serialVersionUID = 6357229698218310392L;
     
-    public static final String METADATA = "METADATA";
     protected static final String ioError = "Invalid I/O Structure";
     protected static final String initError = "Error while initializing process ";
     protected static final String execError = "Error while executing process ";
     
     protected String name;
-    protected String type;
-    protected HashMap<String, Object> properties = null;
     
     // internal process thread
     protected transient Thread processThread = null;
@@ -85,49 +82,43 @@ public abstract class DataProcess implements Runnable, Serializable
     }
     
     
-    /**
-     * Initialize the process and its internal variables (fixed parameters)
-     * This is called only once before the process is executed.
-     * @throws ProcessException
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcess#init()
      */
+    @Override
     public abstract void init() throws ProcessException;
     
     
-    /**
-     * Resets the process (especially asnchronous ones) before it can be run again
-     * Should initialize all process state variables
-     * @throws ProcessException
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcess#reset()
      */
+    @Override
     public void reset() throws ProcessException
     {
         // DO NOTHING BY DEFAULT
     }
     
     
-    /**
-     * Execute is typically called several times on a process and should
-     * contain all the logic to transform input/parameter values to 
-     * output values. This method should be optimized as much as possible.
-     * @throws ProcessException
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcess#execute()
      */
+    @Override
     public abstract void execute() throws ProcessException;
       
     
-    /**
-     * Override to dispose of all resources allocated
-     * for the process (stop threads, OS resources, etc...)
-     * Default method does nothing.
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcess#dispose()
      */
+    @Override
     public void dispose()
     {        
     }
     
     
-    /**
-     * Check that all needed connections are ready for the process
-     * to run in sync mode (not threaded).
-     * @return true if so and false if at least one connection is not ready.
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcess#canRun()
      */
+    @Override
     public boolean canRun()
     {
         if (!checkAvailability(inputConnections, true))
@@ -200,7 +191,8 @@ public abstract class DataProcess implements Runnable, Serializable
      * @param allConnections (inputs, outputs or parameters)
      * @param flagState
      */
-    protected void setAvailability(List<ConnectionList> allConnections, boolean availability)
+    @Override
+    public void setAvailability(List<ConnectionList> allConnections, boolean availability)
     {
         // loop through all connection lists
         for (int i=0; i<allConnections.size(); i++)
@@ -295,7 +287,7 @@ public abstract class DataProcess implements Runnable, Serializable
     /**
      * Transfers input data in sync mode (not threaded)
      */
-    protected void transferData(List<ConnectionList> allConnections)
+    public void transferData(List<ConnectionList> allConnections)
     {
         // loop through all inputs
         for (int i=0; i<allConnections.size(); i++)
@@ -315,9 +307,10 @@ public abstract class DataProcess implements Runnable, Serializable
     }    
    
     
-    /**
-     * Creates new DataBlock for each output signal
-     **/
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcess#createNewOutputBlocks()
+     */
+    @Override
     public void createNewOutputBlocks()
     {
     	int outputCount = this.outputData.getComponentCount();
@@ -328,9 +321,10 @@ public abstract class DataProcess implements Runnable, Serializable
     }
     
     
-    /**
-     * Creates new DataBlock for each input signal
-     **/
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcess#createNewInputBlocks()
+     */
+    @Override
     public void createNewInputBlocks()
     {
         int inputCount = this.inputData.getComponentCount();
@@ -341,9 +335,10 @@ public abstract class DataProcess implements Runnable, Serializable
     }
     
     
-    /**
-     * Process thread run method
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcess#run()
      */
+    @Override
     public void run()
     {
         do
@@ -369,10 +364,10 @@ public abstract class DataProcess implements Runnable, Serializable
     }
 
 
-    /**
-     * Start process thread
-     * @throws ProcessException
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcess#start()
      */
+    @Override
     public synchronized void start() throws ProcessException
     {
         if (!started)
@@ -391,9 +386,10 @@ public abstract class DataProcess implements Runnable, Serializable
     }
 
 
-    /**
-     * Stop process thread gracefully
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcess#stop()
      */
+    @Override
     public synchronized void stop()
     {
     	if (started)
@@ -454,7 +450,11 @@ public abstract class DataProcess implements Runnable, Serializable
     //////////////////////////////////////
     // Get/Set methods for input/output //
     //////////////////////////////////////
-	public String getName()
+	/* (non-Javadoc)
+     * @see org.vast.process.IProcess#getName()
+     */
+	@Override
+    public String getName()
 	{
 		if (this.name == null)
             return this.getClass().getSimpleName();
@@ -462,49 +462,54 @@ public abstract class DataProcess implements Runnable, Serializable
             return name;
 	}
 	
-	public void setName(String name)
+	/* (non-Javadoc)
+     * @see org.vast.process.IProcess#setName(java.lang.String)
+     */
+	@Override
+    public void setName(String name)
 	{
 		this.name = name;
 	}
-    
-    
-    public String getType()
-    {
-        if (this.type == null)
-            return this.getClass().getName();
-        else
-            return type;
-    }
 
 
-    public void setType(String type)
-    {
-        this.type = type;
-    }
-
-
-	public void addInput(String name, DataComponent inputStructure)
+	/* (non-Javadoc)
+     * @see org.vast.process.IProcess#addInput(java.lang.String, org.vast.cdm.common.DataComponent)
+     */
+	@Override
+    public void addInput(String name, DataComponent inputStructure)
 	{
 		this.inputData.addComponent(name, inputStructure);
         this.inputConnections.add(new ConnectionList());		
 	}
 
 
-	public void addOutput(String name, DataComponent outputStructure)
+	/* (non-Javadoc)
+     * @see org.vast.process.IProcess#addOutput(java.lang.String, org.vast.cdm.common.DataComponent)
+     */
+	@Override
+    public void addOutput(String name, DataComponent outputStructure)
 	{
 		this.outputData.addComponent(name, outputStructure);
         this.outputConnections.add(new ConnectionList());		
 	}
 
 
-	public void addParameter(String name, DataComponent paramStructure)
+	/* (non-Javadoc)
+     * @see org.vast.process.IProcess#addParameter(java.lang.String, org.vast.cdm.common.DataComponent)
+     */
+	@Override
+    public void addParameter(String name, DataComponent paramStructure)
 	{
 		this.paramData.addComponent(name, paramStructure);
         this.paramConnections.add(new ConnectionList());		
 	}
 
 
-	public void connectInput(String dataPath, DataConnection connection) throws ProcessException
+	/* (non-Javadoc)
+     * @see org.vast.process.IProcess#connectInput(java.lang.String, org.vast.process.DataConnection)
+     */
+	@Override
+    public void connectInput(String dataPath, DataConnection connection) throws ProcessException
 	{
 		IOSelector selector = new IOSelector(inputData, dataPath);
 		connection.setDestinationComponent(selector.component);
@@ -514,7 +519,11 @@ public abstract class DataProcess implements Runnable, Serializable
 	}
 
 
-	public void connectOutput(String dataPath, DataConnection connection) throws ProcessException
+	/* (non-Javadoc)
+     * @see org.vast.process.IProcess#connectOutput(java.lang.String, org.vast.process.DataConnection)
+     */
+	@Override
+    public void connectOutput(String dataPath, DataConnection connection) throws ProcessException
 	{
 		IOSelector selector = new IOSelector(outputData, dataPath);
 		connection.setSourceComponent(selector.component);
@@ -524,7 +533,11 @@ public abstract class DataProcess implements Runnable, Serializable
 	}
 
 
-	public void connectParameter(String dataPath, DataConnection connection) throws ProcessException
+	/* (non-Javadoc)
+     * @see org.vast.process.IProcess#connectParameter(java.lang.String, org.vast.process.DataConnection)
+     */
+	@Override
+    public void connectParameter(String dataPath, DataConnection connection) throws ProcessException
 	{
 		IOSelector selector = new IOSelector(paramData, dataPath);
 		connection.setDestinationComponent(selector.component);
@@ -534,6 +547,10 @@ public abstract class DataProcess implements Runnable, Serializable
 	}
     
     
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcess#isInputConnected(java.lang.String)
+     */
+    @Override
     public boolean isInputConnected(String inputName)
     {
         int inputIndex = inputData.getComponentIndex(inputName);
@@ -543,6 +560,10 @@ public abstract class DataProcess implements Runnable, Serializable
     }
 
 
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcess#isOutputConnected(java.lang.String)
+     */
+    @Override
     public boolean isOutputConnected(String outputName)
     {
         int outputIndex = inputData.getComponentIndex(outputName);
@@ -552,6 +573,10 @@ public abstract class DataProcess implements Runnable, Serializable
     }
 
 
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcess#isParamConnected(java.lang.String)
+     */
+    @Override
     public boolean isParamConnected(String paramName)
     {
         int paramIndex = inputData.getComponentIndex(paramName);
@@ -561,72 +586,90 @@ public abstract class DataProcess implements Runnable, Serializable
     }
 
 
-	public List<ConnectionList> getInputConnections()
+	/* (non-Javadoc)
+     * @see org.vast.process.IProcess#getInputConnections()
+     */
+	@Override
+    public List<ConnectionList> getInputConnections()
 	{
 		return this.inputConnections;
 	}
 	
 	
-	public List<ConnectionList> getOutputConnections()
+	/* (non-Javadoc)
+     * @see org.vast.process.IProcess#getOutputConnections()
+     */
+	@Override
+    public List<ConnectionList> getOutputConnections()
 	{
 		return this.outputConnections;
 	}
 	
 	
-	public List<ConnectionList> getParamConnections()
+	/* (non-Javadoc)
+     * @see org.vast.process.IProcess#getParamConnections()
+     */
+	@Override
+    public List<ConnectionList> getParamConnections()
 	{
 		return this.paramConnections;
 	}
 
 
-	public DataComponent getInputList()
+	/* (non-Javadoc)
+     * @see org.vast.process.IProcess#getInputList()
+     */
+	@Override
+    public DataComponent getInputList()
 	{
 		return inputData;
 	}
 
 
-	public DataComponent getOutputList()
+	/* (non-Javadoc)
+     * @see org.vast.process.IProcess#getOutputList()
+     */
+	@Override
+    public DataComponent getOutputList()
 	{
 		return outputData;
 	}
 	
 	
-	public DataComponent getParameterList()
+	/* (non-Javadoc)
+     * @see org.vast.process.IProcess#getParameterList()
+     */
+	@Override
+    public DataComponent getParameterList()
 	{
 		return paramData;
 	}
 
 
-    public Object getProperty(String propName)
-    {
-        if (properties == null)
-            return null;
-        else
-            return properties.get(propName);
-    }
-
-
-    public void setProperty(String propName, Object propValue)
-    {
-        if (properties == null)
-            properties = new HashMap<String, Object>(1, 1.0f);
-        
-        properties.put(propName, propValue);
-    }
-
-
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcess#isUsingQueueBuffers()
+     */
+    @Override
     public boolean isUsingQueueBuffers()
     {
         return usingQueueBuffers;
     }
 
 
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcess#setUsingQueueBuffers(boolean)
+     */
+    @Override
     public void setUsingQueueBuffers(boolean usingQueueBuffers)
     {
         this.usingQueueBuffers = usingQueueBuffers;
     }
 
 
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcess#needSync()
+     */
+    @Override
     public boolean needSync()
     {
         return needSync;

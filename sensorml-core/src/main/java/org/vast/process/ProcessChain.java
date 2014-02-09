@@ -38,13 +38,13 @@ import java.util.*;
  * @since Aug 19, 2005
  * @version 1.0
  */
-public class ProcessChain extends DataProcess
+public class ProcessChain extends DataProcess implements IProcessChain
 {
     private static final long serialVersionUID = 4281881780309623789L;
     
-    protected Hashtable<String, DataProcess> processTable;
-    protected List<DataProcess> processList;
-    protected List<DataProcess> processExecList;
+    protected Hashtable<String, IProcess> processTable;
+    protected List<IProcess> processList;
+    protected List<IProcess> processExecList;
     protected boolean childrenThreadsOn = false;
     
     // internal in/out/param data queues: component name -> queue
@@ -64,9 +64,9 @@ public class ProcessChain extends DataProcess
     
     public ProcessChain(int memberCount)
     {
-        processTable = new Hashtable<String, DataProcess>(memberCount, 1.0f);
-        processList = new ArrayList<DataProcess>(memberCount);
-        processExecList = new ArrayList<DataProcess>(memberCount);
+        processTable = new Hashtable<String, IProcess>(memberCount, 1.0f);
+        processList = new ArrayList<IProcess>(memberCount);
+        processExecList = new ArrayList<IProcess>(memberCount);
         
         this.internalInputConnections = new ArrayList<ConnectionList>();        
         this.internalParamConnections = new ArrayList<ConnectionList>();
@@ -78,7 +78,7 @@ public class ProcessChain extends DataProcess
     @Override
     public void init() throws ProcessException
     {        
-        DataProcess childProcess = null;
+        IProcess childProcess = null;
         
         try
         {
@@ -114,7 +114,7 @@ public class ProcessChain extends DataProcess
         }
         catch (Exception e)
         {
-            String errMsg = initError + childProcess.getName() + " (" + childProcess.getType() + ")";
+            String errMsg = initError + childProcess.getName() + " (" + childProcess.getClass().getCanonicalName() + ")";
             throw new ProcessException(errMsg, e);
         }
     }
@@ -141,7 +141,7 @@ public class ProcessChain extends DataProcess
     }
        
     
-    private void addUpstreamProcesses(DataProcess process, List<ConnectionList> connectionLists)
+    private void addUpstreamProcesses(IProcess process, List<ConnectionList> connectionLists)
     {
         // loop through all inputs
     	for (int i=0; i<connectionLists.size(); i++)
@@ -177,7 +177,7 @@ public class ProcessChain extends DataProcess
      * @param processBefore
      * @param processAfter
      */
-    private void ensureOrder(DataProcess processBefore, DataProcess processAfter)
+    private void ensureOrder(IProcess processBefore, IProcess processAfter)
     {
     	int before = processExecList.indexOf(processBefore);
     	int after = processExecList.indexOf(processAfter);
@@ -193,7 +193,7 @@ public class ProcessChain extends DataProcess
     @Override
     public void execute() throws ProcessException
     {
-        DataProcess childProcess = null;
+        IProcess childProcess = null;
         
         try
 		{
@@ -244,13 +244,13 @@ public class ProcessChain extends DataProcess
                                 if (childProcess.canRun())
                                 {
                                     //System.out.println("--> Running: " + childProcess.getName());
-                                    childProcess.transferData(childProcess.inputConnections);
-                                    childProcess.transferData(childProcess.paramConnections);
+                                    childProcess.transferData(childProcess.getInputConnections());
+                                    childProcess.transferData(childProcess.getParamConnections());
                                     //childProcess.setAvailability(childProcess.outputConnections, true);
                                     childProcess.execute();
-                                    childProcess.setAvailability(childProcess.inputConnections, false);
-                                    childProcess.setAvailability(childProcess.paramConnections, false);
-                                    childProcess.setAvailability(childProcess.outputConnections, true);
+                                    childProcess.setAvailability(childProcess.getInputConnections(), false);
+                                    childProcess.setAvailability(childProcess.getParamConnections(), false);
+                                    childProcess.setAvailability(childProcess.getOutputConnections(), true);
                                     moreToRun = true;
                                 }
                                 //else
@@ -283,8 +283,8 @@ public class ProcessChain extends DataProcess
                         {
                             childProcess = processExecList.get(i);
                             //System.out.println("--> Running: " + childProcess.getName());
-                            childProcess.transferData(childProcess.inputConnections);
-                            childProcess.transferData(childProcess.paramConnections);
+                            childProcess.transferData(childProcess.getInputConnections());
+                            childProcess.transferData(childProcess.getParamConnections());
                             childProcess.execute();
                         }
                         
@@ -302,7 +302,7 @@ public class ProcessChain extends DataProcess
 		}		
         catch (ProcessException e)
         {
-            String errMsg = execError + childProcess.getName() + " (" + childProcess.getType() + ")";
+            String errMsg = execError + childProcess.getName() + " (" + childProcess.getClass().getCanonicalName() + ")";
             throw new ProcessException(errMsg, e);
 		}
         catch (Exception e)
@@ -361,6 +361,10 @@ public class ProcessChain extends DataProcess
     }
     
  
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcessChain#connectInternalInput(java.lang.String, org.vast.process.DataConnection)
+     */
+    @Override
     public void connectInternalInput(String dataPath, DataConnection connection) throws ProcessException
     {
     	IOSelector selector = new IOSelector(inputData, dataPath);
@@ -371,6 +375,10 @@ public class ProcessChain extends DataProcess
     }
     
     
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcessChain#connectInternalOutput(java.lang.String, org.vast.process.DataConnection)
+     */
+    @Override
     public void connectInternalOutput(String dataPath, DataConnection connection) throws ProcessException
     {
     	IOSelector selector = new IOSelector(outputData, dataPath);
@@ -381,6 +389,10 @@ public class ProcessChain extends DataProcess
     }
     
     
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcessChain#connectInternalParam(java.lang.String, org.vast.process.DataConnection)
+     */
+    @Override
     public void connectInternalParam(String dataPath, DataConnection connection) throws ProcessException
     {
     	IOSelector selector = new IOSelector(paramData, dataPath);
@@ -399,10 +411,10 @@ public class ProcessChain extends DataProcess
     	// start all child processes
     	if (childrenThreadsOn)
     	{
-        	Enumeration<DataProcess> childProcesses = processTable.elements();
+        	Enumeration<IProcess> childProcesses = processTable.elements();
             while (childProcesses.hasMoreElements())
             {
-                DataProcess process = (DataProcess)childProcesses.nextElement();
+                IProcess process = (IProcess)childProcesses.nextElement();
                 process.start();
             }
     	}
@@ -415,10 +427,10 @@ public class ProcessChain extends DataProcess
     	// stop all child processes
     	if (childrenThreadsOn)
     	{
-	        Enumeration<DataProcess> childProcesses = processTable.elements();
+	        Enumeration<IProcess> childProcesses = processTable.elements();
 	        while (childProcesses.hasMoreElements())
 	        {
-	            DataProcess process = (DataProcess)childProcesses.nextElement();
+	            IProcess process = (IProcess)childProcesses.nextElement();
 	            process.stop();
 	        }
     	}
@@ -455,26 +467,24 @@ public class ProcessChain extends DataProcess
     }
 
 
-    /**
-     * Adds a process in the chain
-     * @param name local name of process 
-     * @param process DataProcess object to add in the chain
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcessChain#addProcess(java.lang.String, org.vast.process.DataProcess)
      */
-    public void addProcess(String name, DataProcess process)
+    @Override
+    public void addProcess(String name, IProcess process)
     {
         processTable.put(name, process);
         processList.add(process);
     }
     
     
-    /**
-     * Removes a process from the chain
-     * TODO Also removes connections??
-     * @param name
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcessChain#removeProcess(java.lang.String)
      */
+    @Override
     public void removeProcess(String name)
     {
-        DataProcess process = processTable.get(name);
+        IProcess process = processTable.get(name);
         processTable.remove(name);
         processList.remove(process);
         
@@ -482,22 +492,21 @@ public class ProcessChain extends DataProcess
     }
     
     
-    /**
-     * Retrieves a child DataProcess by its name
-     * @param name local name of process to retrieve
-     * @return DataProcess with given name
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcessChain#getProcess(java.lang.String)
      */
-    public DataProcess getProcess(String name)
+    @Override
+    public IProcess getProcess(String name)
     {
         return processTable.get(name);
     }
     
     
-    /**
-     * Retrieves the whole list of child processes
-     * @return list of all DataProcess children
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcessChain#getProcessList()
      */
-    public List<DataProcess> getProcessList()
+    @Override
+    public List<IProcess> getProcessList()
     {
     	return this.processList;
     }
@@ -508,11 +517,11 @@ public class ProcessChain extends DataProcess
     	StringBuffer text = new StringBuffer(super.toString());
     	
     	text.append("\n  Child Processes:\n");
-    	Enumeration<DataProcess> children = processTable.elements();
+    	Enumeration<IProcess> children = processTable.elements();
     	
     	while (children.hasMoreElements())
     	{
-    		DataProcess child = (DataProcess)children.nextElement();
+    		IProcess child = (IProcess)children.nextElement();
     		text.append("    " + child.getName() + "\n");
     	}
     	
@@ -520,18 +529,30 @@ public class ProcessChain extends DataProcess
     }
 
 
-	public boolean isChildrenThreadsOn()
+	/* (non-Javadoc)
+     * @see org.vast.process.IProcessChain#isChildrenThreadsOn()
+     */
+	@Override
+    public boolean isChildrenThreadsOn()
 	{
 		return childrenThreadsOn;
 	}
 
 
-	public void setChildrenThreadsOn(boolean childrenThreadsOn)
+	/* (non-Javadoc)
+     * @see org.vast.process.IProcessChain#setChildrenThreadsOn(boolean)
+     */
+	@Override
+    public void setChildrenThreadsOn(boolean childrenThreadsOn)
 	{
 		this.childrenThreadsOn = childrenThreadsOn;
 	}
 
 
+    /* (non-Javadoc)
+     * @see org.vast.process.IProcessChain#getInternalConnections()
+     */
+    @Override
     public List<DataConnection> getInternalConnections()
     {
         return internalConnections;

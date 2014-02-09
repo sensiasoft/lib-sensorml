@@ -18,7 +18,7 @@
  
  ******************************* END LICENSE BLOCK ***************************/
 
-package org.vast.sensorML;
+package org.vast.sensorML.metadata;
 
 import java.text.ParseException;
 import java.util.*;
@@ -26,10 +26,7 @@ import org.w3c.dom.*;
 import org.vast.cdm.common.DataComponent;
 import org.vast.xml.DOMHelper;
 import org.vast.xml.XMLReaderException;
-import org.vast.sensorML.metadata.DocumentRef;
-import org.vast.sensorML.metadata.Metadata;
-import org.vast.sensorML.metadata.Person;
-import org.vast.sensorML.metadata.Term;
+import org.vast.sensorML.AbstractSMLReader;
 import org.vast.sweCommon.SWECommonUtils;
 import org.vast.util.*;
 

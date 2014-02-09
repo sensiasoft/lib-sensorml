@@ -20,8 +20,10 @@
 
 package org.vast.sensorML;
 
+import org.vast.xml.IXMLReaderDOM;
 
-public interface SMLReader
+
+public interface SMLReader extends IXMLReaderDOM<SMLProcess>
 {
     /**
      * Process Metadata will be read only if set to true

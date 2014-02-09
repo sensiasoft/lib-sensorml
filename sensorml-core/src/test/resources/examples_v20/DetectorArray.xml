@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:PhysicalComponent gml:id="MY_SENSOR" definition="http://www.opengis.net/def/property/OGC/0/DetectorArray"
+   xmlns:sml="http://www.opengis.net/sensorML/2.0" 
+   xmlns:swe="http://www.opengis.net/swe/2.0" 
+   xmlns:gml="http://www.opengis.net/gml/3.2" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xsi:schemaLocation="http://www.opengis.net/sensorML/2.0 ../../sensorML.xsd">
+   <!-- ================================================= -->
+   <!--                  System Description               -->
+   <!-- ================================================= -->
+   <gml:description>Panchromatic CCD array</gml:description>
+   <gml:identifier codeSpace="uid">urn:cnes:detectors:spot5:PAN</gml:identifier>
+   <!-- ================================================= -->
+   <!--        Input = observed property = radiance       -->
+   <!-- ================================================= -->
+   <sml:inputs>
+      <sml:InputList>
+          <sml:input name="radiation">
+             <sml:ObservableProperty definition="http://sweet.jpl.nasa.gov/2.2/quan.owl#ElectromagneticRadiationProperty"/>
+          </sml:input>
+      </sml:InputList>
+   </sml:inputs>
+   <!-- ================================================= -->
+   <!--         Output = 1D array of measurements         -->
+   <!-- ================================================= -->
+   <sml:outputs>
+      <sml:OutputList>
+         <sml:output name="radiance">
+            <swe:DataArray>
+               <swe:elementCount>
+                  <swe:Count definition="http://www.opengis.net/def/property/OGC/0/NumberOfSamples">
+                     <swe:value>100</swe:value>
+                  </swe:Count>
+               </swe:elementCount>
+               <swe:elementType name="sample">
+                  <swe:Quantity definition="http://sweet.jpl.nasa.gov/2.2/quanEnergyFlux.owl#SpectralRadiance">
+                     <swe:uom code="W.m-2.sr-1.um"/>
+                  </swe:Quantity>
+               </swe:elementType>
+            </swe:DataArray>            
+         </sml:output>
+      </sml:OutputList>
+   </sml:outputs>
+   <!-- ================================================= -->
+   <!--                     Parameters                    -->
+   <!-- ================================================= -->
+   <sml:parameters>
+      <sml:ParameterList>
+         <sml:parameter name="lookAnglesTable">
+             <swe:DataArray>
+                <swe:label>Look Angles Table</swe:label>
+                <swe:description>Calibration table providing look direction for each pixel in the array</swe:description>
+                <swe:elementCount>
+                   <swe:Count>
+                      <swe:value>100</swe:value>
+                   </swe:Count>
+                </swe:elementCount>
+                <swe:elementType name="lookAngle">
+                   <swe:DataRecord>
+                      <swe:field name="index">
+                         <swe:Count definition="http://www.opengis.net/def/property/OGC/0/ArrayIndex"/>
+                      </swe:field>
+                      <swe:field name="phi">
+                         <swe:Quantity definition="http://sweet.jpl.nasa.gov/2.2/reprSpaceCoordinate.owl#AngularCoordinate" axisID="X">
+                            <swe:uom code="deg"/>
+                         </swe:Quantity>
+                      </swe:field>
+                      <swe:field name="psi">
+                         <swe:Quantity definition="http://sweet.jpl.nasa.gov/2.2/reprSpaceCoordinate.owl#AngularCoordinate" axisID="Y">
+                            <swe:uom code="deg"/>
+                         </swe:Quantity>
+                      </swe:field>
+                   </swe:DataRecord>
+                </swe:elementType>
+                <swe:encoding>
+                   <swe:TextEncoding tokenSeparator="," blockSeparator=";"/>
+                </swe:encoding>
+                <swe:values>
+                   0,-2.3;1,-2.2,....,99,12,32
+                </swe:values>
+             </swe:DataArray>
+         </sml:parameter>
+         <sml:parameter name="radioCalibTable">
+             <swe:DataArray>
+                <swe:label>Radiometric Calibration Table</swe:label>
+                <swe:description>Calibration table providing gains and offsets for each pixel in the CCD array</swe:description>
+                <swe:elementCount>
+                   <swe:Count>
+                      <swe:value>100</swe:value>
+                   </swe:Count>
+                </swe:elementCount>
+                <swe:elementType name="gainOffsetValue">
+                   <swe:DataRecord>
+                      <swe:field name="index">
+                         <swe:Count definition="http://www.opengis.net/def/property/OGC/0/ArrayIndex"/>
+                      </swe:field>
+                      <swe:field name="gain">
+                         <swe:Quantity definition="http://www.opengis.net/def/property/OGC/0/Gain">
+                            <swe:uom code="1"/>
+                         </swe:Quantity>
+                      </swe:field>
+                      <swe:field name="offset">
+                         <swe:Quantity definition="http://www.opengis.net/def/property/OGC/0/Offset">
+                            <swe:uom code="W.m-2.sr-1.um"/>
+                         </swe:Quantity>
+                      </swe:field>
+                   </swe:DataRecord>
+                </swe:elementType>
+                <swe:encoding>
+                   <swe:TextEncoding tokenSeparator="," blockSeparator=";"/>
+                </swe:encoding>
+                <swe:values>
+                   0,44;1,-2.2,....,99,12,32
+                </swe:values>
+             </swe:DataArray>
+         </sml:parameter>
+      </sml:ParameterList>
+   </sml:parameters>
+</sml:PhysicalComponent>

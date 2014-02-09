@@ -18,9 +18,9 @@
  
 ******************************* END LICENSE BLOCK ***************************/
 
-package org.vast.sensorML;
+package org.vast.sensorML.metadata;
 
-import org.vast.sensorML.metadata.Metadata;
+import org.vast.sensorML.SMLException;
 import org.vast.xml.DOMHelper;
 import org.vast.xml.XMLWriterException;
 import org.w3c.dom.Element;

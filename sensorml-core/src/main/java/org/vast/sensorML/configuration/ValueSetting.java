@@ -27,4 +27,16 @@ package org.vast.sensorML.configuration;
 public class ValueSetting<Type> extends AbstractSetting
 {
     protected Type value;
+    
+
+    public Type getValue()
+    {
+        return value;
+    }
+    
+
+    public void setValue(Type value)
+    {
+        this.value = value;
+    }
 }

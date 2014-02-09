@@ -23,7 +23,7 @@
 
 package org.vast.sensorML.configuration;
 
-import java.util.List;
+import java.util.ArrayList;
 
 
 /**
@@ -36,19 +36,9 @@ import java.util.List;
  * @since Sep 7, 2013
  * @version 1.0
  */
-public class Configuration
+public class Configuration extends ArrayList<AbstractSetting>
 {
-    protected List<AbstractSetting> settings;
+    private static final long serialVersionUID = -8755535143329699032L;
     
 
-    public List<AbstractSetting> getSettings()
-    {
-        return settings;
-    }
-
-    
-    public void setSettings(List<AbstractSetting> settings)
-    {
-        this.settings = settings;
-    }
 }

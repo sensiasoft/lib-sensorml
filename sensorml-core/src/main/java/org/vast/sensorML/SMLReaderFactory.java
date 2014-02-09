@@ -21,6 +21,7 @@
 package org.vast.sensorML;
 
 import java.util.Hashtable;
+import org.vast.sensorML.metadata.MetadataReader;
 import org.vast.xml.DOMHelper;
 
 

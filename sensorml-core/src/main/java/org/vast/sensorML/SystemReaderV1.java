@@ -11,7 +11,8 @@
  
  The Original Code is the "SensorML DataProcessing Engine".
  
- The Initial Developer of the Original Code is the VAST team at the University of Alabama in Huntsville (UAH). <http://vast.uah.edu> Portions created by the Initial Developer are Copyright (C) 2007 the Initial Developer. All Rights Reserved. Please Contact Mike Botts <mike.botts@uah.edu> for more information.
+ The Initial Developer of the Original Code is the VAST team at the University of Alabama in Huntsville (UAH). <http://vast.uah.edu> Portions created by the Initial Developer are Copyright (C) 2007 the Initial Developer. All Rights Reserved. Please Contact Mike Botts <mike.botts@uah.edu> 
+ or Alexandre Robin <alex.robin@sensiasoftware.com>for more information.
  
  Contributor(s): 
     Alexandre Robin <robin@nsstc.uah.edu>
@@ -24,7 +25,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import org.w3c.dom.*;
-import org.vast.process.*;
 import org.vast.cdm.common.DataEncoding;
 import org.vast.xml.DOMHelper;
 import org.vast.xml.XMLReaderException;
@@ -65,10 +65,12 @@ public class SystemReaderV1 extends ProcessReaderV1 implements SystemReader
     
     
     @Override
-    public DataProcess read(DOMHelper dom, Element systemElement) throws XMLReaderException
+    public SMLProcess read(DOMHelper dom, Element systemElement) throws XMLReaderException
     {
         // first read common process chain stuffs
         SMLSystem system = new SMLSystem();
+        if (dom.getFirstChildElement(systemElement) == null)
+            return system;
         super.readProcessChain(dom, systemElement, system);
         
         // read referenceFrames
@@ -93,10 +95,10 @@ public class SystemReaderV1 extends ProcessReaderV1 implements SystemReader
 
 
     @Override
-    protected DataProcess readProcessModel(DOMHelper dom, Element processModelElement) throws XMLReaderException
+    protected SMLProcess readProcessModel(DOMHelper dom, Element processModelElement) throws XMLReaderException
     {
         // first read common process model stuffs
-        DataProcess newProcess = super.readProcessModel(dom, processModelElement);
+        SMLProcess newProcess = super.readProcessModel(dom, processModelElement);
         
         // if it is a Component also read addtional stuffs
         if (newProcess instanceof SMLComponent)

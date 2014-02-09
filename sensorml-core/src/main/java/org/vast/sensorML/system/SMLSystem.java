@@ -22,7 +22,6 @@ package org.vast.sensorML.system;
 
 import java.util.Hashtable;
 import java.util.List;
-import org.vast.process.DataProcess;
 import org.vast.sensorML.SMLProcessChain;
 
 
@@ -39,7 +38,7 @@ import org.vast.sensorML.SMLProcessChain;
 public class SMLSystem extends SMLProcessChain implements SMLPhysicalComponent
 {
     private static final long serialVersionUID = -3907134965328967342L;
-    public final static Hashtable<ReferenceFrame, DataProcess> frameToObjectMap = new Hashtable<ReferenceFrame, DataProcess>();
+    public final static Hashtable<ReferenceFrame, SMLPhysicalComponent> frameToObjectMap = new Hashtable<ReferenceFrame, SMLPhysicalComponent>();
     
     protected List<ReferenceFrame> referenceFrames;
     protected List<InterfaceDef> interfaces;

@@ -27,4 +27,16 @@ package org.vast.sensorML.configuration;
 public class ModeSetting extends AbstractSetting
 {
     protected String mode;
+
+    
+    public String getMode()
+    {
+        return mode;
+    }
+
+    
+    public void setMode(String mode)
+    {
+        this.mode = mode;
+    }
 }

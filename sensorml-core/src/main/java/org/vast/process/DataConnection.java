@@ -49,8 +49,8 @@ public class DataConnection implements Serializable
 {
     private static final long serialVersionUID = -7283326328202447353L;
     
-    protected DataProcess sourceProcess;
-    protected DataProcess destinationProcess;
+    protected IProcess sourceProcess;
+    protected IProcess destinationProcess;
     protected DataComponent sourceComponent;
     protected DataComponent destinationComponent;
     protected String name;
@@ -233,15 +233,15 @@ public class DataConnection implements Serializable
 	}
 
 
-	public DataProcess getDestinationProcess()
+	public IProcess getDestinationProcess()
 	{
 		return destinationProcess;
 	}
 
 
-	public void setDestinationProcess(DataProcess destinationProcess)
+	public void setDestinationProcess(IProcess destinationProcess)
 	{
-		this.destinationProcess = (DataProcess)destinationProcess;
+		this.destinationProcess = (IProcess)destinationProcess;
 	}
 
 
@@ -258,15 +258,15 @@ public class DataConnection implements Serializable
 	}
 
 
-	public DataProcess getSourceProcess()
+	public IProcess getSourceProcess()
 	{
 		return sourceProcess;
 	}
 
 
-	public void setSourceProcess(DataProcess sourceProcess)
+	public void setSourceProcess(IProcess sourceProcess)
 	{
-		this.sourceProcess = (DataProcess)sourceProcess;
+		this.sourceProcess = (IProcess)sourceProcess;
 	}
 
 

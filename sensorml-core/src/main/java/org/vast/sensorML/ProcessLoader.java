@@ -65,7 +65,7 @@ public class ProcessLoader
     {
         // if process map is not loaded, just return a dummy process.
         if (processMap == null || uri == null)
-            return new Dummy_Process();
+            return new DummyProcess();
               
         // map URN to class name (full name including package)
         String className = processMap.get(uri);

@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Map>
    <!-- -->
-   <Namespace type="SML" version="1.0" uri="http://www.opengis.net/sensorML/1.0"/>
-   <Namespace type="SML" version="1.0.1" uri="http://www.opengis.net/sensorML/1.0.1"/>
-   <Namespace type="SML" version="1.1" uri="http://www.opengis.net/sensorML/1.1"/>
+   <Namespace type="SensorML" version="1.0" uri="http://www.opengis.net/sensorML/1.0"/>
+   <Namespace type="SensorML" version="1.0.1" uri="http://www.opengis.net/sensorML/1.0.1"/>
+   <Namespace type="SensorML" version="2.0" uri="http://www.opengis.net/sensorML/2.0"/>
    <Namespace type="IC" uri="urn:us:gov:ic:ism:v2"/>
-	 <!-- -->
+   <!-- -->
    <Reader type="SensorML" subType="Metadata" version="1.0" class="org.vast.sensorML.MetadataReaderV1"/>
    <Reader type="SensorML" subType="Process" version="1.0" class="org.vast.sensorML.ProcessReaderV1"/>
-   <Reader type="SensorML" subType="Process" version="1.0.1" class="org.vast.sensorML.ProcessReaderV1"/>
    <Reader type="SensorML" subType="System" version="1.0" class="org.vast.sensorML.SystemReaderV1"/>
    <!-- -->
+   <Reader type="SensorML" subType="Metadata" version="1.0.1" class="org.vast.sensorML.MetadataReaderV1"/>
+   <Reader type="SensorML" subType="Process" version="1.0.1" class="org.vast.sensorML.ProcessReaderV1"/>
+   <Reader type="SensorML" subType="System" version="1.0.1" class="org.vast.sensorML.SystemReaderV1"/>
+   <!-- -->
+   <Reader type="SensorML" subType="Metadata" version="2.0" class="org.vast.sensorML.MetadataReaderV20"/>
+   <Reader type="SensorML" subType="Process" version="2.0" class="org.vast.sensorML.ProcessReaderV20"/>
+   <Reader type="SensorML" subType="System" version="2.0" class="org.vast.sensorML.SystemReaderV20"/>
+   <!-- -->
+   <!--<Writer type="SensorML" subType="Metadata" version="2.0" class="org.vast.sensorML.MetadataWriterV20"/>-->
+   <!--<Writer type="SensorML" subType="Process" version="2.0" class="org.vast.sensorML.ProcessWriterV20"/>-->
+   <Writer type="SensorML" subType="System" version="2.0" class="org.vast.sensorML.SystemWriterV20"/>
 </Map>

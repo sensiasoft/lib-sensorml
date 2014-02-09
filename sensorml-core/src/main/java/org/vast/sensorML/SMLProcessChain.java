@@ -9,8 +9,11 @@
  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
  for the specific language governing rights and limitations under the License.
  
- The Initial Developer of the Original Code is SENSIA SOFTWARE LLC.
- Portions created by the Initial Developer are Copyright (C) 2012
+ The Original Code is the "SensorML DataProcessing Engine".
+ 
+ The Initial Developer of the Original Code is the VAST team at the
+ University of Alabama in Huntsville (UAH). <http://vast.uah.edu>
+ Portions created by the Initial Developer are Copyright (C) 2007
  the Initial Developer. All Rights Reserved.
 
  Please Contact Alexandre Robin <alex.robin@sensiasoftware.com> for more
@@ -24,11 +27,12 @@
 package org.vast.sensorML;
 
 import java.util.List;
-import org.vast.process.DataProcess;
+import javax.xml.namespace.QName;
+import org.vast.process.DataConnection;
+import org.vast.process.IProcess;
+import org.vast.process.IProcessChain;
 import org.vast.process.ProcessChain;
-import org.vast.sensorML.configuration.Configuration;
-import org.vast.sensorML.configuration.Mode;
-import org.vast.sensorML.metadata.Metadata;
+import org.vast.process.ProcessException;
 
 
 /**
@@ -41,73 +45,88 @@ import org.vast.sensorML.metadata.Metadata;
  * @since Sep 8, 2013
  * @version 1.0
  */
-public class SMLProcessChain extends ProcessChain implements SMLFeature
+public class SMLProcessChain extends SMLProcess implements IProcessChain
 {
-    private static final long serialVersionUID = -50470827505522315L;
-    
-    protected String uniqueID;
-    protected String description;
-    protected Configuration configuration;
-    protected List<Mode> modes;
-    
+    private static final long serialVersionUID = -50470827505522315L;   
 
-    public String getUniqueID()
+
+    public SMLProcessChain()
     {
-        return uniqueID;
-    }
-
-
-    public void setUniqueID(String uniqueID)
-    {
-        this.uniqueID = uniqueID;
-    }
-
-
-    public String getDescription()
-    {
-        return description;
-    }
-
-
-    public void setDescription(String description)
-    {
-        this.description = description;
-    }
-
-
-    public Metadata getMetadata()
-    {
-        return (Metadata)this.getProperty(DataProcess.METADATA);
+        this(10);
     }
     
     
-    public void setMetadata(Metadata metadata)
+    public SMLProcessChain(int memberCount)
     {
-        this.setProperty(DataProcess.METADATA, metadata);
+        super(new ProcessChain(memberCount));
+        this.qname = new QName("ProcessChain");
     }
     
     
-    public Configuration getConfiguration()
+    //// Methods delegated to underlying process chain ////
+    
+    public void connectInternalInput(String dataPath, DataConnection connection) throws ProcessException
     {
-        return configuration;
+        ((ProcessChain)processImpl).connectInternalInput(dataPath, connection);
     }
 
 
-    public void setConfiguration(Configuration configuration)
+    public void connectInternalOutput(String dataPath, DataConnection connection) throws ProcessException
     {
-        this.configuration = configuration;
+        ((ProcessChain)processImpl).connectInternalOutput(dataPath, connection);
     }
 
 
-    public List<Mode> getModes()
+    public void connectInternalParam(String dataPath, DataConnection connection) throws ProcessException
     {
-        return modes;
+        ((ProcessChain)processImpl).connectInternalParam(dataPath, connection);
     }
 
 
-    public void setModes(List<Mode> modes)
+    public void addProcess(String name, IProcess process)
     {
-        this.modes = modes;
+        ((ProcessChain)processImpl).addProcess(name, process);
     }
 
+
+    public void removeProcess(String name)
+    {
+        ((ProcessChain)processImpl).removeProcess(name);
+    }
+
+
+    public IProcess getProcess(String name)
+    {
+        return ((ProcessChain)processImpl).getProcess(name);
+    }
+
+
+    public List<IProcess> getProcessList()
+    {
+        return ((ProcessChain)processImpl).getProcessList();
+    }
+
+
+    public boolean isChildrenThreadsOn()
+    {
+        return ((ProcessChain)processImpl).isChildrenThreadsOn();
+    }
+
+
+    public void setChildrenThreadsOn(boolean childrenThreadsOn)
+    {
+        ((ProcessChain)processImpl).setChildrenThreadsOn(childrenThreadsOn);
+    }
+
+
+    public List<DataConnection> getInternalConnections()
+    {
+        return ((ProcessChain)processImpl).getInternalConnections();
+    }
+
+
+    public void setOutputNeeded(int outputIndex, boolean needed)
+    {
+        ((ProcessChain)processImpl).setOutputNeeded(outputIndex, needed);
+    }
 }

@@ -20,7 +20,7 @@
 
 package org.vast.sensorML.system;
 
-import org.vast.process.DataProcess;
+import org.vast.process.IProcess;
 
 
 /**
@@ -35,16 +35,16 @@ import org.vast.process.DataProcess;
  */
 public class PositionProcess extends Position
 {
-    protected DataProcess process;
+    protected IProcess process;
 
 
-    public DataProcess getProcess()
+    public IProcess getProcess()
     {
         return process;
     }
 
 
-    public void setProcess(DataProcess process)
+    public void setProcess(IProcess process)
     {
         this.process = process;
     }

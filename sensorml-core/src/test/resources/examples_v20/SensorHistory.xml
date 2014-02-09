@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:EventList 
+xmlns:sml="http://www.opengis.net/sensorML/2.0" 
+xmlns:swe="http://www.opengis.net/swe/2.0" 
+xmlns:gml="http://www.opengis.net/gml/3.2" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns:xlink="http://www.w3.org/1999/xlink"
+xsi:schemaLocation="http://www.opengis.net/sensorML/2.0 http://schemas.opengis.net/sensorML/2.0/sensorML.xsd">
+  <sml:event>
+    <sml:Event>
+      <swe:label>Scheduled Maintenance</swe:label>
+      <swe:description>Monthly maintenance of station exterior.&#13;-Checked electronics&#13;-Checked casing&#13;Checked power supply.&#13;Everything OK.</swe:description>
+      <sml:time>
+        <gml:TimePeriod gml:id="MP1">
+          <gml:beginPosition>2002-03-01T10:00:00Z</gml:beginPosition>
+          <gml:endPosition>2002-03-01T11:00:00Z</gml:endPosition>
+        </gml:TimePeriod>
+      </sml:time>
+    </sml:Event>
+  </sml:event>
+  <sml:event>
+    <sml:Event>
+      <swe:label>Calibration</swe:label>
+      <swe:description>Recalibration of acquisition electronics using temperature reference</swe:description>
+      <sml:time>
+        <gml:TimeInstant gml:id="MP2">
+          <gml:timePosition>2002-03-01T18:00:00Z</gml:timePosition>
+        </gml:TimeInstant>
+      </sml:time>
+      <sml:configuration>
+        <sml:Settings>
+          <sml:setArrayValues ref="base/components/raingauge/parameters/steady-state-response">
+              1,2,3,4,5 2,4,6,8,10
+          </sml:setArrayValues>
+        </sml:Settings>
+      </sml:configuration>
+    </sml:Event>
+  </sml:event>
+</sml:EventList>  

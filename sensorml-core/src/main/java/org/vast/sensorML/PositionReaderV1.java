@@ -24,14 +24,12 @@ import java.net.URI;
 import org.vast.cdm.common.DataComponent;
 import org.vast.xml.DOMHelper;
 import org.vast.xml.XMLReaderException;
-import org.vast.process.DataProcess;
 import org.vast.sensorML.system.Position;
 import org.vast.sensorML.system.PositionData;
 import org.vast.sensorML.system.PositionProcess;
 import org.vast.sensorML.system.ReferenceFrame;
 import org.vast.sensorML.system.SMLPhysicalComponent;
 import org.vast.sensorML.system.SMLSystem;
-import org.vast.sensorML.system.SMLComponent;
 import org.vast.sweCommon.SWECommonUtils;
 import org.w3c.dom.Element;
 
@@ -138,9 +136,8 @@ public class PositionReaderV1 extends AbstractSMLReader
             position.setLocalFrame(locFrame);
             
             // also assign this position to the corresponding component
-            DataProcess component = SMLSystem.frameToObjectMap.get(locFrame);
-            if (component instanceof SMLComponent)
-                ((SMLPhysicalComponent)component).setPosition(position);
+            SMLPhysicalComponent component = SMLSystem.frameToObjectMap.get(locFrame);
+            component.setPosition(position);
         }
         catch (Exception e)
         {

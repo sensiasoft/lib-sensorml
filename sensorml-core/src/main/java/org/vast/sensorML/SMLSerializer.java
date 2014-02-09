@@ -29,8 +29,8 @@ package org.vast.sensorML;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import org.vast.ogc.OGCRegistry;
+import org.vast.ogc.gml.GMLUtils;
 import org.vast.sweCommon.SWECommonUtils;
 import org.vast.xml.DOMHelper;
 import org.vast.xml.DOMHelperException;
@@ -60,10 +60,10 @@ public class SMLSerializer extends XMLSerializer {
 
 		this.dom = dom;
 		
-		dom.addUserPrefix("gml", OGCRegistry.getNamespaceURI(OGCRegistry.GML));
+		dom.addUserPrefix("gml", OGCRegistry.getNamespaceURI(GMLUtils.GML));
         //dom.addUserPrefix("om", OGCRegistry.getNamespaceURI(OGCRegistry.OM, "0.0"));
         dom.addUserPrefix("swe", OGCRegistry.getNamespaceURI(SWECommonUtils.SWE, "1.0"));
-        dom.addUserPrefix("sml", OGCRegistry.getNamespaceURI(SMLUtils.SML, "1.0"));
+        dom.addUserPrefix("sml", OGCRegistry.getNamespaceURI(SMLUtils.SENSORML, "1.0"));
         dom.addUserPrefix("xlink", OGCRegistry.getNamespaceURI(OGCRegistry.XLINK, "1.0"));
         //NodeList elts = dom.getDocument().getElementsByTagNameNS("http://www.opengis.net/sml/1.0", "sml:System");
         NodeList elts = dom.getDocument().getElementsByTagNameNS("*", "System");

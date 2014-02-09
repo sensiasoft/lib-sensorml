@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:PhysicalComponent gml:id="MY_SENSOR" 
+xmlns:sml="http://www.opengis.net/sensorML/2.0"
+   xmlns:swe="http://www.opengis.net/swe/2.0" 
+   xmlns:gml="http://www.opengis.net/gml/3.2"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xsi:schemaLocation="http://www.opengis.net/sensorML/2.0 http://schemas.opengis.net/sensorML/2.0/sensorML.xsd">
+   <!-- ================================================= -->
+   <!--                  System Description               -->
+   <!-- ================================================= -->
+   <gml:description>A Health 2070 Gamma detector</gml:description>
+   <gml:identifier codeSpace="uid">urn:myRadationNet:stations:76455</gml:identifier>
+
+   <!-- metadata deleted for brevity sake -->
+
+   <!-- ================================================= -->
+   <!--             Observed Property = Output            -->
+   <!-- ================================================= -->
+   <sml:outputs>
+      <sml:OutputList>
+         <sml:output name="gammaRadiation">
+            <sml:DataInterface>
+
+               <!-- data description -->
+               <sml:data>
+                  <swe:DataStream>
+                     <swe:elementType name="gamaRadiation">
+						<swe:DataRecord>
+							<swe:field name="averageDose">
+								<swe:Quantity definition="http://sensorml.com/ont/swe/property/DoseRate.html">
+									<swe:label>Average Dose of Gamma Radiation</swe:label>
+									<swe:uom code="uR/min"/>
+								</swe:Quantity>
+							</swe:field>
+							<swe:field name="InstantaneousDose">
+								<swe:Quantity definition="http://sensorml.com/ont/swe/property/RadiationDose">
+									<swe:label>Instantaneous Dose of Gamma Radiation</swe:label>
+									<swe:uom code="uR"/>
+								</swe:Quantity>
+							</swe:field>
+						</swe:DataRecord>
+                     </swe:elementType>
+
+                     <!-- encoding description -->
+                     <swe:encoding>
+                        <swe:TextEncoding tokenSeparator="," blockSeparator=" "/>
+                     </swe:encoding>
+                     
+                     <swe:values />
+
+                  </swe:DataStream>
+               </sml:data>
+               <sml:interfaceParameters>
+					<swe:DataRecord definition="http://sensorml.com/ont/swe/property/SerialPortSettings">
+						<swe:field name="portType">
+							<swe:Category definition="http://sensorml.com/ont/swe/property/SerialPortType">
+								<swe:label>Port Type</swe:label>
+								<swe:value>RS232</swe:value>
+							</swe:Category>
+						</swe:field>
+						<swe:field name="portNumber">
+							<swe:Count definition="http://sensorml.com/ont/swe/property/PortNumber">
+								<swe:label>Port Number</swe:label>
+								<swe:value>0</swe:value>
+							</swe:Count>
+						</swe:field>
+						<swe:field name="baudRate">
+							<swe:Count definition="http://sensorml.com/ont/swe/property/BaudRate">
+								<swe:label>Baud Rate</swe:label>
+								<swe:value>9600</swe:value>
+							</swe:Count>
+						</swe:field>
+						<swe:field name="bits">
+							<swe:Count definition="http://sensorml.com/ont/swe/property/DataBitSize">
+								<swe:label>Data Bits</swe:label>
+								<swe:value>8</swe:value>
+							</swe:Count>
+						</swe:field>
+						<swe:field name="parity">
+							<swe:Category definition="http://sensorml.com/ont/swe/property/DataParity">
+								<swe:label>Parity</swe:label>
+								<swe:value>N</swe:value>
+							</swe:Category>
+						</swe:field>
+						<swe:field name="stopBits">
+							<swe:Count definition="http://sensorml.com/ont/swe/property/StopBits">
+								<swe:label>Stop Bits</swe:label>
+								<swe:value>1</swe:value>
+							</swe:Count>
+						</swe:field>
+					</swe:DataRecord>
+               </sml:interfaceParameters>
+            </sml:DataInterface>
+         </sml:output>
+      </sml:OutputList>
+   </sml:outputs>
+   <!-- ================================================= -->
+   <!--                  Station Location                 -->
+   <!-- ================================================= -->
+   <sml:position>
+      <gml:Point gml:id="stationLocation" srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+         <gml:coordinates>47.8 88.56</gml:coordinates>
+      </gml:Point>
+   </sml:position>
+</sml:PhysicalComponent>
