@@ -26,10 +26,16 @@
 
 package org.vast.sensorML.test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import org.custommonkey.xmlunit.Validator;
 import org.custommonkey.xmlunit.XMLTestCase;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.vast.data.ConstraintList;
-import org.vast.sensorML.SMLProcess;
+import org.vast.ogc.om.IObservation;
+import org.vast.ogc.om.OMUtils;
+import org.vast.sensorML.SMLUtils;
 import org.vast.sensorML.SystemReaderV20;
 import org.vast.sensorML.configuration.Configuration;
 import org.vast.sensorML.configuration.ConfigurationReaderV20;
@@ -39,21 +45,61 @@ import org.vast.sensorML.configuration.ModeSetting;
 import org.vast.sensorML.configuration.StatusSetting;
 import org.vast.sensorML.configuration.ValueSetting;
 import org.vast.sensorML.system.SMLPhysicalComponent;
+import org.vast.sensorML.system.SMLSystem;
 import org.vast.sweCommon.IntervalConstraint;
 import org.vast.xml.DOMHelper;
 import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
 
 public class TestReadSensorMLV20 extends XMLTestCase
 {
+    
+    public void setUp() throws Exception
+    {
+        XMLUnit.setIgnoreComments(true);
+        XMLUnit.setIgnoreWhitespace(true);
+        XMLUnit.setNormalizeWhitespace(true);
+    }
+    
+    
+    protected void validate(InputStream is, String schemaUrl) throws Exception
+    {
+        InputSource saxIs = new InputSource(is);
+        Validator v = new Validator(saxIs);
+        v.useXMLSchema(true);
+        v.setJAXP12SchemaSource(schemaUrl);
+        assertTrue(v.isValid());
+    }
+    
+    
+    protected void readWriteCompareOmXml(String path) throws Exception
+    {
+        SMLUtils utils = new SMLUtils("2.0");
+        
+        InputStream is = getClass().getResourceAsStream(path);
+        DOMHelper dom1 = new DOMHelper(is, false);
+        SMLSystem sys = utils.readSystem(dom1, dom1.getBaseElement());
+        is.close();
+        
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        System.out.println();
+        utils.write(System.out, sys);
+        utils.write(os, sys);
+        os.close();
+        
+        DOMHelper dom2 = new DOMHelper(new ByteArrayInputStream(os.toByteArray()), false);
+        assertXMLEqual(dom1.getDocument(), dom2.getDocument());
+    }
+    
     
     protected Configuration readSettings(String filePath, String domPath) throws Exception
     {
         ConfigurationReaderV20 reader = new ConfigurationReaderV20();        
         InputStream is = TestReadSensorMLV20.class.getResourceAsStream(filePath);        
         DOMHelper dom = new DOMHelper(is, false);
-        Element settingsElt = dom.getElement(domPath);        
-        return reader.readSettings(dom, settingsElt);        
+        Element settingsElt = dom.getElement(domPath);
+        return reader.readSettings(dom, settingsElt);
     }
     
     
@@ -121,9 +167,7 @@ public class TestReadSensorMLV20 extends XMLTestCase
     
     public void testReadSystem() throws Exception
     {
-        SMLPhysicalComponent system = readSystem("/examples_v20/Davis_7817_complete.xml");
+        readWriteCompareOmXml("/examples_v20/Davis_7817_complete.xml");
     }
-    
-    
     
 }

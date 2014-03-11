@@ -27,8 +27,11 @@
 package org.vast.sensorML;
 
 import java.text.NumberFormat;
+import org.vast.cdm.common.DataComponent;
+import org.vast.ogc.OGCRegistry;
 import org.vast.ogc.gml.GMLFeatureWriter;
 import org.vast.ogc.gml.GMLTimeWriter;
+import org.vast.ogc.gml.GMLUtils;
 import org.vast.sweCommon.SweComponentWriterV20;
 import org.vast.xml.DOMHelper;
 import org.vast.xml.IXMLWriterDOM;
@@ -71,6 +74,37 @@ public class SystemWriterV20 implements IXMLWriterDOM<SMLProcess>
     
     public Element write(DOMHelper dom, SMLProcess smlProcess) throws XMLWriterException
     {
-        return null;
+        dom.addUserPrefix("sml", OGCRegistry.getNamespaceURI(SMLUtils.SENSORML, "2.0"));
+        dom.addUserPrefix("gml", OGCRegistry.getNamespaceURI(GMLUtils.GML, "3.2"));
+        
+        Element sysElt = dom.createElement("sml:PhysicalSystem");
+        
+        // UID
+        dom.setElementValue(sysElt, "gml:identifier", smlProcess.getIdentifier());
+        
+        // name
+        dom.setElementValue(sysElt, "gml:name", smlProcess.getName());
+        
+        // IOs
+        writeIOList(dom, sysElt, "sml:inputs/sml:InputList", "sml:input", smlProcess.getInputList());
+        writeIOList(dom, sysElt, "sml:outputs/sml:OutputList", "sml:output", smlProcess.getOutputList());
+        writeIOList(dom, sysElt, "sml:parameters/sml:ParameterList", "sml:parameter", smlProcess.getParameterList());
+        
+        return sysElt;
+    }
+    
+    
+    protected void writeIOList(DOMHelper dom, Element parentElt, String listPath, String itemName, DataComponent ioList) throws XMLWriterException
+    {
+        int numComponents = ioList.getComponentCount();
+        if (ioList != null &&  numComponents > 0)
+        {
+            Element ioListElt = dom.addElement(parentElt, listPath);            
+            for (int i = 0; i < numComponents; i++)
+            {
+                Element propElt = sweWriter.addComponentProperty(dom, ioListElt, "+"+itemName, ioList.getComponent(i), false);
+                propElt.setAttribute("name", ioList.getComponent(i).getName());
+            }
+        }
     }
 }

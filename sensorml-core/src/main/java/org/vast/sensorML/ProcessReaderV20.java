@@ -27,7 +27,7 @@ import org.vast.cdm.common.DataComponent;
 import org.vast.xml.DOMHelper;
 import org.vast.xml.XMLReaderException;
 import org.vast.sensorML.metadata.Metadata;
-import org.vast.sensorML.metadata.MetadataReaderV1;
+import org.vast.sensorML.metadata.MetadataReaderV20;
 import org.vast.sweCommon.SWECommonUtils;
 
 
@@ -45,7 +45,7 @@ import org.vast.sweCommon.SWECommonUtils;
 public class ProcessReaderV20 extends AbstractSMLReader implements ProcessReader
 {
     protected static final String dataSeparator = "/"; 
-    protected MetadataReaderV1 metadataReader;
+    protected MetadataReaderV20 metadataReader;
     protected ProcessLoader processLoader;
     protected SWECommonUtils utils;
     protected boolean readMetadata = false;
@@ -98,11 +98,17 @@ public class ProcessReaderV20 extends AbstractSMLReader implements ProcessReader
      */
     protected void parseMetadata(DOMHelper dom, Element processElement, SMLProcess dataProcess) throws XMLReaderException
     {
-        // read metadata if needed
+        // gml:identifier
+        dataProcess.setIdentifier(dom.getElementValue(processElement, "identifier"));
+        
+        // gml:name
+        dataProcess.setName(dom.getElementValue(processElement, "name"));
+        
+        // read extended metadata if needed
         if (readMetadata)
         {
             if (metadataReader == null)
-                metadataReader = new MetadataReaderV1();
+                metadataReader = new MetadataReaderV20();
             
             Metadata metadata = metadataReader.readMetadata(dom, processElement);
             dataProcess.setMetadata(metadata);

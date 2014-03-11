@@ -20,10 +20,7 @@
 
 package org.vast.sensorML;
 
-import org.vast.process.IProcess;
-import org.vast.xml.DOMHelper;
-import org.vast.xml.XMLWriterException;
-import org.w3c.dom.Element;
+import org.vast.xml.IXMLWriterDOM;
 
 
 /**
@@ -36,14 +33,7 @@ import org.w3c.dom.Element;
  * @since Apr 11, 2007
  * @version 1.0
  */
-public interface ProcessWriter
+public interface ProcessWriter extends IXMLWriterDOM<SMLProcess>
 {
-    /**
-     * Creates a W3C DOM element containing the given Process information
-     * @param dom
-     * @param process
-     * @return
-     * @throws SMLException
-     */
-    public Element writeProcess(DOMHelper dom, IProcess process) throws XMLWriterException;
+
 }

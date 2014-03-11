@@ -20,11 +20,12 @@
 
 package org.vast.sensorML;
 
+import java.io.OutputStream;
 import org.vast.ogc.OGCRegistry;
 import org.vast.process.IProcess;
-import org.vast.sensorML.metadata.Metadata;
 import org.vast.sensorML.metadata.MetadataReader;
 import org.vast.sensorML.metadata.MetadataWriter;
+import org.vast.sensorML.system.SMLComponent;
 import org.vast.sensorML.system.SMLSystem;
 import org.vast.xml.DOMHelper;
 import org.vast.xml.XMLReaderException;
@@ -80,6 +81,17 @@ public class SMLUtils
     }
     
     
+    public SMLUtils()
+    {        
+    }
+    
+    
+    public SMLUtils(String version)
+    {
+        this.version = version;
+    }
+    
+    
     public IProcess readProcess(DOMHelper dom, Element processElement) throws XMLReaderException
     {
         ProcessReader reader = getProcessReader(dom, processElement);
@@ -94,17 +106,10 @@ public class SMLUtils
     }
     
     
-    public Metadata readMetadata(DOMHelper dom, Element objectElement) throws XMLReaderException
-    {
-        MetadataReader reader = getMetadataReader(dom, objectElement);
-        return reader.readMetadata(dom, objectElement);
-    }
-    
-    
-    public Element writeProcess(DOMHelper dom, IProcess process) throws XMLWriterException
+    public Element writeProcess(DOMHelper dom, SMLProcess process) throws XMLWriterException
     {
         ProcessWriter writer = getProcessWriter();
-        return writer.writeProcess(dom, process);
+        return writer.write(dom, process);
     }
     
     
@@ -113,12 +118,26 @@ public class SMLUtils
         SystemWriter writer = getSystemWriter();
         return writer.writeSystem(dom, system);
     }
-
-
-    public void writeMetadata(DOMHelper dom, Element parentElement, Metadata metadata) throws XMLWriterException
+    
+    
+    public void write(OutputStream os, SMLProcess smlObj) throws XMLWriterException
     {
-        MetadataWriter writer = getMetadataWriter();
-        writer.writeMetadata(dom, parentElement, metadata);        
+        try
+        {
+            DOMHelper dom = new DOMHelper("sml");
+            Element rootElt = null;
+            
+            if (smlObj instanceof SMLComponent || smlObj instanceof SMLSystem)
+                rootElt = writeSystem(dom, (SMLSystem)smlObj);
+            else if (smlObj instanceof SMLProcess || smlObj instanceof SMLProcessChain)
+                rootElt = writeProcess(dom, (SMLProcess)smlObj);
+            
+            dom.serialize(rootElt, os, true);
+        }
+        catch (Exception e)
+        {
+            throw new XMLWriterException("Error writing SensorML document", e);
+        }
     }
     
     

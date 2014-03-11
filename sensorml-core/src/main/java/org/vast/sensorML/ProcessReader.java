@@ -20,6 +20,8 @@
 
 package org.vast.sensorML;
 
+import org.vast.xml.IXMLReaderDOM;
+
 
 /**
  * <p>
@@ -31,7 +33,20 @@ package org.vast.sensorML;
  * @since Apr 11, 2007
  * @version 1.0
  */
-public interface ProcessReader extends SMLReader
-{      
+public interface ProcessReader extends IXMLReaderDOM<SMLProcess>
+{
+    /**
+     * Process Metadata will be read only if set to true
+     * default is false to reduce parsing time 
+     * @param readMetadata
+     */
+    public void setReadMetadata(boolean readMetadata);
     
+    
+    /**
+     * Executable DataProcess objects will be instantiated if set to true
+     * Default is true. Set to false for simply parsing the document to Dummy Processes.
+     * @param createExecutableProcess
+     */
+    public void setCreateExecutableProcess(boolean createExecutableProcess);
 }
