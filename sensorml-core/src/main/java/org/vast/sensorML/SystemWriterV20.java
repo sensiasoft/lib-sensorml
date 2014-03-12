@@ -32,6 +32,11 @@ import org.vast.ogc.OGCRegistry;
 import org.vast.ogc.gml.GMLFeatureWriter;
 import org.vast.ogc.gml.GMLTimeWriter;
 import org.vast.ogc.gml.GMLUtils;
+import org.vast.sensorML.metadata.KeywordList;
+import org.vast.sensorML.metadata.Metadata;
+import org.vast.sensorML.metadata.MetadataList;
+import org.vast.sensorML.metadata.Term;
+import org.vast.sweCommon.SWECommonUtils;
 import org.vast.sweCommon.SweComponentWriterV20;
 import org.vast.xml.DOMHelper;
 import org.vast.xml.IXMLWriterDOM;
@@ -75,15 +80,30 @@ public class SystemWriterV20 implements IXMLWriterDOM<SMLProcess>
     public Element write(DOMHelper dom, SMLProcess smlProcess) throws XMLWriterException
     {
         dom.addUserPrefix("sml", OGCRegistry.getNamespaceURI(SMLUtils.SENSORML, "2.0"));
+        dom.addUserPrefix("swe", OGCRegistry.getNamespaceURI(SWECommonUtils.SWE, "2.0"));
         dom.addUserPrefix("gml", OGCRegistry.getNamespaceURI(GMLUtils.GML, "3.2"));
+        dom.addUserPrefix("xlink", OGCRegistry.getNamespaceURI(OGCRegistry.XLINK));
         
         Element sysElt = dom.createElement("sml:PhysicalSystem");
         
-        // UID
+        if (smlProcess.getDescription() != null)
+            dom.setElementValue(sysElt, "gml:description", smlProcess.getDescription());
+        
         dom.setElementValue(sysElt, "gml:identifier", smlProcess.getIdentifier());
         
-        // name
-        dom.setElementValue(sysElt, "gml:name", smlProcess.getName());
+        if (smlProcess.getName() != null)
+            dom.setElementValue(sysElt, "gml:name", smlProcess.getName());
+        
+        // metadata
+        Metadata metadata = smlProcess.getMetadata();
+        if (metadata != null)
+        {
+            writeKeywordList(dom, sysElt, "sml:keywords/sml:KeywordList", "sml:keyword", metadata.getKeywords());
+            writeTermList(dom, sysElt, "sml:identification/sml:IdentifierList", "sml:identifier", metadata.getIdentifiers());
+            writeTermList(dom, sysElt, "sml:classification/sml:ClassifierList", "sml:classifier", metadata.getClassifiers());
+            writePropertyList(dom, sysElt, "sml:characteristics/sml:CharacteristicList", "sml:characteristic", metadata.getCharacteristics());
+            writePropertyList(dom, sysElt, "sml:capability/sml:CapabilitiesList", "sml:capability", metadata.getCapabilities());
+        }
         
         // IOs
         writeIOList(dom, sysElt, "sml:inputs/sml:InputList", "sml:input", smlProcess.getInputList());
@@ -91,6 +111,76 @@ public class SystemWriterV20 implements IXMLWriterDOM<SMLProcess>
         writeIOList(dom, sysElt, "sml:parameters/sml:ParameterList", "sml:parameter", smlProcess.getParameterList());
         
         return sysElt;
+    }
+    
+    
+    protected void writeCommonListProperties(DOMHelper dom, Element listElt, MetadataList<?> metadataList)
+    {
+        if (metadataList.getLocalId() != null)
+            dom.setAttributeValue(listElt, "id", metadataList.getLocalId());
+        
+        if (metadataList.getIdentifier() != null)
+            dom.setElementValue(listElt, "swe:identifier", metadataList.getIdentifier());
+        
+        if (metadataList.getLabel() != null)
+            dom.setElementValue(listElt, "swe:label", metadataList.getLabel());
+        
+        if (metadataList.getDescription() != null)
+            dom.setElementValue(listElt, "swe:description", metadataList.getDescription());
+    }
+    
+    
+    protected void writeKeywordList(DOMHelper dom, Element parentElt, String listPath, String itemName, KeywordList keywordList) throws XMLWriterException
+    {
+        if (keywordList == null)
+            return;
+        
+        Element listElt = dom.addElement(parentElt, listPath);
+        writeCommonListProperties(dom, listElt, keywordList);
+        
+        if (keywordList.getCodespace() != null)
+            dom.setAttributeValue(listElt, "sml:codeSpace/xlink:href", keywordList.getCodespace());
+        
+        for (String keyword: keywordList)
+            dom.setElementValue(listElt, "+"+itemName, keyword);
+    }
+    
+    
+    protected void writeTermList(DOMHelper dom, Element parentElt, String listPath, String itemName, MetadataList<Term> termList) throws XMLWriterException
+    {
+        if (termList == null)
+            return;
+        
+        Element listElt = dom.addElement(parentElt, listPath);
+        writeCommonListProperties(dom, listElt, termList);
+        
+        for (Term term: termList)
+        {
+            Element termElt = dom.addElement(listElt, "+" + itemName + "/sml:Term");
+            
+            if (term.getDefinition() != null)
+                dom.setAttributeValue(termElt, "definition", term.getDefinition());
+            dom.setElementValue(termElt, "sml:label", term.getName());            
+            if (term.getCodespace() != null)
+                dom.setAttributeValue(termElt, "codeSpace/xlink:href", term.getCodespace());
+            dom.setElementValue(termElt, "sml:value", term.getValue());
+        }
+    }
+    
+    
+    protected void writePropertyList(DOMHelper dom, Element parentElt, String listPath, String itemName, MetadataList<DataComponent> propertyList) throws XMLWriterException
+    {
+        if (propertyList == null)
+            return;
+        
+        Element listElt = dom.addElement(parentElt, listPath);
+        writeCommonListProperties(dom, listElt, propertyList);
+        
+        for (DataComponent comp: propertyList)
+        {
+            Element propElt = sweWriter.addComponentProperty(dom, listElt, "+"+itemName, comp, true);
+            propElt.setAttribute("name", comp.getName());
+        }
     }
     
     

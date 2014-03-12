@@ -86,7 +86,7 @@
             <swe:Quantity definition="urn:ogc:def:property:weight">
                <swe:label>Weight</swe:label>
                <swe:uom code="mm" />
-               <swe:value>128</swe:value>
+               <swe:value>128.0</swe:value>
             </swe:Quantity>
          </sml:characteristic>
          <sml:characteristic name="diameter">
@@ -100,7 +100,7 @@
             <swe:Quantity definition="urn:ogc:def:property:length">
                <swe:label>Length</swe:label>
                <swe:uom code="mm" />
-               <swe:value>32</swe:value>
+               <swe:value>32.0</swe:value>
             </swe:Quantity>
          </sml:characteristic>
       </sml:CharacteristicList>
@@ -111,15 +111,15 @@
          <sml:capability name="resolution" xlink:arcrole="urn:ogc:def:property:resolution">
             <swe:Quantity definition="urn:ogc:def:property:temperature">
                <swe:label>Temperature Resolution</swe:label>
-               <swe:uom code="cel" />
+               <swe:uom code="Cel" />
                <swe:value>0.1</swe:value>
             </swe:Quantity>
          </sml:capability>
          <sml:capability name="dynamicRange" xlink:arcrole="urn:ogc:def:property:dynamicRange">
             <swe:QuantityRange definition="urn:ogc:def:property:temperature">
                <swe:label>Temperature Range</swe:label>
-               <swe:uom code="cel" />
-               <swe:value>-45 60</swe:value>
+               <swe:uom code="Cel" />
+               <swe:value>-45.0 60.0</swe:value>
             </swe:QuantityRange>
          </sml:capability>
          <sml:capability name="accuracy" xlink:arcrole="urn:ogc:def:property:accuracy">

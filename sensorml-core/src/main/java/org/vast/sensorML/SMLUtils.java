@@ -23,11 +23,10 @@ package org.vast.sensorML;
 import java.io.OutputStream;
 import org.vast.ogc.OGCRegistry;
 import org.vast.process.IProcess;
-import org.vast.sensorML.metadata.MetadataReader;
-import org.vast.sensorML.metadata.MetadataWriter;
 import org.vast.sensorML.system.SMLComponent;
 import org.vast.sensorML.system.SMLSystem;
 import org.vast.xml.DOMHelper;
+import org.vast.xml.IXMLWriterDOM;
 import org.vast.xml.XMLReaderException;
 import org.vast.xml.XMLWriterException;
 import org.w3c.dom.Element;
@@ -60,10 +59,8 @@ public class SMLUtils
     private DOMHelper previousDom;
     private ProcessReader processReader = null;
     private SystemReader systemReader = null;
-    private MetadataReader metadataReader = null;
-    private ProcessWriter processWriter = null;
-    private SystemWriter systemWriter = null;
-    private MetadataWriter metadataWriter = null;	
+    private IXMLWriterDOM<SMLProcess> processWriter = null;
+    private IXMLWriterDOM<SMLProcess> systemWriter = null;	
     
     
     static
@@ -108,15 +105,15 @@ public class SMLUtils
     
     public Element writeProcess(DOMHelper dom, SMLProcess process) throws XMLWriterException
     {
-        ProcessWriter writer = getProcessWriter();
+        IXMLWriterDOM<SMLProcess> writer = getProcessWriter();
         return writer.write(dom, process);
     }
     
     
     public Element writeSystem(DOMHelper dom, SMLSystem system) throws XMLWriterException
     {
-        SystemWriter writer = getSystemWriter();
-        return writer.writeSystem(dom, system);
+        IXMLWriterDOM<SMLProcess> writer = getSystemWriter();
+        return writer.write(dom, system);
     }
     
     
@@ -196,36 +193,11 @@ public class SMLUtils
     
     
     /**
-     * Reuses or creates the MetadataReader corresponding to
-     * the version specified by the SensorML namespace URI
-     * @param dom
-     * @param smlobjElt
-     * @return
-     */
-    private MetadataReader getMetadataReader(DOMHelper dom, Element smlobjElt)
-    {
-        if (dom == previousDom && processReader != null)
-        {
-            return metadataReader;
-        }
-        else
-        {
-            MetadataReader reader = (MetadataReader)OGCRegistry.createReader(
-                                                    SENSORML,
-                                                    METADATA,
-                                                    getVersion(dom, smlobjElt));
-            metadataReader = reader;
-            return reader;
-        }
-    }
-    
-    
-    /**
      * Reuses or creates the ProcessWriter corresponding to
      * the specified version (previously set by setOutputVersion)
      * @return
      */
-    private ProcessWriter getProcessWriter()
+    private IXMLWriterDOM<SMLProcess> getProcessWriter()
     {
         if (!versionChanged && processWriter != null)
         {
@@ -233,7 +205,7 @@ public class SMLUtils
         }
         else
         {
-            ProcessWriter writer = (ProcessWriter)OGCRegistry.createWriter(
+            IXMLWriterDOM<SMLProcess> writer = (IXMLWriterDOM<SMLProcess>)OGCRegistry.createWriter(
                                                   SENSORML,
                                                   PROCESS,
                                                   this.version);
@@ -249,7 +221,7 @@ public class SMLUtils
      * the specified version (previously set by setOutputVersion)
      * @return
      */
-    private SystemWriter getSystemWriter()
+    private IXMLWriterDOM<SMLProcess> getSystemWriter()
     {
         if (!versionChanged && processWriter != null)
         {
@@ -257,35 +229,11 @@ public class SMLUtils
         }
         else
         {
-            SystemWriter writer = (SystemWriter)OGCRegistry.createWriter(
+            IXMLWriterDOM<SMLProcess> writer = (IXMLWriterDOM<SMLProcess>)OGCRegistry.createWriter(
                                                   SENSORML,
                                                   SYSTEM,
                                                   this.version);
             systemWriter = writer;
-            versionChanged = false;
-            return writer;
-        }
-    }
-    
-    
-    /**
-     * Reuses or creates the MetadataWriter corresponding to
-     * the specified version (previously set by setOutputVersion)
-     * @return
-     */
-    private MetadataWriter getMetadataWriter()
-    {
-        if (!versionChanged && processWriter != null)
-        {
-            return metadataWriter;
-        }
-        else
-        {
-            MetadataWriter writer = (MetadataWriter)OGCRegistry.createWriter(
-                                                  SENSORML,
-                                                  METADATA,
-                                                  this.version);
-            metadataWriter = writer;
             versionChanged = false;
             return writer;
         }

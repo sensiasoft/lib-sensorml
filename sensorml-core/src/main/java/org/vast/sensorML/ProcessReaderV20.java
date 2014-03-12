@@ -98,10 +98,8 @@ public class ProcessReaderV20 extends AbstractSMLReader implements ProcessReader
      */
     protected void parseMetadata(DOMHelper dom, Element processElement, SMLProcess dataProcess) throws XMLReaderException
     {
-        // gml:identifier
         dataProcess.setIdentifier(dom.getElementValue(processElement, "identifier"));
-        
-        // gml:name
+        dataProcess.setDescription(dom.getElementValue(processElement, "description"));
         dataProcess.setName(dom.getElementValue(processElement, "name"));
         
         // read extended metadata if needed

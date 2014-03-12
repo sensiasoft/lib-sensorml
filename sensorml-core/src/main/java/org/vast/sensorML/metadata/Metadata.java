@@ -20,8 +20,6 @@
 
 package org.vast.sensorML.metadata;
 
-import java.util.List;
-
 import org.vast.cdm.common.DataComponent;
 import org.vast.util.Contact;
 import org.vast.util.DateTime;
@@ -41,15 +39,15 @@ import org.vast.util.DateTime;
  */
 public class Metadata
 {
-    protected List<String> descriptions;
-    protected List<Term> identifiers;
-    protected List<Term> classifiers;
-    protected List<DocumentRef> documents;
-    protected List<Contact> contacts;
-    protected List<DataComponent> characteristics;
-    protected List<DataComponent> capabilities;
-    protected List<HistoryEvent> events;
-    protected List<LegalConstraint> legalConstraints;
+    protected KeywordList keywords;
+    protected MetadataList<Term> identifiers;
+    protected MetadataList<Term> classifiers;
+    protected MetadataList<DocumentRef> documents;
+    protected MetadataList<Contact> contacts;
+    protected MetadataList<DataComponent> characteristics;
+    protected MetadataList<DataComponent> capabilities;
+    protected MetadataList<HistoryEvent> events;
+    protected MetadataList<LegalConstraint> legalConstraints;
     protected SecurityConstraint securityConstraint;
     protected DateTime validityBegin;
     protected DateTime validityEnd;    
@@ -60,109 +58,109 @@ public class Metadata
     }
     
     
-    public List<String> getDescriptions()
+    public KeywordList getKeywords()
     {
-        return descriptions;
+        return keywords;
     }
 
 
-    public void setDescriptions(List<String> descriptions)
+    public void setKeywords(KeywordList keywords)
     {
-        this.descriptions = descriptions;
+        this.keywords = keywords;
     }
-    
-    
-    public List<DataComponent> getCapabilities()
+
+
+    public MetadataList<DataComponent> getCapabilities()
     {
         return capabilities;
     }
 
 
-    public void setCapabilities(List<DataComponent> capabilities)
+    public void setCapabilities(MetadataList<DataComponent> capabilities)
     {
         this.capabilities = capabilities;
     }
 
 
-    public List<DataComponent> getCharacteristics()
+    public MetadataList<DataComponent> getCharacteristics()
     {
         return characteristics;
     }
 
 
-    public void setCharacteristics(List<DataComponent> characteristics)
+    public void setCharacteristics(MetadataList<DataComponent> characteristics)
     {
         this.characteristics = characteristics;
     }
 
 
-    public List<Term> getClassifiers()
+    public MetadataList<Term> getClassifiers()
     {
         return classifiers;
     }
 
 
-    public void setClassifiers(List<Term> classifiers)
+    public void setClassifiers(MetadataList<Term> classifiers)
     {
         this.classifiers = classifiers;
     }
 
 
-    public List<Contact> getContacts()
+    public MetadataList<Contact> getContacts()
     {
         return contacts;
     }
 
 
-    public void setContacts(List<Contact> contacts)
+    public void setContacts(MetadataList<Contact> contacts)
     {
         this.contacts = contacts;
     }
 
 
-    public List<DocumentRef> getDocuments()
+    public MetadataList<DocumentRef> getDocuments()
     {
         return documents;
     }
 
 
-    public void setDocuments(List<DocumentRef> documents)
+    public void setDocuments(MetadataList<DocumentRef> documents)
     {
         this.documents = documents;
     }
 
 
-    public List<Term> getIdentifiers()
+    public MetadataList<Term> getIdentifiers()
     {
         return identifiers;
     }
 
 
-    public void setIdentifiers(List<Term> identifiers)
+    public void setIdentifiers(MetadataList<Term> identifiers)
     {
         this.identifiers = identifiers;
     }
 
 
-    public List<HistoryEvent> getEvents()
+    public MetadataList<HistoryEvent> getEvents()
     {
         return events;
     }
 
 
-    public void setEvents(List<HistoryEvent> events)
+    public void setEvents(MetadataList<HistoryEvent> events)
     {
         this.events = events;
     }
 
 
-    public List<LegalConstraint> getLegalConstraints()
+    public MetadataList<LegalConstraint> getLegalConstraints()
     {
         return legalConstraints;
     }
 
 
-    public void setLegalConstraints(List<LegalConstraint> legalConstraints)
+    public void setLegalConstraints(MetadataList<LegalConstraint> legalConstraints)
     {
         this.legalConstraints = legalConstraints;
     }

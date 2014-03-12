@@ -52,7 +52,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 
-public class TestReadSensorMLV20 extends XMLTestCase
+public class TestSMLBindingsV20 extends XMLTestCase
 {
     
     public void setUp() throws Exception
@@ -73,9 +73,10 @@ public class TestReadSensorMLV20 extends XMLTestCase
     }
     
     
-    protected void readWriteCompareOmXml(String path) throws Exception
+    protected void readWriteCompareXml(String path) throws Exception
     {
         SMLUtils utils = new SMLUtils("2.0");
+        utils.setReadMetadata(true);
         
         InputStream is = getClass().getResourceAsStream(path);
         DOMHelper dom1 = new DOMHelper(is, false);
@@ -96,7 +97,7 @@ public class TestReadSensorMLV20 extends XMLTestCase
     protected Configuration readSettings(String filePath, String domPath) throws Exception
     {
         ConfigurationReaderV20 reader = new ConfigurationReaderV20();        
-        InputStream is = TestReadSensorMLV20.class.getResourceAsStream(filePath);        
+        InputStream is = TestSMLBindingsV20.class.getResourceAsStream(filePath);        
         DOMHelper dom = new DOMHelper(is, false);
         Element settingsElt = dom.getElement(domPath);
         return reader.readSettings(dom, settingsElt);
@@ -106,7 +107,7 @@ public class TestReadSensorMLV20 extends XMLTestCase
     protected Mode readMode(String filePath, String domPath) throws Exception
     {
         ConfigurationReaderV20 reader = new ConfigurationReaderV20();        
-        InputStream is = TestReadSensorMLV20.class.getResourceAsStream(filePath);        
+        InputStream is = TestSMLBindingsV20.class.getResourceAsStream(filePath);        
         DOMHelper dom = new DOMHelper(is, false);
         Element modeElt = dom.getElement(domPath);
         return reader.readMode(dom, modeElt);
@@ -116,7 +117,7 @@ public class TestReadSensorMLV20 extends XMLTestCase
     protected SMLPhysicalComponent readSystem(String filePath) throws Exception
     {
         SystemReaderV20 reader = new SystemReaderV20();        
-        InputStream is = TestReadSensorMLV20.class.getResourceAsStream(filePath);        
+        InputStream is = TestSMLBindingsV20.class.getResourceAsStream(filePath);        
         DOMHelper dom = new DOMHelper(is, false);       
         return (SMLPhysicalComponent)reader.read(dom, dom.getBaseElement());        
     }
@@ -167,7 +168,7 @@ public class TestReadSensorMLV20 extends XMLTestCase
     
     public void testReadSystem() throws Exception
     {
-        readWriteCompareOmXml("/examples_v20/Davis_7817_complete.xml");
+        readWriteCompareXml("/examples_v20/Davis_7817_complete.xml");
     }
     
 }

@@ -34,7 +34,7 @@ import org.vast.sensorML.system.ProtocolDef;
 import org.vast.sensorML.system.ReferenceFrame;
 import org.vast.sensorML.system.SMLSystem;
 import org.vast.sensorML.system.SMLComponent;
-import org.vast.sweCommon.SweEncodingReaderV1;
+import org.vast.sweCommon.SweEncodingReaderV20;
 
 
 /**
@@ -51,7 +51,7 @@ public class SystemReaderV20 extends ProcessReaderV20 implements SystemReader
 {
     protected static final String dataSeparator = "/";
     protected PositionReaderV1 positionReader;
-    protected SweEncodingReaderV1 encodingReader;
+    protected SweEncodingReaderV20 encodingReader;
         
     
     /**
@@ -294,15 +294,14 @@ public class SystemReaderV20 extends ProcessReaderV20 implements SystemReader
         try
         {
             // get child protocol element
-            Element protocolElement = dom.getFirstChildElement(protocolProperty);                
+            Element protocolElement = dom.getFirstChildElement(protocolProperty);
             
             // read definition
             String protocolType = dom.getAttributeValue(protocolElement, "definition");
             protocol.setDefinition(protocolType);
             
             // read list of protocol properties
-            NodeList propElts = dom.getElements(protocolElement, "property");
-            protocol.setProperties(metadataReader.readPropertyList(dom, propElts));
+            protocol.setProperties(metadataReader.readPropertyList(dom, protocolElement, "property"));
             
             // read encoding if present       
             Element encodingElt = dom.getElement(protocolElement, "encoding");

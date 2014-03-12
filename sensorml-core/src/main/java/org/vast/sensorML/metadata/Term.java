@@ -33,6 +33,7 @@ package org.vast.sensorML.metadata;
 public class Term
 {
     protected String name;
+    protected String definition;
     protected String value;
     protected String codespace;
 
@@ -46,6 +47,18 @@ public class Term
     public void setName(String name)
     {
         this.name = name;
+    }
+
+
+    public String getDefinition()
+    {
+        return definition;
+    }
+
+
+    public void setDefinition(String definition)
+    {
+        this.definition = definition;
     }
 
 

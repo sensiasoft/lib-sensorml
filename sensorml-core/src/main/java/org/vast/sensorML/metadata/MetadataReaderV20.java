@@ -21,13 +21,12 @@
 package org.vast.sensorML.metadata;
 
 import java.text.ParseException;
-import java.util.*;
 import org.w3c.dom.*;
 import org.vast.cdm.common.DataComponent;
 import org.vast.xml.DOMHelper;
 import org.vast.xml.XMLReaderException;
 import org.vast.sensorML.AbstractSMLReader;
-import org.vast.sweCommon.SWECommonUtils;
+import org.vast.sweCommon.SweComponentReaderV20;
 import org.vast.util.*;
 
 
@@ -42,9 +41,9 @@ import org.vast.util.*;
  * @author Alexandre Robin
  * @version 1.0
  */
-public class MetadataReaderV20 extends AbstractSMLReader implements MetadataReader
+public class MetadataReaderV20 extends AbstractSMLReader
 {
-    protected SWECommonUtils utils;
+    protected SweComponentReaderV20 sweReader;
 
 
     /**
@@ -53,7 +52,7 @@ public class MetadataReaderV20 extends AbstractSMLReader implements MetadataRead
      */
     public MetadataReaderV20()
     {
-        utils = new SWECommonUtils();
+        sweReader = new SweComponentReaderV20();
     }
 
 
@@ -63,70 +62,86 @@ public class MetadataReaderV20 extends AbstractSMLReader implements MetadataRead
     public Metadata readMetadata(DOMHelper dom, Element objectElement) throws XMLReaderException
     {
         Metadata metadata = new Metadata();
+        Element listElt;
         
-        // read all identifier lists
-        NodeList identifierElts = dom.getElements(objectElement, "identification/IdentifierList/identifier");
-        metadata.setIdentifiers(readTermList(dom, identifierElts));
-
-        // read all classifier lists
-        NodeList classifierElts = dom.getElements(objectElement, "classification/ClassifierList/classifier");
-        metadata.setClassifiers(readTermList(dom, classifierElts));
-
-        // read all characteristics lists
-        NodeList characteristicsElts = dom.getElements(objectElement, "characteristics/PropertyList/property");
-        metadata.setCharacteristics(readPropertyList(dom, characteristicsElts));
-
-        // read all capabilities lists
-        NodeList capabilitiesElts = dom.getElements(objectElement, "capabilities/PropertyList/property");
-        metadata.setCapabilities(readPropertyList(dom, capabilitiesElts));
-
-        // read all document lists
-        NodeList documentElts = dom.getElements(objectElement, "documentation/DocumentList/member");
-        metadata.setDocuments(readDocumentList(dom, documentElts));
-
-        // read all contact lists
-        NodeList contactElts = dom.getElements(objectElement, "contact/ContactList/member");
-        metadata.setContacts(readContactList(dom, contactElts));
+        // keywords
+        listElt = dom.getElement(objectElement, "keywords/KeywordList");
+        metadata.setKeywords(readKeywordList(dom, listElt, "keyword"));
         
-        // read standalone documents
-        NodeList docElts = dom.getElements(objectElement, "documentation/Document");
-        for (int i=0; i<docElts.getLength(); i++)
-        {
-            Element docElt = (Element)docElts.item(i);
-            DocumentRef doc = readDocument(dom, docElt);
-            metadata.getDocuments().add(doc);
-        }
-        
-        // read standalone contacts
-        contactElts = dom.getElements(objectElement, "contact/*");
-        for (int i=0; i<contactElts.getLength(); i++)
-        {
-            Element contactElt = (Element)contactElts.item(i);
-            if (!contactElt.getLocalName().equals("ContactList"))
-            {
-                Contact contact = readContact(dom, contactElt);
-                metadata.getContacts().add(contact);
-            }
-        }
+        // identifiers
+        listElt = dom.getElement(objectElement, "identification/IdentifierList");
+        metadata.setIdentifiers(readTermList(dom, listElt, "identifier"));
+
+        // classifiers
+        listElt = dom.getElement(objectElement, "classification/ClassifierList");
+        metadata.setClassifiers(readTermList(dom, listElt, "classifier"));
+
+        // characteristics
+        listElt = dom.getElement(objectElement, "characteristics/CharacteristicList");
+        metadata.setCharacteristics(readPropertyList(dom, listElt, "characteristic"));
+
+        // capabilities
+        listElt = dom.getElement(objectElement, "capabilities/CapabilityList");
+        metadata.setCapabilities(readPropertyList(dom, listElt, "capability"));
+
+        // documents
+        listElt = dom.getElement(objectElement, "documentation/DocumentList");
+        metadata.setDocuments(readDocumentList(dom, listElt, "document"));
+
+        // contacts
+        listElt = dom.getElement(objectElement, "contact/ContactList");
+        metadata.setContacts(readContactList(dom, listElt, "contact"));
 
         return metadata;
     }
-
-
-    /* (non-Javadoc)
-     * @see org.vast.sensorML.reader.MetadataReader#readTermList(org.vast.xml.DOMHelper, org.w3c.dom.NodeList)
-     */
-    public List<Term> readTermList(DOMHelper dom, NodeList termPropertyElts) throws XMLReaderException
+    
+    
+    protected void readCommonListProperties(DOMHelper dom, Element listElt, MetadataList<?> metadataList)
     {
+        metadataList.setLocalId(dom.getAttributeValue(listElt, "id"));
+        metadataList.setDescription(dom.getElementValue(listElt, "description"));
+        metadataList.setLabel(dom.getElementValue(listElt, "label"));
+        metadataList.setIdentifier(dom.getElementValue(listElt, "identifier"));
+    }
+
+
+    protected KeywordList readKeywordList(DOMHelper dom, Element listElt, String itemName) throws XMLReaderException
+    {
+        if (listElt == null)
+            return null;
+        
+        NodeList termPropertyElts = dom.getElements(listElt, itemName);
+        int listSize = termPropertyElts.getLength();        
+        KeywordList keywordList = new KeywordList(listSize);
+        
+        readCommonListProperties(dom, listElt, keywordList);
+        keywordList.setCodespace(dom.getAttributeValue(listElt, "codeSpace/href"));
+        
+        for (int i = 0; i < listSize; i++)
+        {
+            Element keywordElt = (Element) termPropertyElts.item(i);
+            keywordList.add(dom.getElementValue(keywordElt));
+        }
+
+        return keywordList;
+    }
+    
+    
+    protected MetadataList<Term> readTermList(DOMHelper dom, Element listElt, String itemName) throws XMLReaderException
+    {
+        if (listElt == null)
+            return null;
+        
+        NodeList termPropertyElts = dom.getElements(listElt, itemName);
         int listSize = termPropertyElts.getLength();
-        List<Term> termList = new ArrayList<Term>(listSize);
+        MetadataList<Term> termList = new MetadataList<Term>(listSize);
+        readCommonListProperties(dom, listElt, termList);
 
         for (int i = 0; i < listSize; i++)
         {
             Element propElt = (Element) termPropertyElts.item(i);
             Element termElt = dom.getFirstChildElement(propElt);
             Term term = readTerm(dom, termElt);
-            term.setName(dom.getAttributeValue(propElt, "name"));
             termList.add(term);
         }
 
@@ -134,14 +149,16 @@ public class MetadataReaderV20 extends AbstractSMLReader implements MetadataRead
     }
 
 
-    /* (non-Javadoc)
-     * @see org.vast.sensorML.reader.MetadataReader#readDocumentList(org.vast.xml.DOMHelper, org.w3c.dom.NodeList)
-     */
-    public List<DocumentRef> readDocumentList(DOMHelper dom, NodeList docPropertyElts) throws XMLReaderException
+    protected MetadataList<DocumentRef> readDocumentList(DOMHelper dom, Element listElt, String itemName) throws XMLReaderException
     {
+        if (listElt == null)
+            return null;
+        
+        NodeList docPropertyElts = dom.getElements(listElt, itemName);
         int listSize = docPropertyElts.getLength();
-        List<DocumentRef> docList = new ArrayList<DocumentRef>(listSize);
-
+        MetadataList<DocumentRef> docList = new MetadataList<DocumentRef>(listSize);
+        readCommonListProperties(dom, listElt, docList);
+        
         for (int i = 0; i < listSize; i++)
         {
             Element propElt = (Element) docPropertyElts.item(i);
@@ -155,14 +172,16 @@ public class MetadataReaderV20 extends AbstractSMLReader implements MetadataRead
     }
 
 
-    /* (non-Javadoc)
-     * @see org.vast.sensorML.reader.MetadataReader#readContactList(org.vast.xml.DOMHelper, org.w3c.dom.NodeList)
-     */
-    public List<Contact> readContactList(DOMHelper dom, NodeList contactPropertyElts) throws XMLReaderException
+    protected MetadataList<Contact> readContactList(DOMHelper dom, Element listElt, String itemName) throws XMLReaderException
     {
+        if (listElt == null)
+            return null;
+        
+        NodeList contactPropertyElts = dom.getElements(listElt, itemName);
         int listSize = contactPropertyElts.getLength();
-        List<Contact> contactList = new ArrayList<Contact>(listSize);
-
+        MetadataList<Contact> contactList = new MetadataList<Contact>(listSize);
+        readCommonListProperties(dom, listElt, contactList);
+        
         for (int i = 0; i < listSize; i++)
         {
             Element propElt = (Element) contactPropertyElts.item(i);
@@ -187,18 +206,20 @@ public class MetadataReaderV20 extends AbstractSMLReader implements MetadataRead
     }
 
 
-    /* (non-Javadoc)
-     * @see org.vast.sensorML.reader.MetadataReader#readPropertyList(org.vast.xml.DOMHelper, org.w3c.dom.NodeList)
-     */
-    public List<DataComponent> readPropertyList(DOMHelper dom, NodeList propertyElts) throws XMLReaderException
+    public MetadataList<DataComponent> readPropertyList(DOMHelper dom, Element listElt, String itemName) throws XMLReaderException
     {
+        if (listElt == null)
+            return null;
+        
+        NodeList propertyElts = dom.getElements(listElt, itemName);
         int listSize = propertyElts.getLength();
-        List<DataComponent> propertyList = new ArrayList<DataComponent>(listSize);
-
+        MetadataList<DataComponent> propertyList = new MetadataList<DataComponent>(listSize);
+        readCommonListProperties(dom, listElt, propertyList);
+        
         for (int i = 0; i < listSize; i++)
         {
             Element propElt = (Element) propertyElts.item(i);
-            DataComponent data = utils.readComponentProperty(dom, propElt);
+            DataComponent data = sweReader.readComponentProperty(dom, propElt);
             propertyList.add(data);
         }
 
@@ -206,29 +227,18 @@ public class MetadataReaderV20 extends AbstractSMLReader implements MetadataRead
     }
 
 
-    /* (non-Javadoc)
-     * @see org.vast.sensorML.reader.MetadataReader#readTerm(org.vast.xml.DOMHelper, org.w3c.dom.Element)
-     */
-    public Term readTerm(DOMHelper dom, Element termElt) throws XMLReaderException
+    protected Term readTerm(DOMHelper dom, Element termElt) throws XMLReaderException
     {
-        Term term = new Term();
-
-        // read codespace href attribute
-        String codespace = dom.getAttributeValue(termElt, "codeSpace/href");
-        term.setCodespace(codespace);
-
-        // read term value
-        String value = dom.getElementValue(termElt, "value");
-        term.setValue(value);
-
+        Term term = new Term();        
+        term.setDefinition(dom.getAttributeValue(termElt, "definition"));
+        term.setCodespace(dom.getAttributeValue(termElt, "codeSpace/href"));
+        term.setName(dom.getElementValue(termElt, "label"));
+        term.setValue(dom.getElementValue(termElt, "value"));
         return term;
     }
 
 
-    /* (non-Javadoc)
-     * @see org.vast.sensorML.reader.MetadataReader#readDocument(org.vast.xml.DOMHelper, org.w3c.dom.Element)
-     */
-    public DocumentRef readDocument(DOMHelper dom, Element documentElement) throws XMLReaderException
+    protected DocumentRef readDocument(DOMHelper dom, Element documentElement) throws XMLReaderException
     {
         DocumentRef document = new DocumentRef();
 
@@ -262,10 +272,7 @@ public class MetadataReaderV20 extends AbstractSMLReader implements MetadataRead
     }
 
 
-    /* (non-Javadoc)
-     * @see org.vast.sensorML.reader.MetadataReader#readContact(org.vast.xml.DOMHelper, org.w3c.dom.Element)
-     */
-    public Contact readContact(DOMHelper dom, Element contactElement) throws XMLReaderException
+    protected Contact readContact(DOMHelper dom, Element contactElement) throws XMLReaderException
     {
         Contact contact = null;
 
@@ -278,10 +285,7 @@ public class MetadataReaderV20 extends AbstractSMLReader implements MetadataRead
     }
 
 
-    /* (non-Javadoc)
-     * @see org.vast.sensorML.reader.MetadataReader#readPerson(org.vast.xml.DOMHelper, org.w3c.dom.Element)
-     */
-    public Person readPerson(DOMHelper dom, Element personElement) throws XMLReaderException
+    protected Person readPerson(DOMHelper dom, Element personElement) throws XMLReaderException
     {
         Person person = new Person();
         String value;
@@ -314,10 +318,7 @@ public class MetadataReaderV20 extends AbstractSMLReader implements MetadataRead
     }
 
 
-    /* (non-Javadoc)
-     * @see org.vast.sensorML.reader.MetadataReader#readResponsibleParty(org.vast.xml.DOMHelper, org.w3c.dom.Element)
-     */
-    public ResponsibleParty readResponsibleParty(DOMHelper dom, Element partyElement) throws XMLReaderException
+    protected ResponsibleParty readResponsibleParty(DOMHelper dom, Element partyElement) throws XMLReaderException
     {
         ResponsibleParty party = new ResponsibleParty();
         String value;
@@ -378,10 +379,7 @@ public class MetadataReaderV20 extends AbstractSMLReader implements MetadataRead
     }
 
 
-    /* (non-Javadoc)
-     * @see org.vast.sensorML.reader.MetadataReader#readDate(org.vast.xml.DOMHelper, org.w3c.dom.Element)
-     */
-    public DateTime readDate(DOMHelper dom, Element dateElement) throws XMLReaderException
+    protected DateTime readDate(DOMHelper dom, Element dateElement) throws XMLReaderException
     {       
         try
         {
