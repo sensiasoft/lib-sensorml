@@ -9,6 +9,6 @@ The processing engine implementation is particularly oriented toward real time s
 distributed pipelined processing. The development of executable process model profiles is supported by the
 development project at SensorML Profile Development.
 
-The project was initiated by the [http://vast.uah.edu](VAST Team) at the [University of Alabama in Huntsville (UAH)](http://www.uah.edu) and is now maintained by [Sensia Software](http://www.sensiasoftware.com) and [Botts Innovative Research, Inc](http://www.botts-inc.com).
+The project was initiated by the [VAST Team](http://vast.uah.edu) at the [University of Alabama in Huntsville (UAH)](http://www.uah.edu) and is now maintained by [Sensia Software](http://www.sensiasoftware.com) and [Botts Innovative Research, Inc](http://www.botts-inc.com).
 
 This project relies on the [SWE Common Library](https://github.com/sensiasoft/lib-swe-common). 
