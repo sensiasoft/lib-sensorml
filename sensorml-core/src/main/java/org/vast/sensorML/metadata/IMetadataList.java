@@ -25,37 +25,39 @@
 
 package org.vast.sensorML.metadata;
 
+import java.util.List;
 
-/**
- * <p>
- * Specialization for keyword list containing a code space
- * </p>
- *
- * <p>Copyright (c) 2014 Sensia Software LLC</p>
- * @author Alexandre Robin <alex.robin@sensiasoftware.com>
- * @since Mar 12, 2014
- */
-public class KeywordList extends MetadataList<String>
+
+public interface IMetadataList<ItemType> extends List<ItemType>
 {
-    private static final long serialVersionUID = 2842314345294018071L;
-    protected String codespace;
+
+    public abstract String getLocalId();
+
+
+    public abstract void setLocalId(String localId);
+
+
+    public abstract String getIdentifier();
+
+
+    public abstract void setIdentifier(String identifier);
+
+
+    public abstract String getLabel();
+
+
+    public abstract void setLabel(String label);
+
+
+    public abstract String getDescription();
+
+
+    public abstract void setDescription(String description);
     
     
-    public KeywordList(int listSize)
-    {
-        super(listSize);
-    }
+    public abstract String getCodespace();
 
 
-    public String getCodespace()
-    {
-        return codespace;
-    }
-
-
-    public void setCodespace(String codespace)
-    {
-        this.codespace = codespace;
-    }
+    public abstract void setCodespace(String codespace);
 
 }

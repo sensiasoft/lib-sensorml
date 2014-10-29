@@ -25,12 +25,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import org.w3c.dom.*;
-import org.vast.cdm.common.DataEncoding;
 import org.vast.xml.DOMHelper;
 import org.vast.xml.XMLReaderException;
-import org.vast.sensorML.system.InterfaceDef;
 import org.vast.sensorML.system.Position;
-import org.vast.sensorML.system.ProtocolDef;
 import org.vast.sensorML.system.ReferenceFrame;
 import org.vast.sensorML.system.SMLSystem;
 import org.vast.sensorML.system.SMLComponent;
@@ -80,10 +77,6 @@ public class SystemReaderV20 extends ProcessReaderV20 implements SystemReader
         for (int i=0; i<frameList.size(); i++)
             SMLSystem.frameToObjectMap.put(frameList.get(i), system);
         
-        // read interfaces
-        List<InterfaceDef> interfaceList = readInterfaceList(dom, systemElement);
-        system.setInterfaces(interfaceList);
-        
         // read positions
         List<Position> positionList = readPositionList(dom, systemElement);
         system.setComponentPositions(positionList);
@@ -116,10 +109,6 @@ public class SystemReaderV20 extends ProcessReaderV20 implements SystemReader
             // also add frames to the map
             for (int i=0; i<frameList.size(); i++)
                 SMLSystem.frameToObjectMap.put(frameList.get(i), component);
-            
-            // read interfaces
-            List<InterfaceDef> interfaceList = readInterfaceList(dom, processModelElement);
-            component.setInterfaces(interfaceList);
         }
         
         return newProcess;
@@ -146,32 +135,7 @@ public class SystemReaderV20 extends ProcessReaderV20 implements SystemReader
         
         return frameList;
     }
-    
-    
-    /**
-     * Reads the whole list of interfaces for a given Component
-     * @param componentElement
-     * @return
-     * @throws SMLException
-     */
-    public List<InterfaceDef> readInterfaceList(DOMHelper dom, Element componentElement) throws XMLReaderException
-    {
-        NodeList interfaceElts = dom.getElements(componentElement, "interfaces/InterfaceList/interface");
-        int listSize = interfaceElts.getLength();
-        List<InterfaceDef> interfaceList = new ArrayList<InterfaceDef>(listSize);
-        
-        for (int i=0; i<listSize; i++)
-        {
-            Element propElt = (Element)interfaceElts.item(i);
-            Element interfaceElt = dom.getFirstChildElement(propElt);
-            InterfaceDef interfaceDef = readInterface(dom, interfaceElt);            
-            String name = dom.getAttributeValue(propElt, "name");
-            interfaceDef.setName(name);            
-            interfaceList.add(interfaceDef);
-        }
-        
-        return interfaceList;
-    }
+
     
     
     /**
@@ -234,88 +198,5 @@ public class SystemReaderV20 extends ProcessReaderV20 implements SystemReader
         
         return frame;
     }
-    
-    
-    /**
-     * Reads an Interface description
-     * @param interfaceElement
-     * @return
-     * @throws SMLException
-     */
-    public InterfaceDef readInterface(DOMHelper dom, Element interfaceElement) throws XMLReaderException
-    {
-        InterfaceDef interfaceDef = new InterfaceDef();
-        Element propElt;
-        
-        propElt = dom.getElement(interfaceElement, "serviceLayer");
-        interfaceDef.setServiceLayerProtocol(readProtocol(dom, propElt));
-        
-        propElt = dom.getElement(interfaceElement, "applicationLayer");
-        interfaceDef.setApplicationLayerProtocol(readProtocol(dom, propElt));
-        
-        propElt = dom.getElement(interfaceElement, "presentationLayer");
-        interfaceDef.setPresentationLayerProtocol(readProtocol(dom, propElt));
-        
-        propElt = dom.getElement(interfaceElement, "sessionLayer");
-        interfaceDef.setSessionLayerProtocol(readProtocol(dom, propElt));
-        
-        propElt = dom.getElement(interfaceElement, "transportLayer");
-        interfaceDef.setTransportLayerProtocol(readProtocol(dom, propElt));
-        
-        propElt = dom.getElement(interfaceElement, "networkLayer");
-        interfaceDef.setNetworkLayerProtocol(readProtocol(dom, propElt));
-        
-        propElt = dom.getElement(interfaceElement, "dataLinkLayer");
-        interfaceDef.setDataLinkLayerProtocol(readProtocol(dom, propElt));
-        
-        propElt = dom.getElement(interfaceElement, "physicalLayer");
-        interfaceDef.setPhysicalLayerProtocol(readProtocol(dom, propElt));
-        
-        propElt = dom.getElement(interfaceElement, "mechanicalLayer");
-        interfaceDef.setMechanicalLayerProtocol(readProtocol(dom, propElt));
-        
-        return interfaceDef;
-    }
-    
-    
-    /**
-     * Reads a Protocol description 
-     * @param protocolElement
-     * @return
-     * @throws SMLException
-     */
-    public ProtocolDef readProtocol(DOMHelper dom, Element protocolProperty) throws XMLReaderException
-    {
-        if (protocolProperty == null)
-            return null;
-        
-        ProtocolDef protocol = new ProtocolDef(); 
-        
-        try
-        {
-            // get child protocol element
-            Element protocolElement = dom.getFirstChildElement(protocolProperty);
-            
-            // read definition
-            String protocolType = dom.getAttributeValue(protocolElement, "definition");
-            protocol.setDefinition(protocolType);
-            
-            // read list of protocol properties
-            protocol.setProperties(metadataReader.readPropertyList(dom, protocolElement, "property"));
-            
-            // read encoding if present       
-            Element encodingElt = dom.getElement(protocolElement, "encoding");
-            if (encodingElt != null)
-            {
-                DataEncoding encoding = encodingReader.readEncodingProperty(dom, encodingElt);
-                protocol.setEncoding(encoding);
-            }
-        }
-        catch (XMLReaderException e)
-        {
-            throw new XMLReaderException("Error while reading interface protocol", e);
-        }
-        
-        return protocol;
-    }
+
 }

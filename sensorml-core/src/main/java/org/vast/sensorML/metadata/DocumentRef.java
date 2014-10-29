@@ -37,6 +37,7 @@ import org.vast.util.DateTime;
 public class DocumentRef
 {
     protected String description;
+    protected String name;
     protected String role;
     protected String version;
     protected DateTime date;
@@ -78,6 +79,18 @@ public class DocumentRef
     public void setDescription(String description)
     {
         this.description = description;
+    }
+
+
+    public String getName()
+    {
+        return name;
+    }
+
+
+    public void setName(String name)
+    {
+        this.name = name;
     }
 
 

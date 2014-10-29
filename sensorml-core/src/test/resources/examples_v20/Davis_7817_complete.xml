@@ -80,7 +80,7 @@
    <!-- PUT IN VALIDTIME, CONSTRAINTS ?? -->
 
    <sml:characteristics name="physical">
-      <sml:CharacteristicList definition="urn:ogc:def:property:physicalProperties">
+      <sml:CharacteristicList>
          <swe:label>Physical Properties</swe:label>
          <sml:characteristic name="weight">
             <swe:Quantity definition="urn:ogc:def:property:weight">
@@ -107,7 +107,7 @@
    </sml:characteristics>
 
    <sml:capabilities name="measurement">
-      <sml:CapabilityList definition="urn:ogc:def:property:measurementProperties">
+      <sml:CapabilityList>
          <sml:capability name="resolution" xlink:arcrole="urn:ogc:def:property:resolution">
             <swe:Quantity definition="urn:ogc:def:property:temperature">
                <swe:label>Temperature Resolution</swe:label>
@@ -151,7 +151,7 @@
                      <gmd:address>
                         <gmd:CI_Address>
                            <gmd:deliveryPoint>
-                              <gco:CharacterString> Diablo Avenue</gco:CharacterString>
+                              <gco:CharacterString>Diablo Avenue</gco:CharacterString>
                            </gmd:deliveryPoint>
                            <gmd:city>
                               <gco:CharacterString>Hatwood</gco:CharacterString>
@@ -294,7 +294,7 @@
                <swe:encoding>
                   <swe:TextEncoding tokenSeparator="," blockSeparator="&#x20;" decimalSeparator="." />
                </swe:encoding>
-               <swe:values>-40,0 -10,0.1 15,0.3 27,0.5 44,1 60,2.1</swe:values>
+               <swe:values>-40.0,0.0 -10.0,0.1 15.0,0.3 27.0,0.5 44.0,1.0 60.0,2.1</swe:values>
             </swe:DataArray>
          </sml:parameter>
          <sml:parameter name="latency" xlink:arcrole="urn:ogc:def:property:OGC:latencyTime">

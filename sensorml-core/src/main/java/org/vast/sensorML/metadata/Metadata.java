@@ -20,6 +20,8 @@
 
 package org.vast.sensorML.metadata;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.vast.cdm.common.DataComponent;
 import org.vast.util.Contact;
 import org.vast.util.DateTime;
@@ -39,142 +41,151 @@ import org.vast.util.DateTime;
  */
 public class Metadata
 {
-    protected KeywordList keywords;
-    protected MetadataList<Term> identifiers;
-    protected MetadataList<Term> classifiers;
-    protected MetadataList<DocumentRef> documents;
-    protected MetadataList<Contact> contacts;
-    protected MetadataList<DataComponent> characteristics;
-    protected MetadataList<DataComponent> capabilities;
-    protected MetadataList<HistoryEvent> events;
-    protected MetadataList<LegalConstraint> legalConstraints;
-    protected SecurityConstraint securityConstraint;
+    protected List<IMetadataList<String>> keywordsLists;
+    protected List<IMetadataList<Term>> identifiersLists;
+    protected List<IMetadataList<Term>> classifiersLists;
+    protected List<IMetadataList<DocumentRef>> documentsLists;
+    protected List<IMetadataList<Contact>> contactsLists;
+    protected List<IMetadataList<DataComponent>> characteristicsLists;
+    protected List<IMetadataList<DataComponent>> capabilitiesLists;
+    protected List<IMetadataList<HistoryEvent>> eventsLists;
+    protected List<IMetadataList<LegalConstraint>> legalConstraintsLists;
+    protected SecurityConstraint securityConstraints;
     protected DateTime validityBegin;
-    protected DateTime validityEnd;    
+    protected DateTime validityEnd;
 
 
     public Metadata()
     {
-    }
-    
-    
-    public KeywordList getKeywords()
-    {
-        return keywords;
-    }
-
-
-    public void setKeywords(KeywordList keywords)
-    {
-        this.keywords = keywords;
+        keywordsLists = new ArrayList<IMetadataList<String>>(3);
+        identifiersLists = new ArrayList<IMetadataList<Term>>(3);
+        classifiersLists = new ArrayList<IMetadataList<Term>>(3);
+        documentsLists = new ArrayList<IMetadataList<DocumentRef>>(3);
+        contactsLists = new ArrayList<IMetadataList<Contact>>(3);
+        characteristicsLists = new ArrayList<IMetadataList<DataComponent>>(3);
+        capabilitiesLists = new ArrayList<IMetadataList<DataComponent>>(3);
+        eventsLists = new ArrayList<IMetadataList<HistoryEvent>>(3);
+        legalConstraintsLists = new ArrayList<IMetadataList<LegalConstraint>>(3);
     }
 
 
-    public MetadataList<DataComponent> getCapabilities()
+    public List<IMetadataList<String>> getKeywordsLists()
     {
-        return capabilities;
+        return keywordsLists;
     }
 
 
-    public void setCapabilities(MetadataList<DataComponent> capabilities)
+    public void setKeywordsLists(List<IMetadataList<String>> keywordsLists)
     {
-        this.capabilities = capabilities;
+        this.keywordsLists = keywordsLists;
     }
 
 
-    public MetadataList<DataComponent> getCharacteristics()
+    public List<IMetadataList<Term>> getIdentifiersLists()
     {
-        return characteristics;
+        return identifiersLists;
     }
 
 
-    public void setCharacteristics(MetadataList<DataComponent> characteristics)
+    public void setIdentifiersLists(List<IMetadataList<Term>> identifiersLists)
     {
-        this.characteristics = characteristics;
+        this.identifiersLists = identifiersLists;
     }
 
 
-    public MetadataList<Term> getClassifiers()
+    public List<IMetadataList<Term>> getClassifiersLists()
     {
-        return classifiers;
+        return classifiersLists;
     }
 
 
-    public void setClassifiers(MetadataList<Term> classifiers)
+    public void setClassifiersLists(List<IMetadataList<Term>> classifiersLists)
     {
-        this.classifiers = classifiers;
+        this.classifiersLists = classifiersLists;
     }
 
 
-    public MetadataList<Contact> getContacts()
+    public List<IMetadataList<DocumentRef>> getDocumentsLists()
     {
-        return contacts;
+        return documentsLists;
     }
 
 
-    public void setContacts(MetadataList<Contact> contacts)
+    public void setDocumentsLists(List<IMetadataList<DocumentRef>> documentsLists)
     {
-        this.contacts = contacts;
+        this.documentsLists = documentsLists;
     }
 
 
-    public MetadataList<DocumentRef> getDocuments()
+    public List<IMetadataList<Contact>> getContactsLists()
     {
-        return documents;
+        return contactsLists;
     }
 
 
-    public void setDocuments(MetadataList<DocumentRef> documents)
+    public void setContactsLists(List<IMetadataList<Contact>> contactsLists)
     {
-        this.documents = documents;
+        this.contactsLists = contactsLists;
     }
 
 
-    public MetadataList<Term> getIdentifiers()
+    public List<IMetadataList<DataComponent>> getCharacteristicsLists()
     {
-        return identifiers;
+        return characteristicsLists;
     }
 
 
-    public void setIdentifiers(MetadataList<Term> identifiers)
+    public void setCharacteristicsLists(List<IMetadataList<DataComponent>> characteristicsLists)
     {
-        this.identifiers = identifiers;
+        this.characteristicsLists = characteristicsLists;
     }
 
 
-    public MetadataList<HistoryEvent> getEvents()
+    public List<IMetadataList<DataComponent>> getCapabilitiesLists()
     {
-        return events;
+        return capabilitiesLists;
     }
 
 
-    public void setEvents(MetadataList<HistoryEvent> events)
+    public void setCapabilitiesLists(List<IMetadataList<DataComponent>> capabilitiesLists)
     {
-        this.events = events;
+        this.capabilitiesLists = capabilitiesLists;
     }
 
 
-    public MetadataList<LegalConstraint> getLegalConstraints()
+    public List<IMetadataList<HistoryEvent>> getEventsLists()
     {
-        return legalConstraints;
+        return eventsLists;
     }
 
 
-    public void setLegalConstraints(MetadataList<LegalConstraint> legalConstraints)
+    public void setEventsLists(List<IMetadataList<HistoryEvent>> eventsLists)
     {
-        this.legalConstraints = legalConstraints;
+        this.eventsLists = eventsLists;
     }
 
 
-    public SecurityConstraint getSecurityConstraint()
+    public List<IMetadataList<LegalConstraint>> getLegalConstraintsLists()
     {
-        return securityConstraint;
+        return legalConstraintsLists;
     }
 
 
-    public void setSecurityConstraint(SecurityConstraint securityConstraint)
+    public void setLegalConstraintsLists(List<IMetadataList<LegalConstraint>> legalConstraintsLists)
     {
-        this.securityConstraint = securityConstraint;
+        this.legalConstraintsLists = legalConstraintsLists;
+    }
+
+
+    public SecurityConstraint getSecurityConstraints()
+    {
+        return securityConstraints;
+    }
+
+
+    public void setSecurityConstraints(SecurityConstraint securityConstraints)
+    {
+        this.securityConstraints = securityConstraints;
     }
 
 
@@ -200,4 +211,5 @@ public class Metadata
     {
         this.validityEnd = validityEnd;
     }
+    
 }

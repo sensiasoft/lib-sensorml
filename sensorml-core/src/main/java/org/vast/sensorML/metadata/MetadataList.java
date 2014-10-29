@@ -38,7 +38,7 @@ import java.util.ArrayList;
  * @author Alexandre Robin <alex.robin@sensiasoftware.com>
  * @since Mar 12, 2014
  */
-public class MetadataList<ItemType> extends ArrayList<ItemType>
+public class MetadataList<ItemType> extends ArrayList<ItemType> implements IMetadataList<ItemType>
 {
     private static final long serialVersionUID = 4896366007675756619L;
 
@@ -46,6 +46,7 @@ public class MetadataList<ItemType> extends ArrayList<ItemType>
     protected String identifier;
     protected String label;
     protected String description;
+    protected String codespace;
 
 
     public MetadataList(int listSize)
@@ -54,51 +55,103 @@ public class MetadataList<ItemType> extends ArrayList<ItemType>
     }
     
     
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.metadata.IMetadataList#getLocalId()
+     */
+    @Override
     public String getLocalId()
     {
         return localId;
     }
 
 
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.metadata.IMetadataList#setLocalId(java.lang.String)
+     */
+    @Override
     public void setLocalId(String localId)
     {
         this.localId = localId;
     }
 
 
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.metadata.IMetadataList#getIdentifier()
+     */
+    @Override
     public String getIdentifier()
     {
         return identifier;
     }
 
 
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.metadata.IMetadataList#setIdentifier(java.lang.String)
+     */
+    @Override
     public void setIdentifier(String identifier)
     {
         this.identifier = identifier;
     }
 
 
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.metadata.IMetadataList#getLabel()
+     */
+    @Override
     public String getLabel()
     {
         return label;
     }
 
 
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.metadata.IMetadataList#setLabel(java.lang.String)
+     */
+    @Override
     public void setLabel(String label)
     {
         this.label = label;
     }
 
 
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.metadata.IMetadataList#getDescription()
+     */
+    @Override
     public String getDescription()
     {
         return description;
     }
 
 
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.metadata.IMetadataList#setDescription(java.lang.String)
+     */
+    @Override
     public void setDescription(String description)
     {
         this.description = description;
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.metadata.IMetadataList#getCodespace(java.lang.String)
+     */
+    @Override
+    public String getCodespace()
+    {
+        return codespace;
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.vast.sensorML.metadata.IMetadataList#setCodespace(java.lang.String)
+     */
+    @Override
+    public void setCodespace(String codespace)
+    {
+        this.codespace = codespace;        
     }
 
 }

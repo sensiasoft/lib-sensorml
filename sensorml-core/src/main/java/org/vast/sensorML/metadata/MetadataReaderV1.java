@@ -65,49 +65,53 @@ public class MetadataReaderV1 extends AbstractSMLReader
 
         // read all identifier lists
         NodeList identifierElts = dom.getElements(objectElement, "identification/IdentifierList/identifier");
-        metadata.setIdentifiers(readTermList(dom, identifierElts));
+        metadata.getIdentifiersLists().add(readTermList(dom, identifierElts));
 
         // read all classifier lists
         NodeList classifierElts = dom.getElements(objectElement, "classification/ClassifierList/classifier");
-        metadata.setClassifiers(readTermList(dom, classifierElts));
+        metadata.getClassifiersLists().add(readTermList(dom, classifierElts));
 
         // read all characteristics lists
         NodeList characteristicsElts = dom.getElements(objectElement, "characteristics/PropertyList/property");
-        metadata.setCharacteristics(readPropertyList(dom, characteristicsElts));
+        metadata.getCharacteristicsLists().add(readPropertyList(dom, characteristicsElts));
 
         // read all capabilities lists
         NodeList capabilitiesElts = dom.getElements(objectElement, "capabilities/PropertyList/property");
-        metadata.setCapabilities(readPropertyList(dom, capabilitiesElts));
+        metadata.getCapabilitiesLists().add(readPropertyList(dom, capabilitiesElts));
 
         // read all document lists
         NodeList documentElts = dom.getElements(objectElement, "documentation/DocumentList/member");
-        metadata.setDocuments(readDocumentList(dom, documentElts));
+        metadata.getDocumentsLists().add(readDocumentList(dom, documentElts));
 
         // read all contact lists
         NodeList contactElts = dom.getElements(objectElement, "contact/ContactList/member");
-        metadata.setContacts(readContactList(dom, contactElts));
+        metadata.getContactsLists().add(readContactList(dom, contactElts));
         
         // read standalone documents
         NodeList docElts = dom.getElements(objectElement, "documentation/Document");
+        MetadataList<DocumentRef> docList = new MetadataList<DocumentRef>(docElts.getLength());
         for (int i=0; i<docElts.getLength(); i++)
         {
             Element docElt = (Element)docElts.item(i);
             DocumentRef doc = readDocument(dom, docElt);
-            metadata.getDocuments().add(doc);
+            docList.add(doc);
         }
+        metadata.getDocumentsLists().add(docList);
         
         // read standalone contacts
         contactElts = dom.getElements(objectElement, "contact/*");
+        MetadataList<Contact> contactList = new MetadataList<Contact>(docElts.getLength());
         for (int i=0; i<contactElts.getLength(); i++)
         {
             Element contactElt = (Element)contactElts.item(i);
             if (!contactElt.getLocalName().equals("ContactList"))
             {
                 Contact contact = readContact(dom, contactElt);
-                metadata.getContacts().add(contact);
+                contactList.add(contact);
             }
         }
-
+        metadata.getContactsLists().add(contactList);
+        
         return metadata;
     }
 
@@ -115,7 +119,7 @@ public class MetadataReaderV1 extends AbstractSMLReader
     /* (non-Javadoc)
      * @see org.vast.sensorML.reader.MetadataReader#readTermList(org.vast.xml.DOMHelper, org.w3c.dom.NodeList)
      */
-    public MetadataList<Term> readTermList(DOMHelper dom, NodeList termPropertyElts) throws XMLReaderException
+    public IMetadataList<Term> readTermList(DOMHelper dom, NodeList termPropertyElts) throws XMLReaderException
     {
         int listSize = termPropertyElts.getLength();
         MetadataList<Term> termList = new MetadataList<Term>(listSize);
@@ -189,7 +193,7 @@ public class MetadataReaderV1 extends AbstractSMLReader
     /* (non-Javadoc)
      * @see org.vast.sensorML.reader.MetadataReader#readPropertyList(org.vast.xml.DOMHelper, org.w3c.dom.NodeList)
      */
-    public MetadataList<DataComponent> readPropertyList(DOMHelper dom, NodeList propertyElts) throws XMLReaderException
+    public IMetadataList<DataComponent> readPropertyList(DOMHelper dom, NodeList propertyElts) throws XMLReaderException
     {
         int listSize = propertyElts.getLength();
         MetadataList<DataComponent> propertyList = new MetadataList<DataComponent>(listSize);
