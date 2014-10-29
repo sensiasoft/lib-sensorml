@@ -12,4 +12,4 @@ development project at SensorML Profile Development.
 The project was initiated by the VAST Team at the University of Alabama in Huntsville (UAH) and is now maintained
 by Sensia Software and Botts Innovative Research, Inc..
 
-This project relies on the [SWE Common Library](../lib-swe-common). 
+This project relies on the [SWE Common Library](https://github.com/sensiasoft/lib-swe-common). 
