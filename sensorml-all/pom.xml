@@ -5,7 +5,7 @@
   <version>1.0</version>
   <packaging>pom</packaging>
   <name>SensorML Library</name>
-  <url>http://code.google.com/p/sensorml-data-processing/</url>
+  <url>https://github.com/sensiasoft/lib-sensorml/tree/master/sensorml-all</url>
   <description>Java bindings and associated data processing framework for the SensorML language</description>
   <licenses>
     <license>
@@ -26,13 +26,11 @@
     </developer>
   </developers>
   <scm>
-     <url>https://github.com/sensiasoft/lib-swe-common/tree/master/sensorml-all</url>
-     <connection>scm:git:https://github.com/sensiasoft/lib-sensorml/sensorml-all</connection>
-     <developerConnection>scm:git:https://github.com/sensiasoft/lib-sensorml/sensorml-all</developerConnection>
      <tag>master</tag>
+     <url>https://github.com/sensiasoft/lib-sensorml/tree/master/sensorml-all</url>
   </scm>
   <issueManagement>
-     <url>scm:git:https://github.com/sensiasoft/lib-sensorml/issues</url>
+     <url>https://github.com/sensiasoft/lib-sensorml/issues</url>
      <system>GitHub</system>
   </issueManagement>
   <modules>
