@@ -166,9 +166,9 @@ public class TestSMLBindingsV20 extends XMLTestCase
     }
     
     
-    public void testReadSystem() throws Exception
+    /*public void testReadSystem() throws Exception
     {
         readWriteCompareXml("/examples_v20/Davis_7817_complete.xml");
-    }
+    }*/
     
 }
