@@ -26,14 +26,14 @@
     </developer>
   </developers>
   <scm>
-     <url>http://code.google.com/p/sensorml-data-processing/source/browse/</url>
-     <connection>scm:svn:http://sensorml-data-processing.googlecode.com/svn/</connection>
-     <developerConnection>scm:svn:https://sensorml-data-processing.googlecode.com/svn/</developerConnection>
-     <tag>HEAD</tag>
+     <url>https://github.com/sensiasoft/lib-swe-common/tree/master/sensorml-all</url>
+     <connection>scm:git:https://github.com/sensiasoft/lib-sensorml/sensorml-all</connection>
+     <developerConnection>scm:git:https://github.com/sensiasoft/lib-sensorml/sensorml-all</developerConnection>
+     <tag>master</tag>
   </scm>
   <issueManagement>
-     <url>http://code.google.com/p/sensorml-data-processing/issues/list</url>
-     <system>Google Code</system>
+     <url>scm:git:https://github.com/sensiasoft/lib-sensorml/issues</url>
+     <system>GitHub</system>
   </issueManagement>
   <modules>
      <module>../sensorml-core</module>
