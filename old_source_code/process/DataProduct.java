@@ -20,7 +20,7 @@
 
 package org.vast.process;
 
-import org.vast.cdm.common.DataBlock;
+import net.opengis.swe.v20.DataBlock;
 import org.vast.data.*;
 
 
@@ -71,7 +71,7 @@ public class DataProduct extends DataProcess
     }   
     
     
-    public void addDataDesc(String name, AbstractDataComponent structure)
+    public void addDataDesc(String name, DataComponent structure)
     {
         if (inputData.getComponentCount() == 1)
         	return;
@@ -84,19 +84,19 @@ public class DataProduct extends DataProcess
     }
     
     
-    public void addInput(String name, AbstractDataComponent inputStructure)
+    public void addInput(String name, DataComponent inputStructure)
     {
     	this.addDataDesc(name, inputStructure);
     }
     
     
-    public void addOutput(String name, AbstractDataComponent outputStructure)
+    public void addOutput(String name, DataComponent outputStructure)
     {
     	this.addDataDesc(name, outputStructure);
     }
     
     
-    public void addParameter(String name, AbstractDataComponent paramStructure)
+    public void addParameter(String name, DataComponent paramStructure)
     {
     	this.addDataDesc(name, paramStructure);
     }

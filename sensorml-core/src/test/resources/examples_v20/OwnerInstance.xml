@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sml:PhysicalComponent gml:id="WEATHER_STATION" 
-xmlns:sml="http://www.opengis.net/sensorML/2.0" 
+xmlns:sml="http://www.opengis.net/sensorml/2.0" 
 xmlns:swe="http://www.opengis.net/swe/2.0" 
 xmlns:gml="http://www.opengis.net/gml/3.2" 
 xmlns:gmd="http://www.isotc211.org/2005/gmd" 
@@ -116,7 +116,7 @@ xsi:schemaLocation="http://www.opengis.net/sensorML/2.0 http://schemas.opengis.n
    <!-- ================================================= -->
    <!--                System Configuration               -->
    <!-- ================================================= -->
-   <sml:typeOf xlink:title="urn:davis:stations:ProVantage2v4" xlink:href="http://www.sensors.ws/examples/sensorML-2.0/xml/ManufacturerDescription.xml"/>
+   <sml:typeOf xlink:href="http://www.sensors.ws/examples/sensorML-2.0/xml/ManufacturerDescription.xml"/>
    <sml:configuration>
       <sml:Settings>
          <sml:setValue ref="base/components/raingauge/parameters/Averaging_Period">60.0</sml:setValue>

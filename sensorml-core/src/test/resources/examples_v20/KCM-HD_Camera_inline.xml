@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sml:SimpleProcess gml:id="myCSM-camera" 
-xmlns:sml="http://www.opengis.net/sensorML/2.0" 
+xmlns:sml="http://www.opengis.net/sensorml/2.0" 
 xmlns:swe="http://www.opengis.net/swe/2.0" 
 xmlns:gml="http://www.opengis.net/gml/3.2" 
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
@@ -72,7 +72,7 @@ definition="http://sensors.ws/process/CSM_FrameCamera2">
 								<swe:Quantity definition="http://sensorml.com/ont/swe/property/StdError">
 									<swe:label>Standard Error</swe:label>
 									<swe:uom code="mm"/>
-									<swe:value>5.512e-003</swe:value>
+									<swe:value>0.005512</swe:value>
 								</swe:Quantity>
 							</swe:quality>
 							<swe:uom code="mm"/>
@@ -120,7 +120,7 @@ definition="http://sensors.ws/process/CSM_FrameCamera2">
 										<swe:Quantity definition="http://sensorml.com/ont/swe/property/StdError">
 											<swe:label>Standard Error</swe:label>
 											<swe:uom code="mm"/>
-											<swe:value>4.353e-003</swe:value>
+											<swe:value>0.004353</swe:value>
 										</swe:Quantity>
 									</swe:quality>
 									<swe:uom code="mm"/>
@@ -134,7 +134,7 @@ definition="http://sensors.ws/process/CSM_FrameCamera2">
 										<swe:Quantity definition="http://sensorml.com/ont/csm/property/StdError">
 											<swe:label>Standard Error</swe:label>
 											<swe:uom code="mm"/>
-											<swe:value>5.059e-003</swe:value>
+											<swe:value>0.005059</swe:value>
 										</swe:Quantity>
 									</swe:quality>
 									<swe:uom code="mm"/>
@@ -150,7 +150,7 @@ definition="http://sensors.ws/process/CSM_FrameCamera2">
 								<swe:Quantity definition="http://sensorml.com/ont/csm/property/DISTOR_A1">
 									<swe:label>a1</swe:label>
 									<swe:uom code="1/1"/>
-									<swe:value>0</swe:value>
+									<swe:value>0.0</swe:value>
 								</swe:Quantity>
 							</swe:field>
 							<swe:field name="b1">
@@ -160,25 +160,25 @@ definition="http://sensors.ws/process/CSM_FrameCamera2">
 										<swe:Quantity definition="http://sensorml.com/ont/swe/property/StdError">
 											<swe:label>Standard Error</swe:label>
 											<swe:uom code="1/1"/>
-											<swe:value>1.419e-016</swe:value>
+											<swe:value>1.419E-16</swe:value>
 										</swe:Quantity>
 									</swe:quality>
 									<swe:uom code="1/1"/>
-									<swe:value>-4.94883e-025</swe:value>
+									<swe:value>-4.94883E-25</swe:value>
 								</swe:Quantity>
 							</swe:field>
 							<swe:field name="c1">
 								<swe:Quantity definition="http://sensorml.com/ont/csm/property/DISTOR_C1">
 									<swe:label>c1</swe:label>
 									<swe:uom code="1/1"/>
-									<swe:value>0</swe:value>
+									<swe:value>0.0</swe:value>
 								</swe:Quantity>
 							</swe:field>
 							<swe:field name="a2">
 								<swe:Quantity definition="http://sensorml.com/ont/csm/property/DISTOR_A2">
 									<swe:label>a2</swe:label>
 									<swe:uom code="1/1"/>
-									<swe:value>0</swe:value>
+									<swe:value>0.0</swe:value>
 								</swe:Quantity>
 							</swe:field>
 							<swe:field name="b2">
@@ -188,18 +188,18 @@ definition="http://sensors.ws/process/CSM_FrameCamera2">
 										<swe:Quantity definition="http://sensorml.com/ont/swe/property/StdError">
 											<swe:label>Standard Error</swe:label>
 											<swe:uom code="1/1"/>
-											<swe:value>1.419e-016</swe:value>
+											<swe:value>1.419E-16</swe:value>
 										</swe:Quantity>
 									</swe:quality>
 									<swe:uom code="1/1"/>
-									<swe:value>-1.42380e-025</swe:value>
+									<swe:value>-1.4238E-25</swe:value>
 								</swe:Quantity>
 							</swe:field>
 							<swe:field name="c2">
 								<swe:Quantity definition="http://sensorml.com/ont/csm/property/DISTOR_C2">
 									<swe:label>c2</swe:label>
 									<swe:uom code="1/1"/>
-									<swe:value>0</swe:value>
+									<swe:value>0.0</swe:value>
 								</swe:Quantity>
 							</swe:field>
 						</swe:DataRecord>
@@ -214,11 +214,11 @@ definition="http://sensors.ws/process/CSM_FrameCamera2">
 										<swe:Quantity definition="http://sensorml.com/ont/swe/property/StdError">
 											<swe:label>Standard Error</swe:label>
 											<swe:uom code="mm-2"/>
-											<swe:value>1.036e-006</swe:value>
+											<swe:value>1.036E-6</swe:value>
 										</swe:Quantity>
 									</swe:quality>
 									<swe:uom code="mm-2"/>
-									<swe:value>3.34076e-005</swe:value>
+									<swe:value>3.34076E-5</swe:value>
 								</swe:Quantity>
 							</swe:field>
 							<swe:field name="k2">
@@ -228,11 +228,11 @@ definition="http://sensors.ws/process/CSM_FrameCamera2">
 										<swe:Quantity definition="http://sensorml.com/ont/swe/property/StdError">
 											<swe:label>Standard Error</swe:label>
 											<swe:uom code="mm-2"/>
-											<swe:value>1.735e-008</swe:value>
+											<swe:value>1.735E-8</swe:value>
 										</swe:Quantity>
 									</swe:quality>
 									<swe:uom code="mm-2"/>
-									<swe:value>1.64705e-007</swe:value>
+									<swe:value>1.64705E-7</swe:value>
 								</swe:Quantity>
 							</swe:field>
 							<swe:field name="k3">
@@ -242,11 +242,11 @@ definition="http://sensors.ws/process/CSM_FrameCamera2">
 										<swe:Quantity definition="http://sensorml.com/ont/swe/property/StdError">
 											<swe:label>Standard Error</swe:label>
 											<swe:uom code="mm-2"/>
-											<swe:value>1.419e-016</swe:value>
+											<swe:value>1.419E-16</swe:value>
 										</swe:Quantity>
 									</swe:quality>
 									<swe:uom code="mm-2"/>
-									<swe:value>2.10952e-022</swe:value>
+									<swe:value>2.10952E-22</swe:value>
 								</swe:Quantity>
 							</swe:field>
 						</swe:DataRecord>
@@ -261,11 +261,11 @@ definition="http://sensors.ws/process/CSM_FrameCamera2">
 										<swe:Quantity definition="http://sensorml.com/ont/swe/property/StdError">
 											<swe:label>Standard Error</swe:label>
 											<swe:uom code="mm-1"/>
-											<swe:value>1.419e-016</swe:value>
+											<swe:value>1.419E-16</swe:value>
 										</swe:Quantity>
 									</swe:quality>
 									<swe:uom code="mm-1"/>
-									<swe:value>-2.30790e-025</swe:value>
+									<swe:value>-2.3079E-25</swe:value>
 								</swe:Quantity>
 							</swe:field>
 							<swe:field name="p2">
@@ -275,11 +275,11 @@ definition="http://sensors.ws/process/CSM_FrameCamera2">
 										<swe:Quantity definition="http://sensorml.com/ont/swe/property/StdError">
 											<swe:label>Standard Error</swe:label>
 											<swe:uom code="mm-1"/>
-											<swe:value>1.419e-016</swe:value>
+											<swe:value>1.419E-16</swe:value>
 										</swe:Quantity>
 									</swe:quality>
 									<swe:uom code="mm-1"/>
-									<swe:value>-4.27963e-025</swe:value>
+									<swe:value>-4.27963E-25</swe:value>
 								</swe:Quantity>
 							</swe:field>
 						</swe:DataRecord>

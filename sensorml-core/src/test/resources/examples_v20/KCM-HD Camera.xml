@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sml:SimpleProcess gml:id="myKCM-HD-camera" 
-xmlns:sml="http://www.opengis.net/sensorML/2.0" 
+xmlns:sml="http://www.opengis.net/sensorml/2.0" 
 xmlns:swe="http://www.opengis.net/swe/2.0" 
 xmlns:gml="http://www.opengis.net/gml/3.2" 
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
@@ -10,8 +10,7 @@ xsi:schemaLocation="http://www.opengis.net/sensorML/2.0 http://schemas.opengis.n
         An example of an instance of the Community Sensor Model for precise geolocation of the HD UAV-borne video KCM-HD camera
     </gml:description>
     <gml:identifier codeSpace="uid">urn:myDomain:swe:csm:KCM-HD</gml:identifier>
-    <sml:typeOf xlink:title="urn:net:swe:process:csmFrameCamera2" 
-        xlink:href="http://www.sensorml.com/sensorML-2.0/examples/xml/CSM_FrameCamera2"/>
+    <sml:typeOf xlink:href="http://www.sensorml.com/sensorML-2.0/examples/xml/CSM_FrameCamera2"/>
     <sml:configuration>
         <sml:Settings>
             <sml:setValue ref="parameters/csmParams/focalLength">51.5465</sml:setValue>

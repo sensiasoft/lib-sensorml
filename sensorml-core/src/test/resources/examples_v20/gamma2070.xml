@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sml:PhysicalComponent gml:id="Gamma2070" 
-xmlns:sml="http://www.opengis.net/sensorML/2.0" 
+xmlns:sml="http://www.opengis.net/sensorml/2.0" 
 xmlns:swe="http://www.opengis.net/swe/2.0" 
 xmlns:gml="http://www.opengis.net/gml/3.2" 
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
@@ -89,7 +89,7 @@ xsi:schemaLocation="http://www.opengis.net/sensorML/2.0 http://schemas.opengis.n
 							<swe:field name="Weight">
 								<swe:Quantity definition="http://sensorml.com/ont/swe/property/Weight">
 									<swe:uom code="oz"/>
-									<swe:value>10</swe:value>
+									<swe:value>10.0</swe:value>
 								</swe:Quantity>
 							</swe:field>
 							<swe:field name="Length">
@@ -125,7 +125,7 @@ xsi:schemaLocation="http://www.opengis.net/sensorML/2.0 http://schemas.opengis.n
 					<swe:field name="voltage">
 						<swe:QuantityRange definition="http://sensorml.com/ont/swe/property/Voltage">
 							<swe:uom code="V"/>
-							<swe:value>8 12</swe:value>
+							<swe:value>8.0 12.0</swe:value>
 						</swe:QuantityRange>
 					</swe:field>
 					<swe:field name="CurrentType">
@@ -136,7 +136,7 @@ xsi:schemaLocation="http://www.opengis.net/sensorML/2.0 http://schemas.opengis.n
 					<swe:field name="AmpRange">
 						<swe:QuantityRange definition="http://sensorml.com/ont/swe/property/ElectricalCurrent">
 							<swe:uom code="mA"/>
-							<swe:value>20 40</swe:value>
+							<swe:value>20.0 40.0</swe:value>
 						</swe:QuantityRange>
 					</swe:field>
 				</swe:DataRecord>
@@ -154,25 +154,25 @@ xsi:schemaLocation="http://www.opengis.net/sensorML/2.0 http://schemas.opengis.n
 					<swe:field name="RadiationRange">
 						<swe:QuantityRange definition="http://sensorml.com/ont/swe/property/RadiationLevel">
 							<swe:uom code="R/h"/>
-							<swe:value>0 30</swe:value>
+							<swe:value>0.0 30.0</swe:value>
 						</swe:QuantityRange>
 					</swe:field>
 					<swe:field name="Sensitivitity">
 						<swe:Quantity definition="http://sensorml.com/ont/swe/property/RadiationSensitivity">
 							<swe:uom code="{tot}/uR"/>
-							<swe:value>1</swe:value>
+							<swe:value>1.0</swe:value>
 						</swe:Quantity>
 					</swe:field>
 					<swe:field name="SamplePeriod">
 						<swe:Quantity definition="http://sensorml.com/ont/swe/property/SamplePeriod">
 							<swe:uom code="s"/>
-							<swe:value>1</swe:value>
+							<swe:value>1.0</swe:value>
 						</swe:Quantity>
 					</swe:field>
 					<swe:field name="MeasurementOutputTime">
 						<swe:Quantity definition="http://sensorml.com/ont/swe/property/OutputPeriod">
 							<swe:uom code="s"/>
-							<swe:value>450</swe:value>
+							<swe:value>450.0</swe:value>
 						</swe:Quantity>
 					</swe:field>
 				</swe:DataRecord>
@@ -248,10 +248,10 @@ xsi:schemaLocation="http://www.opengis.net/sensorML/2.0 http://schemas.opengis.n
 						</swe:DataRecord>
 					</swe:elementType>
 					<swe:encoding>
-						<swe:TextEncoding blockSeparator="&#10;" tokenSeparator=","/>
+						<swe:TextEncoding blockSeparator="&#10;" tokenSeparator="," decimalSeparator="."/>
 					</swe:encoding>
 					<swe:values>
-						10.0,73 17.5,89.5 20.0,94.0 30.,95.5 40.0,96.0 50.0,96.0 100.0,94.0
+						10.0,73.0 17.5,89.5 20.0,94.0 30.0,95.5 40.0,96.0 50.0,96.0 100.0,94.0
 					</swe:values>
 				</swe:DataArray>
 			</sml:parameter>

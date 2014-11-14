@@ -1,5 +1,5 @@
 <sml:PhysicalComponent gml:id="Davis7817_complete"
-   xmlns:sml="http://www.opengis.net/sensorML/2.0"
+   xmlns:sml="http://www.opengis.net/sensorml/2.0"
    xmlns:swe="http://www.opengis.net/swe/2.0"
    xmlns:gml="http://www.opengis.net/gml/3.2"
    xmlns:gmd="http://www.isotc211.org/2005/gmd"
@@ -257,16 +257,16 @@
                   </swe:DataRecord>
                </swe:elementType>
                <swe:encoding>
-                  <swe:TextEncoding tokenSeparator="," blockSeparator="&#x20;" decimalSeparator="." />
+                  <swe:TextEncoding collapseWhiteSpaces="true" tokenSeparator="," blockSeparator="&#x20;" decimalSeparator="." />
                </swe:encoding>
                <swe:values>
-                  -40,328.4 -35,237.7 -30,173.9
-                  -25,128.5 -20,95.89 -15,72.23
-                  -10,54.89 -5,42.07 0,32.51
-                  5,25.31 10,19.86 15,15.69
-                  20,12.49 25,10 30,8.06 35,6.536
-                  40,5.331 45,4.373 50,3.606
-                  55,2.989 60,2.49
+                  -40.0,328.4  -35.0,237.7  -30.0,173.9
+                  -25.0,128.5  -20.0,95.89  -15.0,72.23 
+                  -10.0,54.89   -5.0,42.07    0.0,32.51 
+                    5.0,25.31   10.0,19.86   15.0,15.69 
+                   20.0,12.49   25.0,10.0    30.0,8.06 
+                   35.0,6.536   40.0,5.331   45.0,4.373 
+                   50.0,3.606   55.0,2.989   60.0,2.49
                </swe:values>
             </swe:DataArray>
          </sml:parameter>
@@ -292,7 +292,7 @@
                   </swe:DataRecord>
                </swe:elementType>
                <swe:encoding>
-                  <swe:TextEncoding tokenSeparator="," blockSeparator="&#x20;" decimalSeparator="." />
+                  <swe:TextEncoding collapseWhiteSpaces="true" tokenSeparator="," blockSeparator="&#x20;" decimalSeparator="." />
                </swe:encoding>
                <swe:values>-40.0,0.0 -10.0,0.1 15.0,0.3 27.0,0.5 44.0,1.0 60.0,2.1</swe:values>
             </swe:DataArray>
@@ -313,7 +313,7 @@
             </swe:ConditionalValue> -->
             <swe:Quantity definition="urn:ogc:def:property:OGC:duration">
                <swe:uom code="s" />
-               <swe:value>10</swe:value>
+               <swe:value>10.0</swe:value>
             </swe:Quantity>
          </sml:parameter>
       </sml:ParameterList>

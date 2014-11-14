@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sml:PhysicalComponent gml:id="MY_MODEL_INSTANCE" 
-xmlns:sml="http://www.opengis.net/sensorML/2.0" 
+xmlns:sml="http://www.opengis.net/sensorml/2.0" 
 xmlns:gml="http://www.opengis.net/gml/3.2" 
 xmlns:xlink="http://www.w3.org/1999/xlink" 
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -9,8 +9,7 @@ xsi:schemaLocation="http://www.opengis.net/sensorML/2.0 http://schemas.opengis.n
     	An example of an instance in which one sets the active mode during installation
     </gml:description>
     <!-- reference to the base sensor -->
-    <sml:typeOf xlink:title="urn:net:swe:process:sensorWithModes_ex456" 
-        xlink:href="http://www.sensorml.com/sensorML-2.0/examples/xml/SensorWithModes.xml"/>
+    <sml:typeOf xlink:href="http://www.sensorml.com/sensorML-2.0/examples/xml/SensorWithModes.xml"/>
     <!-- configuration settings for mode -->
     <sml:configuration>
         <sml:Settings>

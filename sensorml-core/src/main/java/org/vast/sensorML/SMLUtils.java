@@ -21,11 +21,10 @@
 package org.vast.sensorML;
 
 import java.io.OutputStream;
+import net.opengis.sensorml.v20.AbstractProcess;
 import org.vast.ogc.OGCRegistry;
-import org.vast.process.IProcess;
-import org.vast.sensorML.system.SMLComponent;
-import org.vast.sensorML.system.SMLSystem;
 import org.vast.xml.DOMHelper;
+import org.vast.xml.IXMLReaderDOM;
 import org.vast.xml.IXMLWriterDOM;
 import org.vast.xml.XMLReaderException;
 import org.vast.xml.XMLWriterException;
@@ -35,11 +34,11 @@ import org.w3c.dom.Element;
 /**
  * <p>
  * Helper class providing a version agnostic access to SensorML
- * Process/System/Metadata readers and writers. This class delegates
- * to version specific readers/writers.
+ * object readers and writers. This class delegates to version specific
+ * readers/writers.
  * </p>
  *
- * <p>Copyright (c) 2007</p>
+ * <p>Copyright (c) 2014</p>
  * @author Alexandre Robin
  * @since Apr 10, 2007
  * @version 1.0
@@ -49,18 +48,8 @@ public class SMLUtils
 	public final static String IC;
 	public final static String SENSORML;
     public final static String PROCESS = "Process";
-    public final static String SYSTEM = "System";
-    public final static String METADATA = "Metadata";
     
-    private String version = "1.0";
-    private boolean versionChanged;
-    private boolean readProcessMetadata;
-    private boolean createExecProcess;
-    private DOMHelper previousDom;
-    private ProcessReader processReader = null;
-    private SystemReader systemReader = null;
-    private IXMLWriterDOM<SMLProcess> processWriter = null;
-    private IXMLWriterDOM<SMLProcess> systemWriter = null;	
+    private String version = "2.0";
     
     
     static
@@ -89,46 +78,32 @@ public class SMLUtils
     }
     
     
-    public IProcess readProcess(DOMHelper dom, Element processElement) throws XMLReaderException
+    public AbstractProcess readProcess(DOMHelper dom, Element processElt) throws XMLReaderException
     {
-        ProcessReader reader = getProcessReader(dom, processElement);
-        return reader.read(dom, processElement);
+        IXMLReaderDOM<AbstractProcess> reader = (IXMLReaderDOM<AbstractProcess>)OGCRegistry.createReader(
+                                                    SENSORML,
+                                                    PROCESS,
+                                                    getVersion(dom, processElt));
+        return reader.read(dom, processElt);
     }
     
     
-    public SMLSystem readSystem(DOMHelper dom, Element systemElement) throws XMLReaderException
+    public Element writeProcess(DOMHelper dom, AbstractProcess process) throws XMLWriterException
     {
-        SystemReader reader = getSystemReader(dom, systemElement);
-        return (SMLSystem)reader.read(dom, systemElement);
-    }
-    
-    
-    public Element writeProcess(DOMHelper dom, SMLProcess process) throws XMLWriterException
-    {
-        IXMLWriterDOM<SMLProcess> writer = getProcessWriter();
+        IXMLWriterDOM<AbstractProcess> writer = (IXMLWriterDOM<AbstractProcess>)OGCRegistry.createWriter(
+                                                    SENSORML,
+                                                    PROCESS,
+                                                    this.version);
         return writer.write(dom, process);
     }
     
     
-    public Element writeSystem(DOMHelper dom, SMLSystem system) throws XMLWriterException
-    {
-        IXMLWriterDOM<SMLProcess> writer = getSystemWriter();
-        return writer.write(dom, system);
-    }
-    
-    
-    public void write(OutputStream os, SMLProcess smlObj) throws XMLWriterException
+    public void write(OutputStream os, AbstractProcess smlObj) throws XMLWriterException
     {
         try
         {
             DOMHelper dom = new DOMHelper("sml");
-            Element rootElt = null;
-            
-            if (smlObj instanceof SMLComponent || smlObj instanceof SMLSystem)
-                rootElt = writeSystem(dom, (SMLSystem)smlObj);
-            else if (smlObj instanceof SMLProcess || smlObj instanceof SMLProcessChain)
-                rootElt = writeProcess(dom, (SMLProcess)smlObj);
-            
+            Element rootElt = writeProcess(dom, smlObj);            
             dom.serialize(rootElt, os, true);
         }
         catch (Exception e)
@@ -139,111 +114,10 @@ public class SMLUtils
     
     
     /**
-     * Reuses or creates the ProcessReader corresponding to
-     * the version specified by the SensorML namespace URI
-     * @param dom
-     * @param processElt
-     * @return
-     */
-    private ProcessReader getProcessReader(DOMHelper dom, Element processElt)
-    {
-        if (dom == previousDom && processReader != null)
-        {
-            return processReader;
-        }
-        else
-        {
-            ProcessReader reader = (ProcessReader)OGCRegistry.createReader(
-                                                  SENSORML,
-                                                  PROCESS,
-                                                  getVersion(dom, processElt));
-            processReader = reader;
-            processReader.setReadMetadata(readProcessMetadata);
-            processReader.setCreateExecutableProcess(createExecProcess);
-            return reader;
-        }
-    }
-    
-    
-    /**
-     * Reuses or creates the SystemReader corresponding to
-     * the version specified by the SensorML namespace URI
-     * @param dom
-     * @param systemElt
-     * @return
-     */
-    private SystemReader getSystemReader(DOMHelper dom, Element systemElt)
-    {
-        if (dom == previousDom && systemReader != null)
-        {
-            return systemReader;
-        }
-        else
-        {
-            SystemReader reader = (SystemReader)OGCRegistry.createReader(
-                                                SENSORML,
-                                                SYSTEM,
-                                                getVersion(dom, systemElt));
-            systemReader = reader;
-            systemReader.setReadMetadata(readProcessMetadata);
-            systemReader.setCreateExecutableProcess(createExecProcess);            
-            return reader;
-        }
-    }
-    
-    
-    /**
-     * Reuses or creates the ProcessWriter corresponding to
-     * the specified version (previously set by setOutputVersion)
-     * @return
-     */
-    private IXMLWriterDOM<SMLProcess> getProcessWriter()
-    {
-        if (!versionChanged && processWriter != null)
-        {
-            return processWriter;
-        }
-        else
-        {
-            IXMLWriterDOM<SMLProcess> writer = (IXMLWriterDOM<SMLProcess>)OGCRegistry.createWriter(
-                                                  SENSORML,
-                                                  PROCESS,
-                                                  this.version);
-            processWriter = writer;
-            versionChanged = false;
-            return writer;
-        }
-    }
-    
-    
-    /**
-     * Reuses or creates the SystemWriter corresponding to
-     * the specified version (previously set by setOutputVersion)
-     * @return
-     */
-    private IXMLWriterDOM<SMLProcess> getSystemWriter()
-    {
-        if (!versionChanged && processWriter != null)
-        {
-            return systemWriter;
-        }
-        else
-        {
-            IXMLWriterDOM<SMLProcess> writer = (IXMLWriterDOM<SMLProcess>)OGCRegistry.createWriter(
-                                                  SENSORML,
-                                                  SYSTEM,
-                                                  this.version);
-            systemWriter = writer;
-            versionChanged = false;
-            return writer;
-        }
-    }
-    
-    
-    /**
      * Logic to guess SensorML version from namespace
      * @param dom
-     * @return
+     * @param smlElt 
+     * @return version string
      */
     public String getVersion(DOMHelper dom, Element smlElt)
     {
@@ -256,7 +130,6 @@ public class SMLUtils
         if (!version.matches("^\\d+(\\.\\d+)?(\\.\\d+)?$"))
             version = "0.0";
         
-        previousDom = dom;
         return version;
     }
     
@@ -268,18 +141,5 @@ public class SMLUtils
     public void setOutputVersion(String version)
     {
         this.version = version;
-        this.versionChanged = true;
-    }
-    
-    
-    public void setReadMetadata(boolean readMetadata)
-    {
-        this.readProcessMetadata = readMetadata;
-    }
-
-
-    public void setCreateExecutableProcess(boolean createExecProcess)
-    {
-        this.createExecProcess = createExecProcess;        
     }
 }

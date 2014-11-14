@@ -20,7 +20,7 @@
 
 package org.vast.process;
 
-import org.vast.cdm.common.DataComponent;
+import net.opengis.swe.v20.DataComponent;
 
 
 /**

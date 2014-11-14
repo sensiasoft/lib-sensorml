@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sml:PhysicalComponent gml:id="MY_SENSOR" 
-   xmlns:sml="http://www.opengis.net/sensorML/2.0" 
+   xmlns:sml="http://www.opengis.net/sensorml/2.0" 
    xmlns:swe="http://www.opengis.net/swe/2.0" 
    xmlns:gml="http://www.opengis.net/gml/3.2" 
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
@@ -72,7 +72,7 @@
    <!-- ================================================= -->
    <sml:position>
       <gml:Point gml:id="stationLocation" srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
-         <gml:coordinates>47.8 88.56</gml:coordinates>
+         <gml:pos>47.8 88.56</gml:pos>
       </gml:Point>
    </sml:position>
 </sml:PhysicalComponent>

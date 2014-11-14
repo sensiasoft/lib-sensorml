@@ -14,23 +14,23 @@
  The Initial Developer of the Original Code is the VAST team at the University of Alabama in Huntsville (UAH). <http://vast.uah.edu> Portions created by the Initial Developer are Copyright (C) 2007 the Initial Developer. All Rights Reserved. Please Contact Mike Botts <mike.botts@uah.edu> for more information.
  
  Contributor(s): 
-    Alexandre Robin <robin@nsstc.uah.edu>
+    Alexandre Robin <alex.robin@sensiasoftware.com>
  
 ******************************* END LICENSE BLOCK ***************************/
 
 package org.vast.process;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import org.vast.cdm.common.DataBlock;
-import org.vast.cdm.common.DataComponent;
+import java.util.logging.Logger;
+import net.opengis.swe.v20.DataBlock;
+import net.opengis.swe.v20.DataComponent;
+import net.opengis.swe.v20.HasUom;
 import org.vast.data.DataIterator;
 import org.vast.data.DataValue;
 import org.vast.data.ScalarIterator;
-import org.vast.sweCommon.SweConstants;
 import org.vast.unit.Unit;
 import org.vast.unit.UnitConversion;
 import org.vast.unit.UnitConverter;
@@ -38,22 +38,23 @@ import org.vast.unit.UnitConverter;
 
 /**
  * <p>
- *
+ * Implementation of data connection for the processing engine.
+ * This class is capable of automatically converting units if source and target
+ * are not in the same unit (units have to be physcially compatible)
  * </p>
  * 
- * <p>Copyright (c) 2005</p>
+ * <p>Copyright (c) 2014</p>
  * @author Alexandre Robin
  * @version 1.0
  */
-public class DataConnection implements Serializable
+public class DataConnection
 {
-    private static final long serialVersionUID = -7283326328202447353L;
+    private final static Logger LOGGER = Logger.getLogger(DataConnection.class.getName());
     
-    protected IProcess sourceProcess;
-    protected IProcess destinationProcess;
+    protected IProcessExec sourceProcess;
+    protected IProcessExec destinationProcess;
     protected DataComponent sourceComponent;
     protected DataComponent destinationComponent;
-    protected String name;
     protected transient boolean dataAvailable;
     protected transient boolean needsUnitConversion;
     protected transient List<ComponentConverter> componentConverters;
@@ -62,11 +63,11 @@ public class DataConnection implements Serializable
     
     protected class ComponentConverter
     {
-        protected DataValue src;
-        protected DataValue dest;
+        protected DataComponent src;
+        protected DataComponent dest;
         protected UnitConverter converter;
         
-        public ComponentConverter(DataValue src, DataValue dest, UnitConverter converter)
+        public ComponentConverter(DataComponent src, DataComponent dest, UnitConverter converter)
         {
             this.src = src;
             this.dest = dest;
@@ -99,14 +100,14 @@ public class DataConnection implements Serializable
         
         while (itSrc.hasNext())
         {
-            DataValue src = itSrc.next();
-            DataValue dest = itDest.next();
+            DataComponent src = itSrc.next();
+            DataComponent dest = itDest.next();
             UnitConverter conv = getUnitConverter(src, dest);
             
             if (conv != null)
             {
                 componentConverters.add(new ComponentConverter(src, dest, conv));
-                //System.out.println("Unit conversion from " + src.getName() + " to " + dest.getName());
+                LOGGER.finer("Unit conversion setup from " + src.getName() + " to " + dest.getName());
             }
         }
     }
@@ -114,13 +115,18 @@ public class DataConnection implements Serializable
     
     protected UnitConverter getUnitConverter(DataComponent src, DataComponent dest) throws ProcessException
     {
-        Unit srcUom = (Unit)src.getProperty(SweConstants.UOM_OBJ);
-        Unit destUom = (Unit)dest.getProperty(SweConstants.UOM_OBJ);
+        if (src instanceof HasUom && dest instanceof HasUom)
+        {
+            Unit srcUom = (Unit)((HasUom)src).getUom().getValue();
+            Unit destUom = (Unit)((HasUom)dest).getUom().getValue();
+            
+            if (srcUom == null || destUom == null || srcUom.isEquivalent(destUom))
+                return null;
+            
+            return UnitConversion.getConverter(srcUom, destUom);
+        }
         
-        if (srcUom == null || destUom == null || srcUom.isEquivalent(destUom))
-            return null;
-        
-        return UnitConversion.getConverter(srcUom, destUom);
+        return null;
     }
     
 	
@@ -153,7 +159,10 @@ public class DataConnection implements Serializable
     /**
      * Checks that source and destination components can be connected.
      * This validates compatibility of units and structure of aggregates.
+     * @param src 
+     * @param dest 
      * @return Warning message or null if no warning
+     * @throws ProcessException 
      */
     public static String check(DataComponent src, DataComponent dest) throws ProcessException
     {
@@ -179,10 +188,10 @@ public class DataConnection implements Serializable
                 throw new ProcessException("Components '" + c1.getName() + "' and '" + c2.getName() + "' are not compatible");
             
             // check that scalars are compatible
-            if (c1 instanceof DataValue && c2 instanceof DataValue)
+            if (c1 instanceof HasUom && c2 instanceof HasUom)
             {
-                Unit uom1 = (Unit)c1.getProperty(SweConstants.UOM_OBJ);
-                Unit uom2 = (Unit)c2.getProperty(SweConstants.UOM_OBJ);
+                Unit uom1 = (Unit)((HasUom)c1).getUom().getValue();
+                Unit uom2 = (Unit)((HasUom)c2).getUom().getValue();
                 
                 if (uom1 != null && uom2 != null)
                 {
@@ -206,18 +215,6 @@ public class DataConnection implements Serializable
     {
         return DataConnection.check(this.sourceComponent, this.destinationComponent);
     }
-    
-    
-	public String getName()
-	{
-		return this.name;
-	}
-
-	
-	public void setName(String name)
-	{
-		this.name = name;		
-	}
 
 
 	public DataComponent getDestinationComponent()
@@ -233,15 +230,15 @@ public class DataConnection implements Serializable
 	}
 
 
-	public IProcess getDestinationProcess()
+	public IProcessExec getDestinationProcess()
 	{
 		return destinationProcess;
 	}
 
 
-	public void setDestinationProcess(IProcess destinationProcess)
+	public void setDestinationProcess(IProcessExec destinationProcess)
 	{
-		this.destinationProcess = (IProcess)destinationProcess;
+		this.destinationProcess = (IProcessExec)destinationProcess;
 	}
 
 
@@ -258,15 +255,15 @@ public class DataConnection implements Serializable
 	}
 
 
-	public IProcess getSourceProcess()
+	public IProcessExec getSourceProcess()
 	{
 		return sourceProcess;
 	}
 
 
-	public void setSourceProcess(IProcess sourceProcess)
+	public void setSourceProcess(IProcessExec sourceProcess)
 	{
-		this.sourceProcess = (IProcess)sourceProcess;
+		this.sourceProcess = (IProcessExec)sourceProcess;
 	}
 
 
