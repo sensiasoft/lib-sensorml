@@ -701,21 +701,21 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
 
 
     @Override
-    public void addInputAsAbstractDataComponent(String name, DataComponent input)
+    public void addInput(String name, DataComponent input)
     {
         inputs.add(name, input);
     }
 
 
     @Override
-    public void addInputAsObservableProperty(String name, ObservableProperty input)
+    public void addInput(String name, ObservableProperty input)
     {
         inputs.add(name, input);
     }
 
 
     @Override
-    public void addInputAsDataInterface(String name, DataInterface input)
+    public void addInput(String name, DataInterface input)
     {
         inputs.add(name, input);
     }
@@ -743,21 +743,21 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
 
 
     @Override
-    public void addOutputAsAbstractDataComponent(String name, DataComponent output)
+    public void addOutput(String name, DataComponent output)
     {
         outputs.add(name, output);
     }
 
 
     @Override
-    public void addOutputAsObservableProperty(String name, ObservableProperty output)
+    public void addOutput(String name, ObservableProperty output)
     {
         outputs.add(name, output);
     }
 
 
     @Override
-    public void addOutputAsDataInterface(String name, DataInterface output)
+    public void addOutput(String name, DataInterface output)
     {
         outputs.add(name, output);
     }
@@ -778,21 +778,21 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
 
 
     @Override
-    public void addParameterAsAbstractDataComponent(String name, DataComponent parameter)
+    public void addParameter(String name, DataComponent parameter)
     {
         parameters.add(name, parameter);
     }
 
 
     @Override
-    public void addParameterAsObservableProperty(String name, ObservableProperty parameter)
+    public void addParameter(String name, ObservableProperty parameter)
     {
         parameters.add(name, parameter);
     }
 
 
     @Override
-    public void addParameterAsDataInterface(String name, DataInterface parameter)
+    public void addParameter(String name, DataInterface parameter)
     {
         parameters.add(name, parameter);
     }

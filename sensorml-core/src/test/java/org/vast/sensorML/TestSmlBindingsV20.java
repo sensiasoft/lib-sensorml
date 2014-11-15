@@ -238,7 +238,7 @@ public class TestSmlBindingsV20 extends XMLTestCase
         // input
         ObservableProperty obs = new ObservablePropertyImpl();
         obs.setDefinition("http://mmisw.org/ont/cf/parameter/weather");
-        system.addInputAsObservableProperty("weather_phenomena", obs);
+        system.addInput("weather_phenomena", obs);
         system.getInputList().add("rain", "http://remotedef.xml", null);
         
         // outputs                
@@ -260,7 +260,7 @@ public class TestSmlBindingsV20 extends XMLTestCase
         Quantity acc = new QuantityImpl();
         acc.setDefinition("http://mmisw.org/ont/cf/parameter/accuracy");
         acc.getUom().setCode("%");
-        q1.addQualityAsQuantity(acc);
+        q1.addQuality(acc);
         rec.addField("temp", q1);
         
         Quantity q2 = new QuantityImpl();
@@ -281,7 +281,7 @@ public class TestSmlBindingsV20 extends XMLTestCase
         q4.getUom().setCode("deg");
         rec.addField("wind_dir", q4);
         
-        system.addOutputAsAbstractDataComponent("weather_data", rec);
+        system.addOutput("weather_data", rec);
         system.getOutputList().add("status_info", "http://remotedef.xml", null);
         
         // reference frame

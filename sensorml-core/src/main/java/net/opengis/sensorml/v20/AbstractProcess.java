@@ -90,19 +90,19 @@ public interface AbstractProcess extends DescribedObject
     /**
      * Adds a new inputAsAbstractDataComponent property
      */
-    public void addInputAsAbstractDataComponent(String name, DataComponent input);
+    public void addInput(String name, DataComponent input);
     
     
     /**
      * Adds a new inputAsObservableProperty property
      */
-    public void addInputAsObservableProperty(String name, ObservableProperty input);
+    public void addInput(String name, ObservableProperty input);
     
     
     /**
      * Adds a new inputAsDataInterface property
      */
-    public void addInputAsDataInterface(String name, DataInterface input);
+    public void addInput(String name, DataInterface input);
     
     
     /**
@@ -126,19 +126,19 @@ public interface AbstractProcess extends DescribedObject
     /**
      * Adds a new outputAsAbstractDataComponent property
      */
-    public void addOutputAsAbstractDataComponent(String name, DataComponent output);
+    public void addOutput(String name, DataComponent output);
     
     
     /**
      * Adds a new outputAsObservableProperty property
      */
-    public void addOutputAsObservableProperty(String name, ObservableProperty output);
+    public void addOutput(String name, ObservableProperty output);
     
     
     /**
      * Adds a new outputAsDataInterface property
      */
-    public void addOutputAsDataInterface(String name, DataInterface output);
+    public void addOutput(String name, DataInterface output);
     
     
     /**
@@ -162,19 +162,19 @@ public interface AbstractProcess extends DescribedObject
     /**
      * Adds a new parameterAsAbstractDataComponent property
      */
-    public void addParameterAsAbstractDataComponent(String name, DataComponent parameter);
+    public void addParameter(String name, DataComponent parameter);
     
     
     /**
      * Adds a new parameterAsObservableProperty property
      */
-    public void addParameterAsObservableProperty(String name, ObservableProperty parameter);
+    public void addParameter(String name, ObservableProperty parameter);
     
     
     /**
      * Adds a new parameterAsDataInterface property
      */
-    public void addParameterAsDataInterface(String name, DataInterface parameter);
+    public void addParameter(String name, DataInterface parameter);
         
     
     /**
