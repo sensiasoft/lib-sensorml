@@ -63,13 +63,7 @@ public interface Factory
     public AbstractSettings newAbstractSettings();
     
     
-    public OutputList newOutputList();
-    
-    
     public IdentifierList newIdentifierList();
-    
-    
-    public InputList newInputList();
     
     
     public DocumentList newDocumentList();
@@ -103,9 +97,6 @@ public interface Factory
     
     
     public ClassifierList newClassifierList();
-    
-    
-    public ParameterList newParameterList();
     
     
     public AbstractModes newAbstractModes();

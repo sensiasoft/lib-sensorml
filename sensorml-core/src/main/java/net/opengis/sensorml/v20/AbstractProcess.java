@@ -1,7 +1,10 @@
 package net.opengis.sensorml.v20;
 
 import java.util.List;
+import net.opengis.OgcPropertyList;
 import net.opengis.gml.v32.Reference;
+import net.opengis.swe.v20.AbstractSWEIdentifiable;
+import net.opengis.swe.v20.DataComponent;
 
 
 /**
@@ -11,7 +14,6 @@ import net.opengis.gml.v32.Reference;
  */
 public interface AbstractProcess extends DescribedObject
 {
-    
     
     /**
      * Gets the typeOf property
@@ -68,58 +70,112 @@ public interface AbstractProcess extends DescribedObject
     
     
     /**
-     * Gets the inputs property
+     * Gets the list of input properties
      */
-    public InputList getInputs();
+    public OgcPropertyList<AbstractSWEIdentifiable> getInputList();
     
     
     /**
-     * Checks if inputs is set
+     * Returns number of input properties
      */
-    public boolean isSetInputs();
+    public int getNumInputs();
     
     
     /**
-     * Sets the inputs property
+     * Gets the input property with the given name
      */
-    public void setInputs(InputList inputs);
+    public AbstractSWEIdentifiable getInput(String name);
     
     
     /**
-     * Gets the outputs property
+     * Adds a new inputAsAbstractDataComponent property
      */
-    public OutputList getOutputs();
+    public void addInputAsAbstractDataComponent(String name, DataComponent input);
     
     
     /**
-     * Checks if outputs is set
+     * Adds a new inputAsObservableProperty property
      */
-    public boolean isSetOutputs();
+    public void addInputAsObservableProperty(String name, ObservableProperty input);
     
     
     /**
-     * Sets the outputs property
+     * Adds a new inputAsDataInterface property
      */
-    public void setOutputs(OutputList outputs);
+    public void addInputAsDataInterface(String name, DataInterface input);
     
     
     /**
-     * Gets the parameters property
+     * Gets the list of output properties
      */
-    public ParameterList getParameters();
+    public OgcPropertyList<AbstractSWEIdentifiable> getOutputList();
     
     
     /**
-     * Checks if parameters is set
+     * Returns number of output properties
      */
-    public boolean isSetParameters();
+    public int getNumOutputs();
     
     
     /**
-     * Sets the parameters property
+     * Gets the output property with the given name
      */
-    public void setParameters(ParameterList parameters);
+    public AbstractSWEIdentifiable getOutput(String name);
     
+    
+    /**
+     * Adds a new outputAsAbstractDataComponent property
+     */
+    public void addOutputAsAbstractDataComponent(String name, DataComponent output);
+    
+    
+    /**
+     * Adds a new outputAsObservableProperty property
+     */
+    public void addOutputAsObservableProperty(String name, ObservableProperty output);
+    
+    
+    /**
+     * Adds a new outputAsDataInterface property
+     */
+    public void addOutputAsDataInterface(String name, DataInterface output);
+    
+    
+    /**
+     * Gets the list of parameter properties
+     */
+    public OgcPropertyList<AbstractSWEIdentifiable> getParameterList();
+    
+    
+    /**
+     * Returns number of parameter properties
+     */
+    public int getNumParameters();
+    
+    
+    /**
+     * Gets the parameter property with the given name
+     */
+    public AbstractSWEIdentifiable getParameter(String name);
+    
+    
+    /**
+     * Adds a new parameterAsAbstractDataComponent property
+     */
+    public void addParameterAsAbstractDataComponent(String name, DataComponent parameter);
+    
+    
+    /**
+     * Adds a new parameterAsObservableProperty property
+     */
+    public void addParameterAsObservableProperty(String name, ObservableProperty parameter);
+    
+    
+    /**
+     * Adds a new parameterAsDataInterface property
+     */
+    public void addParameterAsDataInterface(String name, DataInterface parameter);
+        
     
     /**
      * Gets the list of modes properties

@@ -1,4 +1,3 @@
-package org.vast.sensorML;
 /***************************** BEGIN LICENSE BLOCK ***************************
 
  The contents of this file are subject to the Mozilla Public License Version
@@ -25,6 +24,7 @@ package org.vast.sensorML;
  
 ******************************* END LICENSE BLOCK ***************************/
 
+package org.vast.sensorML;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -238,8 +238,8 @@ public class TestSmlBindingsV20 extends XMLTestCase
         // input
         ObservableProperty obs = new ObservablePropertyImpl();
         obs.setDefinition("http://mmisw.org/ont/cf/parameter/weather");
-        system.getInputs().addInputAsObservableProperty("weather_phenomena", obs);
-        system.getInputs().getInputList().add("rain", "http://remotedef.xml", null);
+        system.addInputAsObservableProperty("weather_phenomena", obs);
+        system.getInputList().add("rain", "http://remotedef.xml", null);
         
         // outputs                
         DataRecord rec = new DataRecordImpl();
@@ -281,8 +281,8 @@ public class TestSmlBindingsV20 extends XMLTestCase
         q4.getUom().setCode("deg");
         rec.addField("wind_dir", q4);
         
-        system.getOutputs().addOutputAsAbstractDataComponent("weather_data", rec);
-        system.getOutputs().getOutputList().add("status_info", "http://remotedef.xml", null);
+        system.addOutputAsAbstractDataComponent("weather_data", rec);
+        system.getOutputList().add("status_info", "http://remotedef.xml", null);
         
         // reference frame
         SpatialFrame systemFrame = new SpatialFrameImpl();

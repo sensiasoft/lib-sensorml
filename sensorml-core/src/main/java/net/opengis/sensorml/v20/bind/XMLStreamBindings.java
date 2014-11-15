@@ -36,15 +36,12 @@ import net.opengis.sensorml.v20.Event;
 import net.opengis.sensorml.v20.EventList;
 import net.opengis.sensorml.v20.FeatureList;
 import net.opengis.sensorml.v20.IdentifierList;
-import net.opengis.sensorml.v20.InputList;
 import net.opengis.sensorml.v20.KeywordList;
 import net.opengis.sensorml.v20.Link;
 import net.opengis.sensorml.v20.Mode;
 import net.opengis.sensorml.v20.ModeChoice;
 import net.opengis.sensorml.v20.ModeSetting;
 import net.opengis.sensorml.v20.ObservableProperty;
-import net.opengis.sensorml.v20.OutputList;
-import net.opengis.sensorml.v20.ParameterList;
 import net.opengis.sensorml.v20.PhysicalComponent;
 import net.opengis.sensorml.v20.PhysicalSystem;
 import net.opengis.sensorml.v20.ProcessMethod;
@@ -2475,10 +2472,41 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         found = checkElementName(reader, "inputs");
         if (found)
         {
+            reader.nextTag(); // InputList
             reader.nextTag();
+            
             if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
             {
-                bean.setInputs(this.readInputList(reader));
+                // input
+                do
+                {
+                    found = checkElementName(reader, "input");
+                    if (found)
+                    {
+                        final OgcProperty<AbstractSWEIdentifiable> inputProp = new OgcPropertyImpl<AbstractSWEIdentifiable>();
+                        readPropertyAttributes(reader, inputProp);
+                        
+                        reader.nextTag();
+                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                        {
+                            readIOChoice(reader, inputProp);
+                            reader.nextTag(); // end property tag
+                        }
+                        else if (inputProp.hasHref())
+                        {
+                            inputProp.setHrefResolver(new HrefResolverXML() {
+                                public void parseContent(XMLStreamReader reader) throws XMLStreamException
+                                {
+                                    readIOChoice(reader, inputProp);
+                                }
+                            });
+                        }
+                        
+                        bean.getInputList().add(inputProp);
+                        reader.nextTag();
+                    }
+                }
+                while (found);
                 reader.nextTag(); // end property tag
             }
             
@@ -2489,10 +2517,41 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         found = checkElementName(reader, "outputs");
         if (found)
         {
+            reader.nextTag(); // OutputList
             reader.nextTag();
+            
             if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
             {
-                bean.setOutputs(this.readOutputList(reader));
+                // output
+                do
+                {
+                    found = checkElementName(reader, "output");
+                    if (found)
+                    {
+                        final OgcProperty<AbstractSWEIdentifiable> outputProp = new OgcPropertyImpl<AbstractSWEIdentifiable>();
+                        readPropertyAttributes(reader, outputProp);
+                        
+                        reader.nextTag();
+                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                        {
+                            readIOChoice(reader, outputProp);
+                            reader.nextTag(); // end property tag
+                        }
+                        else if (outputProp.hasHref())
+                        {
+                            outputProp.setHrefResolver(new HrefResolverXML() {
+                                public void parseContent(XMLStreamReader reader) throws XMLStreamException
+                                {
+                                    readIOChoice(reader, outputProp);
+                                }
+                            });
+                        }
+                        
+                        bean.getOutputList().add(outputProp);
+                        reader.nextTag();
+                    }
+                }
+                while (found);
                 reader.nextTag(); // end property tag
             }
             
@@ -2503,14 +2562,45 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         found = checkElementName(reader, "parameters");
         if (found)
         {
+            reader.nextTag(); // ParameterList
             reader.nextTag();
             if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
             {
-                bean.setParameters(this.readParameterList(reader));
+                // parameter
+                do
+                {
+                    found = checkElementName(reader, "parameter");
+                    if (found)
+                    {
+                        final OgcProperty<AbstractSWEIdentifiable> parameterProp = new OgcPropertyImpl<AbstractSWEIdentifiable>();
+                        readPropertyAttributes(reader, parameterProp);
+                        
+                        reader.nextTag();
+                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                        {
+                            readIOChoice(reader, parameterProp);
+                            reader.nextTag(); // end property tag
+                        }
+                        else if (parameterProp.hasHref())
+                        {
+                            parameterProp.setHrefResolver(new HrefResolverXML() {
+                                public void parseContent(XMLStreamReader reader) throws XMLStreamException
+                                {
+                                    readIOChoice(reader, parameterProp);
+                                }
+                            });
+                        }
+                        
+                        bean.getParameterList().add(parameterProp);
+                        reader.nextTag();
+                    }
+                }
+                while (found);
+                
                 reader.nextTag(); // end property tag
             }
             
-            reader.nextTag();
+            reader.nextTag(); 
         }
         
         // modes
@@ -2579,26 +2669,95 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         }
         
         // inputs
-        if (bean.isSetInputs())
+        if (bean.getNumInputs() > 0)
         {
             writer.writeStartElement(NS_URI, "inputs");
-            this.writeInputList(writer, bean.getInputs());
+            writer.writeStartElement(NS_URI, "InputList");
+            
+            // input
+            numItems = bean.getInputList().size();
+            for (int i = 0; i < numItems; i++)
+            {
+                OgcProperty<AbstractSWEIdentifiable> item = bean.getInputList().getProperty(i);
+                writer.writeStartElement(NS_URI, "input");
+                writePropertyAttributes(writer, item);
+                
+                if (item.hasValue() && !item.hasHref())
+                {
+                    if (item.getValue() instanceof DataComponent)
+                        ns1Bindings.writeDataComponent(writer, (DataComponent)item.getValue(), false);
+                    else if (item.getValue() instanceof ObservableProperty)
+                        this.writeObservableProperty(writer, (ObservableProperty)item.getValue());
+                    else if (item.getValue() instanceof DataInterface)
+                        this.writeDataInterface(writer, (DataInterface)item.getValue());
+                }
+                
+                writer.writeEndElement();
+            }
+            
+            writer.writeEndElement();
             writer.writeEndElement();
         }
         
         // outputs
-        if (bean.isSetOutputs())
+        if (bean.getNumOutputs() > 0)
         {
             writer.writeStartElement(NS_URI, "outputs");
-            this.writeOutputList(writer, bean.getOutputs());
+            writer.writeStartElement(NS_URI, "OutputList");
+            
+            // output
+            numItems = bean.getOutputList().size();
+            for (int i = 0; i < numItems; i++)
+            {
+                OgcProperty<AbstractSWEIdentifiable> item = bean.getOutputList().getProperty(i);
+                writer.writeStartElement(NS_URI, "output");
+                writePropertyAttributes(writer, item);
+                
+                if (item.hasValue() && !item.hasHref())
+                {
+                    if (item.getValue() instanceof DataComponent)
+                        ns1Bindings.writeDataComponent(writer, (DataComponent)item.getValue(), false);
+                    else if (item.getValue() instanceof ObservableProperty)
+                        this.writeObservableProperty(writer, (ObservableProperty)item.getValue());
+                    else if (item.getValue() instanceof DataInterface)
+                        this.writeDataInterface(writer, (DataInterface)item.getValue());
+                }
+                
+                writer.writeEndElement();
+            }
+            
+            writer.writeEndElement();
             writer.writeEndElement();
         }
         
         // parameters
-        if (bean.isSetParameters())
+        if (bean.getNumParameters() > 0)
         {
             writer.writeStartElement(NS_URI, "parameters");
-            this.writeParameterList(writer, bean.getParameters());
+            writer.writeStartElement(NS_URI, "ParameterList");
+            
+            // parameter
+            numItems = bean.getParameterList().size();
+            for (int i = 0; i < numItems; i++)
+            {
+                OgcProperty<AbstractSWEIdentifiable> item = bean.getParameterList().getProperty(i);
+                writer.writeStartElement(NS_URI, "parameter");
+                writePropertyAttributes(writer, item);
+                
+                if (item.hasValue() && !item.hasHref())
+                {
+                    if (item.getValue() instanceof DataComponent)
+                        ns1Bindings.writeDataComponent(writer, (DataComponent)item.getValue(), true);
+                    else if (item.getValue() instanceof ObservableProperty)
+                        this.writeObservableProperty(writer, (ObservableProperty)item.getValue());
+                    else if (item.getValue() instanceof DataInterface)
+                        this.writeDataInterface(writer, (DataInterface)item.getValue());
+                }
+                
+                writer.writeEndElement();
+            }
+            
+            writer.writeEndElement();
             writer.writeEndElement();
         }
         
@@ -2676,133 +2835,6 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     public void writeAbstractSettingsTypeElements(XMLStreamWriter writer, AbstractSettings bean) throws XMLStreamException
     {
         ns1Bindings.writeAbstractSWETypeElements(writer, bean);
-    }
-    
-    
-    /**
-     * Read method for OutputListType complex type
-     */
-    public OutputList readOutputListType(XMLStreamReader reader) throws XMLStreamException
-    {
-        OutputList bean = factory.newOutputList();
-        
-        Map<String, String> attrMap = collectAttributes(reader);
-        this.readOutputListTypeAttributes(attrMap, bean);
-        
-        reader.nextTag();
-        this.readOutputListTypeElements(reader, bean);
-        
-        return bean;
-    }
-    
-    
-    /**
-     * Reads attributes of OutputListType complex type
-     */
-    public void readOutputListTypeAttributes(Map<String, String> attrMap, OutputList bean) throws XMLStreamException
-    {
-        ns1Bindings.readAbstractSWETypeAttributes(attrMap, bean);
-        
-    }
-    
-    
-    /**
-     * Reads elements of OutputListType complex type
-     */
-    public void readOutputListTypeElements(XMLStreamReader reader, OutputList bean) throws XMLStreamException
-    {
-        ns1Bindings.readAbstractSWETypeElements(reader, bean);
-        
-        boolean found;
-        
-        // output
-        do
-        {
-            found = checkElementName(reader, "output");
-            if (found)
-            {
-                OgcProperty<AbstractSWEIdentifiable> outputProp = new OgcPropertyImpl<AbstractSWEIdentifiable>();
-                readPropertyAttributes(reader, outputProp);
-                
-                reader.nextTag();
-                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                {
-                    String localName = reader.getName().getLocalPart();
-                    
-                    if (localName.equals("ObservableProperty"))
-                    {
-                        ObservableProperty output = this.readObservableProperty(reader);
-                        outputProp.setValue(output);
-                    }
-                    else if (localName.equals("DataInterface"))
-                    {
-                        DataInterface output = this.readDataInterface(reader);
-                        outputProp.setValue(output);
-                    }
-                    else
-                    {
-                        DataComponent output = ns1Bindings.readDataComponent(reader);
-                        outputProp.setValue(output);
-                    }
-                    
-                    reader.nextTag(); // end property tag
-                }
-                
-                bean.getOutputList().add(outputProp);
-                reader.nextTag();
-            }
-        }
-        while (found);
-    }
-    
-    
-    /**
-     * Write method for OutputListType complex type
-     */
-    public void writeOutputListType(XMLStreamWriter writer, OutputList bean) throws XMLStreamException
-    {
-        this.writeOutputListTypeAttributes(writer, bean);
-        this.writeOutputListTypeElements(writer, bean);
-    }
-    
-    
-    /**
-     * Writes attributes of OutputListType complex type
-     */
-    public void writeOutputListTypeAttributes(XMLStreamWriter writer, OutputList bean) throws XMLStreamException
-    {
-        ns1Bindings.writeAbstractSWETypeAttributes(writer, bean);
-    }
-    
-    
-    /**
-     * Writes elements of OutputListType complex type
-     */
-    public void writeOutputListTypeElements(XMLStreamWriter writer, OutputList bean) throws XMLStreamException
-    {
-        ns1Bindings.writeAbstractSWETypeElements(writer, bean);
-        int numItems;
-        
-        // output
-        numItems = bean.getOutputList().size();
-        for (int i = 0; i < numItems; i++)
-        {
-            OgcProperty<AbstractSWEIdentifiable> item = bean.getOutputList().getProperty(i);
-            writer.writeStartElement(NS_URI, "output");
-            writePropertyAttributes(writer, item);
-            
-            if (item.hasValue() && !item.hasHref())
-            {
-                if (item.getValue() instanceof DataComponent)
-                    ns1Bindings.writeDataComponent(writer, (DataComponent)item.getValue(), false);
-                else if (item.getValue() instanceof ObservableProperty)
-                    this.writeObservableProperty(writer, (ObservableProperty)item.getValue());
-                else if (item.getValue() instanceof DataInterface)
-                    this.writeDataInterface(writer, (DataInterface)item.getValue());
-            }
-            
-            writer.writeEndElement();
-        }
     }
     
     
@@ -2901,143 +2933,24 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     }
     
     
-    /**
-     * Read method for InputListType complex type
-     */
-    public InputList readInputListType(XMLStreamReader reader) throws XMLStreamException
-    {
-        InputList bean = factory.newInputList();
-        
-        Map<String, String> attrMap = collectAttributes(reader);
-        this.readInputListTypeAttributes(attrMap, bean);
-        
-        reader.nextTag();
-        this.readInputListTypeElements(reader, bean);
-        
-        return bean;
-    }
-    
-    
-    /**
-     * Reads attributes of InputListType complex type
-     */
-    public void readInputListTypeAttributes(Map<String, String> attrMap, InputList bean) throws XMLStreamException
-    {
-        ns1Bindings.readAbstractSWETypeAttributes(attrMap, bean);
-        
-    }
-    
-    
-    /**
-     * Reads elements of InputListType complex type
-     */
-    public void readInputListTypeElements(XMLStreamReader reader, InputList bean) throws XMLStreamException
-    {
-        ns1Bindings.readAbstractSWETypeElements(reader, bean);
-        
-        boolean found;
-        
-        // input
-        do
-        {
-            found = checkElementName(reader, "input");
-            if (found)
-            {
-                final OgcProperty<AbstractSWEIdentifiable> inputProp = new OgcPropertyImpl<AbstractSWEIdentifiable>();
-                readPropertyAttributes(reader, inputProp);
-                
-                reader.nextTag();
-                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                {
-                    readInputListInputChoice(reader, inputProp);
-                    reader.nextTag(); // end property tag
-                }
-                else if (inputProp.hasHref())
-                {
-                    inputProp.setHrefResolver(new HrefResolverXML() {
-                        public void parseContent(XMLStreamReader reader) throws XMLStreamException
-                        {
-                            readInputListInputChoice(reader, inputProp);
-                        }
-                    });
-                }
-                
-                bean.getInputList().add(inputProp);
-                reader.nextTag();
-            }
-        }
-        while (found);
-    }
-    
-    
-    protected void readInputListInputChoice(XMLStreamReader reader, OgcProperty<AbstractSWEIdentifiable> inputProp) throws XMLStreamException
+    protected void readIOChoice(XMLStreamReader reader, OgcProperty<AbstractSWEIdentifiable> prop) throws XMLStreamException
     {
         String localName = reader.getName().getLocalPart();
         
         if (localName.equals("ObservableProperty"))
         {
             ObservableProperty input = this.readObservableProperty(reader);
-            inputProp.setValue(input);
+            prop.setValue(input);
         }
         else if (localName.equals("DataInterface"))
         {
             DataInterface input = this.readDataInterface(reader);
-            inputProp.setValue(input);
+            prop.setValue(input);
         }
         else
         {
             DataComponent input = ns1Bindings.readDataComponent(reader);
-            inputProp.setValue(input);
-        }
-    }
-    
-    
-    /**
-     * Write method for InputListType complex type
-     */
-    public void writeInputListType(XMLStreamWriter writer, InputList bean) throws XMLStreamException
-    {
-        this.writeInputListTypeAttributes(writer, bean);
-        this.writeInputListTypeElements(writer, bean);
-    }
-    
-    
-    /**
-     * Writes attributes of InputListType complex type
-     */
-    public void writeInputListTypeAttributes(XMLStreamWriter writer, InputList bean) throws XMLStreamException
-    {
-        ns1Bindings.writeAbstractSWETypeAttributes(writer, bean);
-    }
-    
-    
-    /**
-     * Writes elements of InputListType complex type
-     */
-    public void writeInputListTypeElements(XMLStreamWriter writer, InputList bean) throws XMLStreamException
-    {
-        ns1Bindings.writeAbstractSWETypeElements(writer, bean);
-        int numItems;
-        
-        // input
-        numItems = bean.getInputList().size();
-        for (int i = 0; i < numItems; i++)
-        {
-            OgcProperty<AbstractSWEIdentifiable> item = bean.getInputList().getProperty(i);
-            writer.writeStartElement(NS_URI, "input");
-            writePropertyAttributes(writer, item);
-            
-            if (item.hasValue() && !item.hasHref())
-            {
-                if (item.getValue() instanceof DataComponent)
-                    ns1Bindings.writeDataComponent(writer, (DataComponent)item.getValue(), false);
-                else if (item.getValue() instanceof ObservableProperty)
-                    this.writeObservableProperty(writer, (ObservableProperty)item.getValue());
-                else if (item.getValue() instanceof DataInterface)
-                    this.writeDataInterface(writer, (DataInterface)item.getValue());
-            }
-            
-            writer.writeEndElement();
+            prop.setValue(input);
         }
     }
     
@@ -4393,133 +4306,6 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     
     
     /**
-     * Read method for ParameterListType complex type
-     */
-    public ParameterList readParameterListType(XMLStreamReader reader) throws XMLStreamException
-    {
-        ParameterList bean = factory.newParameterList();
-        
-        Map<String, String> attrMap = collectAttributes(reader);
-        this.readParameterListTypeAttributes(attrMap, bean);
-        
-        reader.nextTag();
-        this.readParameterListTypeElements(reader, bean);
-        
-        return bean;
-    }
-    
-    
-    /**
-     * Reads attributes of ParameterListType complex type
-     */
-    public void readParameterListTypeAttributes(Map<String, String> attrMap, ParameterList bean) throws XMLStreamException
-    {
-        ns1Bindings.readAbstractSWETypeAttributes(attrMap, bean);
-        
-    }
-    
-    
-    /**
-     * Reads elements of ParameterListType complex type
-     */
-    public void readParameterListTypeElements(XMLStreamReader reader, ParameterList bean) throws XMLStreamException
-    {
-        ns1Bindings.readAbstractSWETypeElements(reader, bean);
-        
-        boolean found;
-        
-        // parameter
-        do
-        {
-            found = checkElementName(reader, "parameter");
-            if (found)
-            {
-                OgcProperty<AbstractSWEIdentifiable> parameterProp = new OgcPropertyImpl<AbstractSWEIdentifiable>();
-                readPropertyAttributes(reader, parameterProp);
-                
-                reader.nextTag();
-                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                {
-                    String localName = reader.getName().getLocalPart();
-                    
-                    if (localName.equals("ObservableProperty"))
-                    {
-                      ObservableProperty parameter = this.readObservableProperty(reader);
-                      parameterProp.setValue(parameter);
-                    }
-                    else if (localName.equals("DataInterface"))
-                    {
-                      DataInterface parameter = this.readDataInterface(reader);
-                      parameterProp.setValue(parameter);
-                    }
-                    else
-                    {
-                      DataComponent parameter = ns1Bindings.readDataComponent(reader);
-                      parameterProp.setValue(parameter);
-                    }
-                    
-                    reader.nextTag(); // end property tag
-                }
-                
-                bean.getParameterList().add(parameterProp);
-                reader.nextTag();
-            }
-        }
-        while (found);
-    }
-    
-    
-    /**
-     * Write method for ParameterListType complex type
-     */
-    public void writeParameterListType(XMLStreamWriter writer, ParameterList bean) throws XMLStreamException
-    {
-        this.writeParameterListTypeAttributes(writer, bean);
-        this.writeParameterListTypeElements(writer, bean);
-    }
-    
-    
-    /**
-     * Writes attributes of ParameterListType complex type
-     */
-    public void writeParameterListTypeAttributes(XMLStreamWriter writer, ParameterList bean) throws XMLStreamException
-    {
-        ns1Bindings.writeAbstractSWETypeAttributes(writer, bean);
-    }
-    
-    
-    /**
-     * Writes elements of ParameterListType complex type
-     */
-    public void writeParameterListTypeElements(XMLStreamWriter writer, ParameterList bean) throws XMLStreamException
-    {
-        ns1Bindings.writeAbstractSWETypeElements(writer, bean);
-        int numItems;
-        
-        // parameter
-        numItems = bean.getParameterList().size();
-        for (int i = 0; i < numItems; i++)
-        {
-            OgcProperty<AbstractSWEIdentifiable> item = bean.getParameterList().getProperty(i);
-            writer.writeStartElement(NS_URI, "parameter");
-            writePropertyAttributes(writer, item);
-            
-            if (item.hasValue() && !item.hasHref())
-            {
-                if (item.getValue() instanceof DataComponent)
-                    ns1Bindings.writeDataComponent(writer, (DataComponent)item.getValue(), true);
-                else if (item.getValue() instanceof ObservableProperty)
-                    this.writeObservableProperty(writer, (ObservableProperty)item.getValue());
-                else if (item.getValue() instanceof DataInterface)
-                    this.writeDataInterface(writer, (DataInterface)item.getValue());
-            }
-            
-            writer.writeEndElement();
-        }
-    }
-    
-    
-    /**
      * Read method for AbstractModesType complex type
      */
     public AbstractModes readAbstractModesType(XMLStreamReader reader) throws XMLStreamException
@@ -5248,31 +5034,6 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     
     
     /**
-     * Read method for OutputList elements
-     */
-    public OutputList readOutputList(XMLStreamReader reader) throws XMLStreamException
-    {
-        boolean found = checkElementName(reader, "OutputList");
-        if (!found)
-            throw new XMLStreamException(ERROR_INVALID_ELT + reader.getName() + errorLocationString(reader));
-        
-        return this.readOutputListType(reader);
-    }
-    
-    
-    /**
-     * Write method for OutputList element
-     */
-    public void writeOutputList(XMLStreamWriter writer, OutputList bean) throws XMLStreamException
-    {
-        writer.writeStartElement(NS_URI, "OutputList");
-        this.writeNamespaces(writer);
-        this.writeOutputListType(writer, bean);
-        writer.writeEndElement();
-    }
-    
-    
-    /**
      * Read method for IdentifierList elements
      */
     public IdentifierList readIdentifierList(XMLStreamReader reader) throws XMLStreamException
@@ -5293,31 +5054,6 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         writer.writeStartElement(NS_URI, "IdentifierList");
         this.writeNamespaces(writer);
         this.writeIdentifierListType(writer, bean);
-        writer.writeEndElement();
-    }
-    
-    
-    /**
-     * Read method for InputList elements
-     */
-    public InputList readInputList(XMLStreamReader reader) throws XMLStreamException
-    {
-        boolean found = checkElementName(reader, "InputList");
-        if (!found)
-            throw new XMLStreamException(ERROR_INVALID_ELT + reader.getName() + errorLocationString(reader));
-        
-        return this.readInputListType(reader);
-    }
-    
-    
-    /**
-     * Write method for InputList element
-     */
-    public void writeInputList(XMLStreamWriter writer, InputList bean) throws XMLStreamException
-    {
-        writer.writeStartElement(NS_URI, "InputList");
-        this.writeNamespaces(writer);
-        this.writeInputListType(writer, bean);
         writer.writeEndElement();
     }
     
@@ -5593,31 +5329,6 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         writer.writeStartElement(NS_URI, "ClassifierList");
         this.writeNamespaces(writer);
         this.writeClassifierListType(writer, bean);
-        writer.writeEndElement();
-    }
-    
-    
-    /**
-     * Read method for ParameterList elements
-     */
-    public ParameterList readParameterList(XMLStreamReader reader) throws XMLStreamException
-    {
-        boolean found = checkElementName(reader, "ParameterList");
-        if (!found)
-            throw new XMLStreamException(ERROR_INVALID_ELT + reader.getName() + errorLocationString(reader));
-        
-        return this.readParameterListType(reader);
-    }
-    
-    
-    /**
-     * Write method for ParameterList element
-     */
-    public void writeParameterList(XMLStreamWriter writer, ParameterList bean) throws XMLStreamException
-    {
-        writer.writeStartElement(NS_URI, "ParameterList");
-        this.writeNamespaces(writer);
-        this.writeParameterListType(writer, bean);
         writer.writeEndElement();
     }
     

@@ -20,12 +20,18 @@
 
 package org.vast.sensorML;
 
-import java.io.OutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 import net.opengis.sensorml.v20.AbstractProcess;
 import org.vast.ogc.OGCRegistry;
 import org.vast.xml.DOMHelper;
 import org.vast.xml.IXMLReaderDOM;
 import org.vast.xml.IXMLWriterDOM;
+import org.vast.xml.IndentingXMLStreamWriter;
 import org.vast.xml.XMLReaderException;
 import org.vast.xml.XMLWriterException;
 import org.w3c.dom.Element;
@@ -67,17 +73,31 @@ public class SMLUtils
     }
     
     
+    /**
+     * Creates this helper for the default SensorML version (2.0)
+     */
     public SMLUtils()
     {        
     }
     
     
+    /**
+     * Creates this helper for the specified SensorML version
+     * @param version
+     */
     public SMLUtils(String version)
     {
         this.version = version;
     }
     
     
+    /**
+     * Reads a SensorML process from a DOM element
+     * @param dom DOM helper wrapping the XML document to read from
+     * @param processElt DOM element to read from. Must be of one of the types derived from AbstractProcess
+     * @return the process instance
+     * @throws XMLReaderException if an error occured while reading the XML
+     */
     public AbstractProcess readProcess(DOMHelper dom, Element processElt) throws XMLReaderException
     {
         IXMLReaderDOM<AbstractProcess> reader = (IXMLReaderDOM<AbstractProcess>)OGCRegistry.createReader(
@@ -88,6 +108,37 @@ public class SMLUtils
     }
     
     
+    /**
+     * Reads a SensorML process from an InputStream
+     * The root element must be of one of the types derived from AbstractProcess
+     * @param is Input stream to read from
+     * @return the process instance
+     * @throws XMLReaderException if an error occured while reading the XML
+     */
+    public AbstractProcess readProcess(InputStream is) throws XMLReaderException
+    {
+        try
+        {
+            SMLStaxBindings staxReader = new SMLStaxBindings();
+            XMLInputFactory input = XMLInputFactory.newFactory();
+            XMLStreamReader reader = input.createXMLStreamReader(is);
+            reader.nextTag();
+            return staxReader.readAbstractProcess(reader);
+        }
+        catch (XMLStreamException e)
+        {
+            throw new XMLReaderException("Error while reading SensorML description", e);
+        }
+    }
+    
+    
+    /**
+     * Serializes a SensorML process to a DOM element
+     * @param dom DOM helper wrapping the XMl document to write to
+     * @param process Process object to serialize
+     * @return DOM element containing the process description (not attached to any parent)
+     * @throws XMLWriterException if an error occurs while generating the DOM tree
+     */
     public Element writeProcess(DOMHelper dom, AbstractProcess process) throws XMLWriterException
     {
         IXMLWriterDOM<AbstractProcess> writer = (IXMLWriterDOM<AbstractProcess>)OGCRegistry.createWriter(
@@ -98,17 +149,29 @@ public class SMLUtils
     }
     
     
-    public void write(OutputStream os, AbstractProcess smlObj) throws XMLWriterException
+    /**
+     * Serializes a SensorMl process to an OutputStream
+     * @param os Output stream to write to
+     * @param process Process object to serialize
+     * @param indent Set to true to indent the output
+     * @throws XMLWriterException if an error occurs while generating the DOM tree or writing to the stream
+     */
+    public void writeProcess(OutputStream os, AbstractProcess process, boolean indent) throws XMLWriterException
     {
         try
         {
-            DOMHelper dom = new DOMHelper("sml");
-            Element rootElt = writeProcess(dom, smlObj);            
-            dom.serialize(rootElt, os, true);
+            SMLStaxBindings smlWriter = new SMLStaxBindings();
+            XMLStreamWriter writer = XMLOutputFactory.newFactory().createXMLStreamWriter(os);
+            if (indent)
+                writer = new IndentingXMLStreamWriter(writer);
+            smlWriter.setNamespacePrefixes(writer);
+            smlWriter.declareNamespacesOnRootElement();
+            smlWriter.writeAbstractProcess(writer, process);
+            writer.close();
         }
-        catch (Exception e)
+        catch (XMLStreamException e)
         {
-            throw new XMLWriterException("Error writing SensorML document", e);
+            throw new XMLWriterException("Error while writing SensorML document to output stream", e);
         }
     }
     
@@ -116,7 +179,7 @@ public class SMLUtils
     /**
      * Logic to guess SensorML version from namespace
      * @param dom
-     * @param smlElt 
+     * @param smlElt DOM element containing the SensorML content
      * @return version string
      */
     public String getVersion(DOMHelper dom, Element smlElt)

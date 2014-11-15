@@ -128,21 +128,9 @@ public class SMLFactory implements Factory
     }
     
     
-    public OutputList newOutputList()
-    {
-        return new OutputListImpl();
-    }
-    
-    
     public IdentifierList newIdentifierList()
     {
         return new IdentifierListImpl();
-    }
-    
-    
-    public InputList newInputList()
-    {
-        return new InputListImpl();
     }
     
     
@@ -209,12 +197,6 @@ public class SMLFactory implements Factory
     public ClassifierList newClassifierList()
     {
         return new ClassifierListImpl();
-    }
-    
-    
-    public ParameterList newParameterList()
-    {
-        return new ParameterListImpl();
     }
     
     

@@ -1,3 +1,4 @@
+
 package org.vast.sensorML;
 
 import java.util.ArrayList;
@@ -18,15 +19,11 @@ import net.opengis.gml.v32.Reference;
 import net.opengis.sensorml.v20.AbstractModes;
 import net.opengis.sensorml.v20.AbstractProcess;
 import net.opengis.sensorml.v20.AbstractSettings;
+import net.opengis.sensorml.v20.DataInterface;
 import net.opengis.sensorml.v20.FeatureList;
-import net.opengis.sensorml.v20.InputList;
-import net.opengis.sensorml.v20.OutputList;
-import net.opengis.sensorml.v20.ParameterList;
+import net.opengis.sensorml.v20.ObservableProperty;
 import net.opengis.sensorml.v20.impl.DescribedObjectImpl;
 import net.opengis.sensorml.v20.impl.FeatureListImpl;
-import net.opengis.sensorml.v20.impl.InputListImpl;
-import net.opengis.sensorml.v20.impl.OutputListImpl;
-import net.opengis.sensorml.v20.impl.ParameterListImpl;
 import net.opengis.swe.v20.AbstractSWEIdentifiable;
 import net.opengis.swe.v20.DataBlock;
 import net.opengis.swe.v20.DataComponent;
@@ -41,20 +38,20 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
 {
     static final long serialVersionUID = 1L;
     private final static Logger LOGGER = Logger.getLogger(AbstractProcessImpl.class.getName());
-    
+
     protected static final String ioError = "Invalid I/O Structure";
     protected static final String initError = "Error while initializing process ";
     protected static final String execError = "Error while executing process ";
-    
+
     protected Reference typeOf;
     protected AbstractSettings configuration;
     protected FeatureList featuresOfInterest;
-    protected InputListImpl inputs;
-    protected OutputListImpl outputs;
-    protected ParameterListImpl parameters;
+    protected OgcPropertyList<AbstractSWEIdentifiable> inputs = new OgcPropertyList<AbstractSWEIdentifiable>();
+    protected OgcPropertyList<AbstractSWEIdentifiable> outputs = new OgcPropertyList<AbstractSWEIdentifiable>();
+    protected OgcPropertyList<AbstractSWEIdentifiable> parameters = new OgcPropertyList<AbstractSWEIdentifiable>();
     protected List<AbstractModes> modesList = new ArrayList<AbstractModes>();
     protected String definition;
-    
+
     //////////////////////////////////
     // variables used for execution //
     //////////////////////////////////
@@ -65,19 +62,20 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     protected transient boolean started = false;
     protected transient boolean usingQueueBuffers = false;
     protected transient boolean needSync = false;
-    
-            
+
+
     public AbstractProcessImpl()
     {
     }
-    
+
+
     /* (non-Javadoc)
      * @see org.vast.process.IProcess#init()
      */
     @Override
     public abstract void init() throws ProcessException;
-    
-    
+
+
     /* (non-Javadoc)
      * @see org.vast.process.IProcess#reset()
      */
@@ -86,24 +84,24 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         // DO NOTHING BY DEFAULT
     }
-    
-    
+
+
     /* (non-Javadoc)
      * @see org.vast.process.IProcess#execute()
      */
     @Override
     public abstract void execute() throws ProcessException;
-      
-    
+
+
     /* (non-Javadoc)
      * @see org.vast.process.IProcess#dispose()
      */
     @Override
     public void dispose()
-    {        
+    {
     }
-    
-    
+
+
     /* (non-Javadoc)
      * @see org.vast.process.IProcess#canRun()
      */
@@ -112,17 +110,17 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         if (!checkAvailability(inputConnections, true))
             return false;
-        
+
         if (!checkAvailability(paramConnections, true))
             return false;
-        
+
         if (!checkAvailability(outputConnections, false))
             return false;
-        
+
         return true;
     }
-    
-    
+
+
     /**
      * Checks if all connections in the list and marked as needed
      * have the specified availability state.
@@ -131,26 +129,26 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     protected boolean checkAvailability(List<DataConnectionList> allConnections, boolean availability)
     {
         // loop through all connection lists
-        for (int i=0; i<allConnections.size(); i++)
+        for (int i = 0; i < allConnections.size(); i++)
         {
             DataConnectionList connectionList = allConnections.get(i);
-            
+
             if (connectionList.isNeeded())
             {
                 // loop through all connections in each list
-                for (int j=0; j<connectionList.size(); j++)
+                for (int j = 0; j < connectionList.size(); j++)
                 {
-                    DataConnection connection = connectionList.get(j);                    
+                    DataConnection connection = connectionList.get(j);
                     if (connection.isDataAvailable() != availability)
                         return false;
                 }
             }
         }
-        
+
         return true;
     }
-    
-    
+
+
     /**
      * Checks that the availability flags of all connections
      * in the list is equal to the specified state.
@@ -161,17 +159,17 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     protected boolean checkAvailability(DataConnectionList connectionList, boolean availability)
     {
         // loop through all connections in the list
-        for (int j=0; j<connectionList.size(); j++)
+        for (int j = 0; j < connectionList.size(); j++)
         {
-            DataConnection connection = connectionList.get(j);                    
+            DataConnection connection = connectionList.get(j);
             if (connection.isDataAvailable() != availability)
                 return false;
         }
-        
+
         return true;
     }
-    
-    
+
+
     /**
      * Sets i/o availability flags in sync mode (not threaded)
      * This default method just sets all needed flags to the
@@ -184,16 +182,16 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     public void setAvailability(List<DataConnectionList> allConnections, boolean availability)
     {
         // loop through all connection lists
-        for (int i=0; i<allConnections.size(); i++)
+        for (int i = 0; i < allConnections.size(); i++)
         {
             DataConnectionList connectionList = allConnections.get(i);
-            
+
             if (connectionList.isNeeded())
                 setAvailability(connectionList, availability);
         }
     }
-    
-    
+
+
     /**
      * Sets the availability flags of all connections in the list
      * to the specified state. (even if not needed!)
@@ -203,14 +201,14 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     protected void setAvailability(DataConnectionList connectionList, boolean availability)
     {
         // loop through all connections in the list
-        for (int j=0; j<connectionList.size(); j++)
+        for (int j = 0; j < connectionList.size(); j++)
         {
             DataConnection connection = connectionList.get(j);
             connection.setDataAvailable(availability);
         }
     }
-    
-    
+
+
     /**
      * Fetch new data from input queues in async mode (threaded)
      * Thread will wait until each queue needing data receives next block
@@ -218,17 +216,17 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     protected void fetchData(List<DataConnectionList> allConnections) throws InterruptedException
     {
         // go through all connections and get next dataBlock from them
-        for (int i=0; i<allConnections.size(); i++)
+        for (int i = 0; i < allConnections.size(); i++)
         {
             DataConnectionList connectionList = allConnections.get(i);
-            
+
             if (connectionList.isNeeded())
             {
                 // loop through all connections
-                for (int j=0; j<connectionList.size(); j++)
+                for (int j = 0; j < connectionList.size(); j++)
                 {
                     // get datablock from queue and assign it to destination component
-                    DataQueue dataQueue = (DataQueue)connectionList.get(j);
+                    DataQueue dataQueue = (DataQueue) connectionList.get(j);
                     DataComponent dataComponent = dataQueue.getDestinationComponent();
                     DataBlock block = dataQueue.get();
                     dataComponent.setData(block);
@@ -236,90 +234,88 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
             }
         }
     }
-    
-    
+
+
     /**
      * Writes new data to output queues in async mode (threaded)
      */
     protected void writeData(List<DataConnectionList> allConnections) throws InterruptedException
     {
-        for (int i=0; i<allConnections.size(); i++)
+        for (int i = 0; i < allConnections.size(); i++)
         {
             DataConnectionList connectionList = allConnections.get(i);
-            
+
             if (connectionList.isNeeded())
             {
                 // loop through all connections
-                for (int j=0; j<connectionList.size(); j++)
+                for (int j = 0; j < connectionList.size(); j++)
                 {
                     // get datablock from source component and add to queue
-                    DataQueue dataQueue = (DataQueue)connectionList.get(j);
+                    DataQueue dataQueue = (DataQueue) connectionList.get(j);
                     DataComponent dataComponent = dataQueue.getSourceComponent();
                     DataBlock block = dataComponent.getData();
                     dataQueue.add(block);
                 }
-                
+
                 // renew output dataBlock
-                DataComponent comp = (DataComponent)inputs.getInputList().get(i);
+                DataComponent comp = (DataComponent) inputs.get(i);
                 comp.renewDataBlock();
             }
         }
     }
-    
-    
+
+
     /**
      * Transfers input data in sync mode (not threaded)
      */
     public void transferData(List<DataConnectionList> allConnections)
     {
         // loop through all inputs
-        for (int i=0; i<allConnections.size(); i++)
+        for (int i = 0; i < allConnections.size(); i++)
         {
             DataConnectionList connectionList = allConnections.get(i);
-            
+
             if (connectionList.isNeeded())
             {
                 // loop through all connections
-                for (int j=0; j<connectionList.size(); j++)
+                for (int j = 0; j < connectionList.size(); j++)
                 {
                     DataConnection connection = connectionList.get(j);
                     connection.transferDataBlocks();
                 }
             }
         }
-    }    
-   
-    
+    }
+
+
     /* (non-Javadoc)
      * @see org.vast.process.IProcess#createNewOutputBlocks()
      */
     @Override
     public void createNewOutputBlocks()
     {
-        int outputCount = outputs.getNumOutputs();
-        for (int i=0; i<outputCount; i++)
+        for (int i = 0; i < getNumOutputs(); i++)
         {
-            DataComponent comp = (DataComponent)outputs.getOutputList().get(i);
+            DataComponent comp = (DataComponent) outputs.get(i);
             comp.renewDataBlock();
         }
     }
-    
-    
+
+
     /* (non-Javadoc)
      * @see org.vast.process.IProcess#createNewInputBlocks()
      */
     @Override
     public void createNewInputBlocks()
     {
-        int inputCount = inputs.getNumInputs();
-        for (int i=0; i<inputCount; i++)
+        for (int i = 0; i < getNumInputs(); i++)
         {
-            DataComponent comp = (DataComponent)inputs.getInputList().get(i);
+            DataComponent comp = (DataComponent) inputs.get(i);
             comp.renewDataBlock();
         }
     }
-    
-    
+
+
     /* (non-Javadoc)
      * @see org.vast.process.IProcess#run()
      */
@@ -334,7 +330,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
                 this.fetchData(inputConnections);
                 this.fetchData(paramConnections);
                 this.execute();
-                this.writeData(outputConnections);                    
+                this.writeData(outputConnections);
             }
             catch (ProcessException e)
             {
@@ -345,7 +341,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
                 started = false;
             }
         }
-        while (started);       
+        while (started);
     }
 
 
@@ -360,10 +356,10 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
             if (LOGGER.isLoggable(Level.FINE))
             {
                 String processClass = getClass().getName();
-                processClass = processClass.substring(processClass.lastIndexOf('.')+1);
+                processClass = processClass.substring(processClass.lastIndexOf('.') + 1);
                 LOGGER.fine("Process " + id + " (" + processClass + ") Thread started");
             }
-            
+
             this.init();
             started = true;
             usingQueueBuffers = true;
@@ -385,22 +381,22 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
             if (LOGGER.isLoggable(Level.FINE))
             {
                 String processClass = getClass().getName();
-                processClass = processClass.substring(processClass.lastIndexOf('.')+1);
+                processClass = processClass.substring(processClass.lastIndexOf('.') + 1);
                 LOGGER.fine("Process " + id + " (" + processClass + ") Thread stopped");
             }
-            
+
             // set a stop flag and let the run method return cleanely
             started = false;
-        
+
             // make sure we exit the wait loop
             if (processThread != null)
                 processThread.interrupt();
-            
+
             processThread = null;
         }
     }
-    
-    
+
+
     /**
      * Print process name and I/O info
      */
@@ -408,30 +404,30 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         StringBuffer text = new StringBuffer();
         String indent = "    ";
-        
+
         text.append("Process: ");
         text.append(id);
         text.append(" (" + this.getClass().getName() + ")\n");
-        
+
         text.append("\n  Inputs:\n");
-        for (int i=0; i<inputs.getNumInputs(); i++)
+        for (int i = 0; i < getNumInputs(); i++)
         {
             text.append(indent);
-            text.append(((AbstractDataComponentImpl)getInputComponents().get(i)).toString(indent));
+            text.append(((AbstractDataComponentImpl) inputs.get(i)).toString(indent));
         }
-        
+
         text.append("\n  Outputs:\n");
-        for (int i=0; i<outputs.getNumOutputs(); i++)
+        for (int i = 0; i < getNumOutputs(); i++)
         {
             text.append(indent);
-            text.append(((AbstractDataComponentImpl)getOutputComponents().get(i)).toString(indent));
+            text.append(((AbstractDataComponentImpl) outputs.get(i)).toString(indent));
         }
-        
+
         text.append("\n  Parameters:\n");
-        for (int i=0; i<parameters.getNumParameters(); i++)
+        for (int i = 0; i < getNumParameters(); i++)
         {
             text.append(indent);
-            text.append(((AbstractDataComponentImpl)getParameterComponents().get(i)).toString(indent));
+            text.append(((AbstractDataComponentImpl) parameters.get(i)).toString(indent));
         }
 
         return text.toString();
@@ -443,8 +439,8 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         try
         {
-            int inputIndex = getSignalIndex(inputs.getInputList(), inputName);
-            DataComponent input = (DataComponent)inputs.getInputList().get(inputIndex);
+            int inputIndex = getSignalIndex(inputs, inputName);
+            DataComponent input = (DataComponent) inputs.get(inputIndex);
             DataComponent dest = new DataSelector().findComponent(input, dataPath);
             connection.setDestinationComponent(dest);
             connection.setDestinationProcess(this);
@@ -462,8 +458,8 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         try
         {
-            int outputIndex = getSignalIndex(outputs.getOutputList(), outputName);
-            DataComponent output = (DataComponent)outputs.getOutputList().get(outputIndex);
+            int outputIndex = getSignalIndex(outputs, outputName);
+            DataComponent output = (DataComponent) outputs.get(outputIndex);
             DataComponent src = new DataSelector().findComponent(output, dataPath);
             connection.setSourceComponent(src);
             connection.setSourceProcess(this);
@@ -472,7 +468,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
         catch (CDMException e)
         {
             throw new ProcessException("Unable to connect signal to output '" + outputName + "'", e);
-        }     
+        }
     }
 
 
@@ -481,8 +477,8 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         try
         {
-            int paramIndex = getSignalIndex(parameters.getParameterList(), paramName);
-            DataComponent param = (DataComponent)parameters.getParameterList().get(paramIndex);
+            int paramIndex = getSignalIndex(parameters, paramName);
+            DataComponent param = (DataComponent) parameters.get(paramIndex);
             DataComponent dest = new DataSelector().findComponent(param, dataPath);
             connection.setDestinationComponent(dest);
             connection.setDestinationProcess(this);
@@ -491,14 +487,14 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
         catch (CDMException e)
         {
             throw new ProcessException("Unable to connect signal to parameter '" + paramName + "'", e);
-        }      
+        }
     }
-    
-    
+
+
     @Override
     public boolean isInputConnected(String inputName)
     {
-        int inputIndex = getSignalIndex(inputs.getInputList(), inputName);
+        int inputIndex = getSignalIndex(inputs, inputName);
         if (inputIndex < 0)
             return false;
         return !inputConnections.get(inputIndex).isEmpty();
@@ -508,7 +504,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     @Override
     public boolean isOutputConnected(String outputName)
     {
-        int outputIndex = getSignalIndex(outputs.getOutputList(), outputName);        
+        int outputIndex = getSignalIndex(outputs, outputName);
         if (outputIndex < 0)
             return false;
         return !outputConnections.get(outputIndex).isEmpty();
@@ -518,42 +514,42 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     @Override
     public boolean isParamConnected(String paramName)
     {
-        int paramIndex = getSignalIndex(parameters.getParameterList(), paramName);
+        int paramIndex = getSignalIndex(parameters, paramName);
         if (paramIndex < 0)
             return false;
         return !paramConnections.get(paramIndex).isEmpty();
     }
-    
-    
+
+
     @Override
     public List<DataConnectionList> getInputConnections()
     {
         return inputConnections;
     }
-    
+
 
     @Override
     public List<DataConnectionList> getParamConnections()
     {
         return outputConnections;
     }
-    
+
 
     @Override
     public List<DataConnectionList> getOutputConnections()
     {
         return paramConnections;
     }
-    
+
 
     protected int getSignalIndex(OgcPropertyList<?> ioList, String signalName)
     {
-        for (int i=0; i<ioList.size(); i++)
+        for (int i = 0; i < ioList.size(); i++)
         {
             if (signalName.equals(ioList.getProperty(i).getName()))
                 return i;
         }
-        
+
         return -1;
     }
 
@@ -578,37 +574,19 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
         return needSync;
     }
 
-    
+
     @Override
     protected void finalize() throws Throwable
     {
         super.finalize();
         this.dispose();
     }
-    
-    
-    public List<AbstractSWEIdentifiable> getInputComponents()
-    {
-        return inputs.getInputList();
-    }
-    
-    
-    public List<AbstractSWEIdentifiable> getParameterComponents()
-    {
-        return parameters.getParameterList();
-    }
-    
-    
-    public List<AbstractSWEIdentifiable> getOutputComponents()
-    {
-        return outputs.getOutputList();
-    }
-    
-    
+
+
     /* ************************************ */
-    /*  Auto-generated Getters and Setters  */    
+    /*  Auto-generated Getters and Setters  */
     /* ************************************ */
-    
+
     /**
      * Gets the typeOf property
      */
@@ -617,8 +595,8 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         return typeOf;
     }
-    
-    
+
+
     /**
      * Checks if typeOf is set
      */
@@ -627,8 +605,8 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         return (typeOf != null);
     }
-    
-    
+
+
     /**
      * Sets the typeOf property
      */
@@ -637,8 +615,8 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         this.typeOf = typeOf;
     }
-    
-    
+
+
     /**
      * Gets the configuration property
      */
@@ -647,8 +625,8 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         return configuration;
     }
-    
-    
+
+
     /**
      * Checks if configuration is set
      */
@@ -657,8 +635,8 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         return (configuration != null);
     }
-    
-    
+
+
     /**
      * Sets the configuration property
      */
@@ -667,8 +645,8 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         this.configuration = configuration;
     }
-    
-    
+
+
     /**
      * Gets the featuresOfInterest property
      */
@@ -679,8 +657,8 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
             featuresOfInterest = new FeatureListImpl();
         return featuresOfInterest;
     }
-    
-    
+
+
     /**
      * Checks if featuresOfInterest is set
      */
@@ -689,8 +667,8 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         return (featuresOfInterest != null);
     }
-    
-    
+
+
     /**
      * Sets the featuresOfInterest property
      */
@@ -699,104 +677,134 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         this.featuresOfInterest = featuresOfInterest;
     }
-    
-    
-    /**
-     * Gets the inputs property
-     */
+
+
     @Override
-    public InputList getInputs()
+    public OgcPropertyList<AbstractSWEIdentifiable> getInputList()
     {
-        if (inputs == null)
-            inputs = new InputListImpl();
         return inputs;
     }
-    
-    
-    /**
-     * Checks if inputs is set
-     */
+
+
     @Override
-    public boolean isSetInputs()
+    public int getNumInputs()
     {
-        return (inputs != null);
+        return inputs.size();
+    }
+
+
+    @Override
+    public AbstractSWEIdentifiable getInput(String name)
+    {
+        return inputs.get(name);
+    }
+
+
+    @Override
+    public void addInputAsAbstractDataComponent(String name, DataComponent input)
+    {
+        inputs.add(name, input);
+    }
+
+
+    @Override
+    public void addInputAsObservableProperty(String name, ObservableProperty input)
+    {
+        inputs.add(name, input);
+    }
+
+
+    @Override
+    public void addInputAsDataInterface(String name, DataInterface input)
+    {
+        inputs.add(name, input);
     }
     
     
-    /**
-     * Sets the inputs property
-     */
     @Override
-    public void setInputs(InputList inputs)
+    public OgcPropertyList<AbstractSWEIdentifiable> getOutputList()
     {
-        this.inputs = (InputListImpl)inputs;
-    }
-    
-    
-    /**
-     * Gets the outputs property
-     */
-    @Override
-    public OutputList getOutputs()
-    {
-        if (outputs == null)
-            outputs = new OutputListImpl();
         return outputs;
     }
-    
-    
-    /**
-     * Checks if outputs is set
-     */
+
+
     @Override
-    public boolean isSetOutputs()
+    public int getNumOutputs()
     {
-        return (outputs != null);
+        return outputs.size();
     }
-    
-    
-    /**
-     * Sets the outputs property
-     */
+
+
     @Override
-    public void setOutputs(OutputList outputs)
+    public AbstractSWEIdentifiable getOutput(String name)
     {
-        this.outputs = (OutputListImpl)outputs;
+        return outputs.get(name);
     }
-    
-    
-    /**
-     * Gets the parameters property
-     */
+
+
     @Override
-    public ParameterList getParameters()
+    public void addOutputAsAbstractDataComponent(String name, DataComponent output)
     {
-        if (parameters == null)
-            parameters = new ParameterListImpl();
+        outputs.add(name, output);
+    }
+
+
+    @Override
+    public void addOutputAsObservableProperty(String name, ObservableProperty output)
+    {
+        outputs.add(name, output);
+    }
+
+
+    @Override
+    public void addOutputAsDataInterface(String name, DataInterface output)
+    {
+        outputs.add(name, output);
+    }
+
+
+    @Override
+    public int getNumParameters()
+    {
+        return parameters.size();
+    }
+
+
+    @Override
+    public AbstractSWEIdentifiable getParameter(String name)
+    {
+        return parameters.get(name);
+    }
+
+
+    @Override
+    public void addParameterAsAbstractDataComponent(String name, DataComponent parameter)
+    {
+        parameters.add(name, parameter);
+    }
+
+
+    @Override
+    public void addParameterAsObservableProperty(String name, ObservableProperty parameter)
+    {
+        parameters.add(name, parameter);
+    }
+
+
+    @Override
+    public void addParameterAsDataInterface(String name, DataInterface parameter)
+    {
+        parameters.add(name, parameter);
+    }
+
+
+    @Override
+    public OgcPropertyList<AbstractSWEIdentifiable> getParameterList()
+    {
         return parameters;
     }
-    
-    
-    /**
-     * Checks if parameters is set
-     */
-    @Override
-    public boolean isSetParameters()
-    {
-        return (parameters != null);
-    }
-    
-    
-    /**
-     * Sets the parameters property
-     */
-    @Override
-    public void setParameters(ParameterList parameters)
-    {
-        this.parameters = (ParameterListImpl)parameters;
-    }
-    
-    
+
+
     /**
      * Gets the list of modes properties
      */
@@ -805,8 +813,8 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         return modesList;
     }
-    
-    
+
+
     /**
      * Returns number of modes properties
      */
@@ -817,8 +825,8 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
             return 0;
         return modesList.size();
     }
-    
-    
+
+
     /**
      * Adds a new modes property
      */
@@ -827,8 +835,8 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         this.modesList.add(modes);
     }
-    
-    
+
+
     /**
      * Gets the definition property
      */
@@ -837,8 +845,8 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         return definition;
     }
-    
-    
+
+
     /**
      * Checks if definition is set
      */
@@ -847,8 +855,8 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         return (definition != null);
     }
-    
-    
+
+
     /**
      * Sets the definition property
      */
