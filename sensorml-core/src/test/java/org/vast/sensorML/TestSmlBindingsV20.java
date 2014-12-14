@@ -106,7 +106,7 @@ public class TestSmlBindingsV20 extends XMLTestCase
                 
         // read from file
         InputStream is = getClass().getResourceAsStream(path);
-        XMLInputFactory input = XMLInputFactory.newFactory();//new com.ctc.wstx.stax.WstxInputFactory();
+        XMLInputFactory input = XMLInputFactory.newInstance();//new com.ctc.wstx.stax.WstxInputFactory();
         XMLStreamReader reader = input.createXMLStreamReader(is);
         reader.nextTag();
         AbstractProcess smlObj = smlHelper.readAbstractProcess(reader);
@@ -115,7 +115,7 @@ public class TestSmlBindingsV20 extends XMLTestCase
         // write back to stdout and buffer
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         System.out.println();
-        XMLOutputFactory output = XMLOutputFactory.newFactory();//new com.ctc.wstx.stax.WstxOutputFactory();
+        XMLOutputFactory output = XMLOutputFactory.newInstance();//new com.ctc.wstx.stax.WstxOutputFactory();
         NamespaceRegister nsContext = new NamespaceRegister();
         nsContext.registerNamespace("xlink", net.opengis.swe.v20.bind.XMLStreamBindings.XLINK_NS_URI);
         nsContext.registerNamespace("sml", net.opengis.sensorml.v20.bind.XMLStreamBindings.NS_URI);
@@ -206,8 +206,8 @@ public class TestSmlBindingsV20 extends XMLTestCase
     {
         SMLStaxBindings smlBindings = new SMLStaxBindings();
                         
-        XMLOutputFactory output = XMLOutputFactory.newFactory();//new com.ctc.wstx.stax.WstxOutputFactory();
-        XMLInputFactory input = XMLInputFactory.newFactory();//new com.ctc.wstx.stax.WstxInputFactory();
+        XMLOutputFactory output = XMLOutputFactory.newInstance();//new com.ctc.wstx.stax.WstxOutputFactory();
+        XMLInputFactory input = XMLInputFactory.newInstance();//new com.ctc.wstx.stax.WstxInputFactory();
         System.out.println("Using " + output.getClass().getSimpleName());
         
         PhysicalSystem system = new PhysicalSystemImpl();

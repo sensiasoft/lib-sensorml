@@ -120,7 +120,7 @@ public class SMLUtils
         try
         {
             SMLStaxBindings staxReader = new SMLStaxBindings();
-            XMLInputFactory input = XMLInputFactory.newFactory();
+            XMLInputFactory input = XMLInputFactory.newInstance();
             XMLStreamReader reader = input.createXMLStreamReader(is);
             reader.nextTag();
             return staxReader.readAbstractProcess(reader);
@@ -161,7 +161,7 @@ public class SMLUtils
         try
         {
             SMLStaxBindings smlWriter = new SMLStaxBindings();
-            XMLStreamWriter writer = XMLOutputFactory.newFactory().createXMLStreamWriter(os);
+            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(os);
             if (indent)
                 writer = new IndentingXMLStreamWriter(writer);
             smlWriter.setNamespacePrefixes(writer);
