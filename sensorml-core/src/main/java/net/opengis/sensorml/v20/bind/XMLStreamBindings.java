@@ -74,6 +74,7 @@ import org.isotc211.v2005.gmd.MDLegalConstraints;
 import net.opengis.sensorml.v20.Factory;
 
 
+@SuppressWarnings("javadoc")
 public class XMLStreamBindings extends AbstractXMLStreamBindings
 {
     public final static String NS_URI = "http://www.opengis.net/sensorml/2.0";
@@ -1980,8 +1981,14 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
             found = checkElementName(reader, "extension");
             if (found)
             {
-                bean.addExtension(this.readExtension(reader));
-                reader.nextTag(); // end property tag
+                reader.nextTag();
+                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                {
+                    Object extension = this.readExtension(reader);
+                    if (extension != null)
+                        bean.addExtension(extension);
+                }
+                
                 reader.nextTag();
             }
         }
@@ -2094,8 +2101,9 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
                 reader.nextTag();
                 if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
                 {
-                    bean.addSecurityConstraints(this.readSecurityConstraints(reader));
-                    reader.nextTag(); // end property tag
+                    Object sec = this.readSecurityConstraints(reader);
+                    if (sec != null)
+                        bean.addSecurityConstraints(sec);
                 }
                 
                 reader.nextTag();
