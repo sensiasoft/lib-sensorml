@@ -122,8 +122,11 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     @Override
     public void dispose()
     {
-        for (int i=0; i<processList.size(); i++)
-            processList.get(i).dispose();
+        if (processList != null)
+        {
+            for (int i=0; i<processList.size(); i++)
+                processList.get(i).dispose();
+        }
     }
        
     
