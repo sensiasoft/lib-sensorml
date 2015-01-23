@@ -31,6 +31,7 @@ import javax.xml.transform.dom.DOMSource;
 import net.opengis.sensorml.v20.AbstractProcess;
 import org.vast.xml.DOMHelper;
 import org.vast.xml.IXMLReaderDOM;
+import org.vast.xml.XMLImplFinder;
 import org.vast.xml.XMLReaderException;
 import org.w3c.dom.Element;
 
@@ -61,7 +62,7 @@ public class SMLProcessReaderDomV20 implements IXMLReaderDOM<AbstractProcess>
         try
         {
             DOMSource source = new DOMSource(elt);
-            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(source);
+            XMLStreamReader reader = XMLImplFinder.getStaxInputFactory().createXMLStreamReader(source);
             reader.nextTag();
             return staxReader.readAbstractProcess(reader);
         }

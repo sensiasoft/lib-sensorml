@@ -21,8 +21,7 @@
 package org.vast.sensorML;
 
 import java.io.InputStream;
-import java.io.OutputStream;import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
+import java.io.OutputStream;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -32,6 +31,7 @@ import org.vast.xml.DOMHelper;
 import org.vast.xml.IXMLReaderDOM;
 import org.vast.xml.IXMLWriterDOM;
 import org.vast.xml.IndentingXMLStreamWriter;
+import org.vast.xml.XMLImplFinder;
 import org.vast.xml.XMLReaderException;
 import org.vast.xml.XMLWriterException;
 import org.w3c.dom.Element;
@@ -120,8 +120,7 @@ public class SMLUtils
         try
         {
             SMLStaxBindings staxReader = new SMLStaxBindings();
-            XMLInputFactory input = XMLInputFactory.newInstance();
-            XMLStreamReader reader = input.createXMLStreamReader(is);
+            XMLStreamReader reader = XMLImplFinder.getStaxInputFactory().createXMLStreamReader(is);
             reader.nextTag();
             return staxReader.readAbstractProcess(reader);
         }
@@ -161,7 +160,7 @@ public class SMLUtils
         try
         {
             SMLStaxBindings smlWriter = new SMLStaxBindings();
-            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(os);
+            XMLStreamWriter writer = XMLImplFinder.getStaxOutputFactory().createXMLStreamWriter(os);
             if (indent)
                 writer = new IndentingXMLStreamWriter(writer);
             smlWriter.setNamespacePrefixes(writer);

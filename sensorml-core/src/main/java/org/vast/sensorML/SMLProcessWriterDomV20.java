@@ -31,6 +31,7 @@ import javax.xml.transform.dom.DOMResult;
 import net.opengis.sensorml.v20.AbstractProcess;
 import org.vast.xml.DOMHelper;
 import org.vast.xml.IXMLWriterDOM;
+import org.vast.xml.XMLImplFinder;
 import org.vast.xml.XMLWriterException;
 import org.w3c.dom.Element;
 
@@ -56,7 +57,8 @@ public class SMLProcessWriterDomV20 implements IXMLWriterDOM<AbstractProcess>
         try
         {
             DOMResult result = new DOMResult(dom.createElement("fragment"));
-            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(result);
+            XMLOutputFactory factory = XMLImplFinder.getStaxOutputFactory();
+            XMLStreamWriter writer = factory.createXMLStreamWriter(result);
             staxWriter.setNamespacePrefixes(writer);
             staxWriter.declareNamespacesOnRootElement();
             staxWriter.writeAbstractProcess(writer, process);
