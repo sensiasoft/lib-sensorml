@@ -2,19 +2,13 @@ package org.vast.sensorML;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.opengis.OgcProperty;
-import net.opengis.OgcPropertyImpl;
 import net.opengis.OgcPropertyList;
 import net.opengis.gml.v32.Point;
 import net.opengis.gml.v32.Reference;
 import net.opengis.sensorml.v20.AbstractProcess;
-import net.opengis.sensorml.v20.ComponentList;
-import net.opengis.sensorml.v20.ConnectionList;
 import net.opengis.sensorml.v20.PhysicalSystem;
 import net.opengis.sensorml.v20.SpatialFrame;
 import net.opengis.sensorml.v20.TemporalFrame;
-import net.opengis.sensorml.v20.impl.ComponentListImpl;
-import net.opengis.sensorml.v20.impl.ConnectionListImpl;
 import net.opengis.swe.v20.DataArray;
 import net.opengis.swe.v20.DataRecord;
 import net.opengis.swe.v20.Text;
@@ -35,8 +29,6 @@ public class PhysicalSystemImpl extends AggregateProcessImpl implements Physical
     protected List<TemporalFrame> localTimeFrameList = new ArrayList<TemporalFrame>();
     protected OgcPropertyList<Object> positionList = new OgcPropertyList<Object>();
     protected OgcPropertyList<Time> timePositionList = new OgcPropertyList<Time>();
-    protected OgcProperty<ComponentList> components;
-    protected OgcProperty<ConnectionList> connections;
     
     
     public PhysicalSystemImpl()
@@ -249,97 +241,5 @@ public class PhysicalSystemImpl extends AggregateProcessImpl implements Physical
     public void addTimePosition(Time timePosition)
     {
         this.timePositionList.add(timePosition);
-    }
-    
-    
-    /**
-     * Gets the components property
-     */
-    @Override
-    public ComponentList getComponents()
-    {
-        if (components == null)
-            components = new OgcPropertyImpl<ComponentList>(new ComponentListImpl());
-        return components.getValue();
-    }
-    
-    
-    /**
-     * Gets extra info (name, xlink, etc.) carried by the components property
-     */
-    @Override
-    public OgcProperty<ComponentList> getComponentsProperty()
-    {
-        if (components == null)
-            components = new OgcPropertyImpl<ComponentList>();
-        return components;
-    }
-    
-    
-    /**
-     * Checks if components is set
-     */
-    @Override
-    public boolean isSetComponents()
-    {
-        return (components != null && (components.hasValue() || components.hasHref()));
-    }
-    
-    
-    /**
-     * Sets the components property
-     */
-    @Override
-    public void setComponents(ComponentList components)
-    {
-        if (this.components == null)
-            this.components = new OgcPropertyImpl<ComponentList>();
-        this.components.setValue(components);
-    }
-    
-    
-    /**
-     * Gets the connections property
-     */
-    @Override
-    public ConnectionList getConnections()
-    {
-        if (connections == null)
-            connections = new OgcPropertyImpl<ConnectionList>(new ConnectionListImpl());
-        return connections.getValue();
-    }
-    
-    
-    /**
-     * Gets extra info (name, xlink, etc.) carried by the connections property
-     */
-    @Override
-    public OgcProperty<ConnectionList> getConnectionsProperty()
-    {
-        if (connections == null)
-            connections = new OgcPropertyImpl<ConnectionList>();
-        return connections;
-    }
-    
-    
-    /**
-     * Checks if connections is set
-     */
-    @Override
-    public boolean isSetConnections()
-    {
-        return (connections != null && (connections.hasValue() || connections.hasHref()));
-    }
-    
-    
-    /**
-     * Sets the connections property
-     */
-    @Override
-    public void setConnections(ConnectionList connections)
-    {
-        if (this.connections == null)
-            this.connections = new OgcPropertyImpl<ConnectionList>();
-        this.connections.setValue(connections);
     }
 }

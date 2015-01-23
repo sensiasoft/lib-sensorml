@@ -19,6 +19,8 @@ import net.opengis.OgcPropertyImpl;
 import net.opengis.sensorml.v20.AggregateProcess;
 import net.opengis.sensorml.v20.ComponentList;
 import net.opengis.sensorml.v20.ConnectionList;
+import net.opengis.sensorml.v20.impl.ComponentListImpl;
+import net.opengis.sensorml.v20.impl.ConnectionListImpl;
 import net.opengis.swe.v20.AbstractSWEIdentifiable;
 import net.opengis.swe.v20.DataComponent;
 
@@ -502,6 +504,8 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     @Override
     public ComponentList getComponents()
     {
+        if (components == null)
+            components = new OgcPropertyImpl<ComponentList>(new ComponentListImpl());
         return components.getValue();
     }
     
@@ -546,6 +550,8 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     @Override
     public ConnectionList getConnections()
     {
+        if (connections == null)
+            connections = new OgcPropertyImpl<ConnectionList>(new ConnectionListImpl());
         return connections.getValue();
     }
     
