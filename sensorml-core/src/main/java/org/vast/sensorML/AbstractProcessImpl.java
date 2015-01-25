@@ -7,7 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.vast.cdm.common.CDMException;
 import org.vast.data.AbstractDataComponentImpl;
-import org.vast.data.DataSelector;
+import org.vast.data.DataComponentHelper;
 import org.vast.process.DataConnectionList;
 import org.vast.process.DataConnection;
 import org.vast.process.DataQueue;
@@ -441,7 +441,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
         {
             int inputIndex = getSignalIndex(inputs, inputName);
             DataComponent input = (DataComponent) inputs.get(inputIndex);
-            DataComponent dest = new DataSelector().findComponent(input, dataPath);
+            DataComponent dest = DataComponentHelper.findComponentByPath(dataPath, input);
             connection.setDestinationComponent(dest);
             connection.setDestinationProcess(this);
             inputConnections.get(inputIndex).add(connection);
@@ -460,7 +460,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
         {
             int outputIndex = getSignalIndex(outputs, outputName);
             DataComponent output = (DataComponent) outputs.get(outputIndex);
-            DataComponent src = new DataSelector().findComponent(output, dataPath);
+            DataComponent src = DataComponentHelper.findComponentByPath(dataPath, output);
             connection.setSourceComponent(src);
             connection.setSourceProcess(this);
             outputConnections.get(outputIndex).add(connection);
@@ -479,7 +479,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
         {
             int paramIndex = getSignalIndex(parameters, paramName);
             DataComponent param = (DataComponent) parameters.get(paramIndex);
-            DataComponent dest = new DataSelector().findComponent(param, dataPath);
+            DataComponent dest = DataComponentHelper.findComponentByPath(dataPath, param);
             connection.setDestinationComponent(dest);
             connection.setDestinationProcess(this);
             paramConnections.get(paramIndex).add(connection);

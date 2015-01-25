@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.vast.cdm.common.CDMException;
+import org.vast.data.DataComponentHelper;
 import org.vast.data.DataRecordImpl;
-import org.vast.data.DataSelector;
 import org.vast.process.DataConnectionList;
 import org.vast.process.DataConnection;
 import org.vast.process.IProcessChainExec;
@@ -358,7 +358,7 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
         {
             int inputIndex = getSignalIndex(inputs, inputName);
             DataComponent input = (DataComponent)inputs.get(inputIndex);
-            DataComponent src = new DataSelector().findComponent(input, dataPath);
+            DataComponent src = DataComponentHelper.findComponentByPath(dataPath, input);
             connection.setSourceComponent(src);
             connection.setSourceProcess(this);
             internalInputConnections.get(inputIndex).add(connection);
@@ -377,7 +377,7 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
         {
             int outputIndex = getSignalIndex(outputs, outputName);
             DataComponent output = (DataComponent)outputs.get(outputIndex);
-            DataComponent dest = new DataSelector().findComponent(output, dataPath);
+            DataComponent dest = DataComponentHelper.findComponentByPath(dataPath, output);
             connection.setDestinationComponent(dest);
             connection.setDestinationProcess(this);
             internalOutputConnections.get(outputIndex).add(connection);
@@ -396,7 +396,7 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
         {
             int paramIndex = getSignalIndex(parameters, paramName);
             DataComponent param = (DataComponent)parameters.get(paramName);
-            DataComponent src = new DataSelector().findComponent(param, dataPath);
+            DataComponent src = DataComponentHelper.findComponentByPath(dataPath, param);
             connection.setSourceComponent(src);
             connection.setSourceProcess(this);
             internalParamConnections.get(paramIndex).add(connection);
