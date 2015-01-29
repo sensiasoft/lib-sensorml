@@ -2692,12 +2692,14 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
                 
                 if (item.hasValue() && !item.hasHref())
                 {
-                    if (item.getValue() instanceof DataComponent)
-                        ns1Bindings.writeDataComponent(writer, (DataComponent)item.getValue(), false);
-                    else if (item.getValue() instanceof ObservableProperty)
+                    if (item.getValue() instanceof ObservableProperty)
                         this.writeObservableProperty(writer, (ObservableProperty)item.getValue());
+                    else if (item.getValue() instanceof DataStream)
+                        ns1Bindings.writeDataStream(writer, (DataStream)item.getValue());
                     else if (item.getValue() instanceof DataInterface)
                         this.writeDataInterface(writer, (DataInterface)item.getValue());
+                    else if (item.getValue() instanceof DataComponent)
+                        ns1Bindings.writeDataComponent(writer, (DataComponent)item.getValue(), false);
                 }
                 
                 writer.writeEndElement();
@@ -2723,12 +2725,14 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
                 
                 if (item.hasValue() && !item.hasHref())
                 {
-                    if (item.getValue() instanceof DataComponent)
-                        ns1Bindings.writeDataComponent(writer, (DataComponent)item.getValue(), false);
-                    else if (item.getValue() instanceof ObservableProperty)
+                    if (item.getValue() instanceof ObservableProperty)
                         this.writeObservableProperty(writer, (ObservableProperty)item.getValue());
+                    else if (item.getValue() instanceof DataStream)
+                        ns1Bindings.writeDataStream(writer, (DataStream)item.getValue());
                     else if (item.getValue() instanceof DataInterface)
                         this.writeDataInterface(writer, (DataInterface)item.getValue());
+                    else if (item.getValue() instanceof DataComponent)
+                        ns1Bindings.writeDataComponent(writer, (DataComponent)item.getValue(), false);
                 }
                 
                 writer.writeEndElement();
@@ -2754,12 +2758,14 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
                 
                 if (item.hasValue() && !item.hasHref())
                 {
-                    if (item.getValue() instanceof DataComponent)
-                        ns1Bindings.writeDataComponent(writer, (DataComponent)item.getValue(), true);
-                    else if (item.getValue() instanceof ObservableProperty)
+                    if (item.getValue() instanceof ObservableProperty)
                         this.writeObservableProperty(writer, (ObservableProperty)item.getValue());
+                    else if (item.getValue() instanceof DataStream)
+                        ns1Bindings.writeDataStream(writer, (DataStream)item.getValue());
                     else if (item.getValue() instanceof DataInterface)
                         this.writeDataInterface(writer, (DataInterface)item.getValue());
+                    else if (item.getValue() instanceof DataComponent)
+                        ns1Bindings.writeDataComponent(writer, (DataComponent)item.getValue(), true);
                 }
                 
                 writer.writeEndElement();
@@ -2947,18 +2953,23 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         
         if (localName.equals("ObservableProperty"))
         {
-            ObservableProperty input = this.readObservableProperty(reader);
-            prop.setValue(input);
+            ObservableProperty signal = this.readObservableProperty(reader);
+            prop.setValue(signal);
+        }
+        else if (localName.equals("DataStream"))
+        {
+            DataStream signal = ns1Bindings.readDataStream(reader);
+            prop.setValue(signal);
         }
         else if (localName.equals("DataInterface"))
         {
-            DataInterface input = this.readDataInterface(reader);
-            prop.setValue(input);
+            DataInterface signal = this.readDataInterface(reader);
+            prop.setValue(signal);
         }
         else
         {
-            DataComponent input = ns1Bindings.readDataComponent(reader);
-            prop.setValue(input);
+            DataComponent signal = ns1Bindings.readDataComponent(reader);
+            prop.setValue(signal);
         }
     }
     
