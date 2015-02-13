@@ -43,10 +43,8 @@ import org.vast.unit.UnitConverter;
  * are not in the same unit (units have to be physcially compatible)
  * </p>
  * 
- * <p>Copyright (c) 2014</p>
- * @author Alexandre Robin
- * @version 1.0
- */
+ * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * */
 public class DataConnection
 {
     private final static Logger LOGGER = Logger.getLogger(DataConnection.class.getName());

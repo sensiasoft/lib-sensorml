@@ -28,11 +28,9 @@ import net.opengis.swe.v20.DataComponent;
  * TODO DataSelector type description
  * </p>
  *
- * <p>Copyright (c) 2005</p>
- * @author Alexandre Robin
+ * @author Alex Robin <alex.robin@sensiasoftware.com>
  * @since Sep 27, 2005
- * @version 1.0
- */
+ * */
 public class IOSelector
 {
 	protected DataComponent component;

@@ -33,10 +33,8 @@ import net.opengis.swe.v20.DataBlock;
  * The queue can also send status values and events.
  * </p>
  * 
- * <p>Copyright (c) 2005</p>
- * @author Alexandre Robin
- * @version 1.0
- */
+ * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * */
 public class DataQueue extends DataConnection
 {
 	// TODO implement events

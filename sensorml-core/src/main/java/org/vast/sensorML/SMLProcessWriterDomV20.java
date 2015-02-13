@@ -42,8 +42,7 @@ import org.w3c.dom.Element;
  * This is implemented as a wrapper on top of the StAX bindings.
  * </p>
  *
- * <p>Copyright (c) 2014 Sensia Software LLC</p>
- * @author Alexandre Robin <alex.robin@sensiasoftware.com>
+ * @author Alex Robin <alex.robin@sensiasoftware.com>
  * @since Nov 14, 2014
  */
 public class SMLProcessWriterDomV20 implements IXMLWriterDOM<AbstractProcess>

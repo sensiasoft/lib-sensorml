@@ -33,11 +33,9 @@ import java.util.ArrayList;
  * and thus the corresponding data should be updated and read all at once.   
  * </p>
  *
- * <p>Copyright (c) 2005</p>
- * @author Alexandre Robin
+ * @author Alex Robin <alex.robin@sensiasoftware.com>
  * @since Dec 4, 2006
- * @version 1.0
- */
+ * */
 public class IOSignal
 {
     protected ArrayList<DataConnection> connections;

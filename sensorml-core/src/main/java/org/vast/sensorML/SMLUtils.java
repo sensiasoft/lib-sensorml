@@ -44,11 +44,9 @@ import org.w3c.dom.Element;
  * readers/writers.
  * </p>
  *
- * <p>Copyright (c) 2014</p>
- * @author Alexandre Robin
+ * @author Alex Robin <alex.robin@sensiasoftware.com>
  * @since Apr 10, 2007
- * @version 1.0
- */
+ * */
 public class SMLUtils
 {
 	public final static String IC;
