@@ -12,8 +12,9 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
  
 ******************************* END LICENSE BLOCK ***************************/
 
-package org.vast.sensorML;
+package net.opengis.sensorml.v20;
 
+import org.vast.sensorML.SMLHelper;
 import net.opengis.OgcPropertyList;
 import net.opengis.swe.v20.AbstractSWEIdentifiable;
 import net.opengis.swe.v20.DataComponent;
@@ -45,6 +46,15 @@ public class IOPropertyList extends OgcPropertyList<AbstractSWEIdentifiable>
     public DataComponent getComponent(String name)
     {
         return SMLHelper.getIOComponent(get(name));
+    }
+    
+    
+    public int getComponentIndex(String name)
+    {
+        AbstractSWEIdentifiable comp = this.get(name);
+        if (comp == null)
+            return -1;
+        return indexOf(comp);
     }
     
 }

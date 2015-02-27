@@ -86,7 +86,7 @@ public interface AbstractProcess extends DescribedObject
     /**
      * Gets the list of input properties
      */
-    public OgcPropertyList<AbstractSWEIdentifiable> getInputList();
+    public IOPropertyList getInputList();
     
     
     /**
@@ -122,7 +122,7 @@ public interface AbstractProcess extends DescribedObject
     /**
      * Gets the list of output properties
      */
-    public OgcPropertyList<AbstractSWEIdentifiable> getOutputList();
+    public IOPropertyList getOutputList();
     
     
     /**
@@ -158,7 +158,7 @@ public interface AbstractProcess extends DescribedObject
     /**
      * Gets the list of parameter properties
      */
-    public OgcPropertyList<AbstractSWEIdentifiable> getParameterList();
+    public IOPropertyList getParameterList();
     
     
     /**

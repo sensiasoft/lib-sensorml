@@ -21,6 +21,7 @@ import net.opengis.sensorml.v20.AbstractProcess;
 import net.opengis.sensorml.v20.AbstractSettings;
 import net.opengis.sensorml.v20.DataInterface;
 import net.opengis.sensorml.v20.FeatureList;
+import net.opengis.sensorml.v20.IOPropertyList;
 import net.opengis.sensorml.v20.ObservableProperty;
 import net.opengis.sensorml.v20.impl.DescribedObjectImpl;
 import net.opengis.sensorml.v20.impl.FeatureListImpl;
@@ -680,7 +681,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
 
 
     @Override
-    public OgcPropertyList<AbstractSWEIdentifiable> getInputList()
+    public IOPropertyList getInputList()
     {
         return inputData;
     }
@@ -722,7 +723,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     
     
     @Override
-    public OgcPropertyList<AbstractSWEIdentifiable> getOutputList()
+    public IOPropertyList getOutputList()
     {
         return outputData;
     }
@@ -799,7 +800,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
 
 
     @Override
-    public OgcPropertyList<AbstractSWEIdentifiable> getParameterList()
+    public IOPropertyList getParameterList()
     {
         return paramData;
     }

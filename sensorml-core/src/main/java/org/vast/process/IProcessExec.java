@@ -17,6 +17,12 @@ public interface IProcessExec
 {
 
     /**
+     * @return name of process
+     */
+    public String getName();
+    
+    
+    /**
      * Initialize the process and its internal variables (fixed parameters)
      * This is called only once before the process is executed.
      * @throws ProcessException
