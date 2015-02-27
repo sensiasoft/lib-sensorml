@@ -21,7 +21,6 @@ import net.opengis.sensorml.v20.ComponentList;
 import net.opengis.sensorml.v20.ConnectionList;
 import net.opengis.sensorml.v20.impl.ComponentListImpl;
 import net.opengis.sensorml.v20.impl.ConnectionListImpl;
-import net.opengis.swe.v20.AbstractSWEIdentifiable;
 import net.opengis.swe.v20.DataComponent;
 
 
@@ -331,8 +330,9 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     
     public void combineInputBlocks()
     {
-        for (AbstractSWEIdentifiable input: inputs)
+        for (int i = 0; i < inputData.size(); i++)
         {
+            DataComponent input = inputData.getComponent(i);
             if (input instanceof DataRecordImpl)
                 ((DataRecordImpl)input).combineDataBlocks();
         }
@@ -343,8 +343,9 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     {
         // make sure sub processes connected to the output
         // also uses these new DataBlocks for their output
-        for (AbstractSWEIdentifiable output: outputs)
+        for (int i = 0; i < outputData.size(); i++)
         {
+            DataComponent output = outputData.getComponent(i);
             if (output instanceof DataRecordImpl)
                 ((DataRecordImpl)output).combineDataBlocks();
         }
@@ -356,8 +357,8 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     {
         try
         {
-            int inputIndex = getSignalIndex(inputs, inputName);
-            DataComponent input = (DataComponent)inputs.get(inputIndex);
+            int inputIndex = getSignalIndex(inputData, inputName);
+            DataComponent input = inputData.getComponent(inputIndex);
             DataComponent src = DataComponentHelper.findComponentByPath(dataPath, input);
             connection.setSourceComponent(src);
             connection.setSourceProcess(this);
@@ -375,8 +376,8 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     {
         try
         {
-            int outputIndex = getSignalIndex(outputs, outputName);
-            DataComponent output = (DataComponent)outputs.get(outputIndex);
+            int outputIndex = getSignalIndex(outputData, outputName);
+            DataComponent output = outputData.getComponent(outputIndex);
             DataComponent dest = DataComponentHelper.findComponentByPath(dataPath, output);
             connection.setDestinationComponent(dest);
             connection.setDestinationProcess(this);
@@ -394,8 +395,8 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     {
         try
         {
-            int paramIndex = getSignalIndex(parameters, paramName);
-            DataComponent param = (DataComponent)parameters.get(paramName);
+            int paramIndex = getSignalIndex(paramData, paramName);
+            DataComponent param = paramData.getComponent(paramIndex);
             DataComponent src = DataComponentHelper.findComponentByPath(dataPath, param);
             connection.setSourceComponent(src);
             connection.setSourceProcess(this);

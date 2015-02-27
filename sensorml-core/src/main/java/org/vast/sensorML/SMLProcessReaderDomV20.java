@@ -25,7 +25,6 @@
 
 package org.vast.sensorML;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
 import net.opengis.sensorml.v20.AbstractProcess;

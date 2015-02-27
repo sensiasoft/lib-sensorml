@@ -46,9 +46,9 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     protected Reference typeOf;
     protected AbstractSettings configuration;
     protected FeatureList featuresOfInterest;
-    protected OgcPropertyList<AbstractSWEIdentifiable> inputs = new OgcPropertyList<AbstractSWEIdentifiable>();
-    protected OgcPropertyList<AbstractSWEIdentifiable> outputs = new OgcPropertyList<AbstractSWEIdentifiable>();
-    protected OgcPropertyList<AbstractSWEIdentifiable> parameters = new OgcPropertyList<AbstractSWEIdentifiable>();
+    protected IOPropertyList inputData = new IOPropertyList();
+    protected IOPropertyList outputData = new IOPropertyList();
+    protected IOPropertyList paramData = new IOPropertyList();
     protected List<AbstractModes> modesList = new ArrayList<AbstractModes>();
     protected String definition;
 
@@ -258,7 +258,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
                 }
 
                 // renew output dataBlock
-                DataComponent comp = (DataComponent) inputs.get(i);
+                DataComponent comp = inputData.getComponent(i);
                 comp.renewDataBlock();
             }
         }
@@ -296,7 +296,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         for (int i = 0; i < getNumOutputs(); i++)
         {
-            DataComponent comp = (DataComponent) outputs.get(i);
+            DataComponent comp = outputData.getComponent(i);
             comp.renewDataBlock();
         }
     }
@@ -310,7 +310,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         for (int i = 0; i < getNumInputs(); i++)
         {
-            DataComponent comp = (DataComponent) inputs.get(i);
+            DataComponent comp = inputData.getComponent(i);
             comp.renewDataBlock();
         }
     }
@@ -413,21 +413,21 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
         for (int i = 0; i < getNumInputs(); i++)
         {
             text.append(indent);
-            text.append(((AbstractDataComponentImpl) inputs.get(i)).toString(indent));
+            text.append(((AbstractDataComponentImpl)inputData.getComponent(i)).toString(indent));
         }
 
         text.append("\n  Outputs:\n");
         for (int i = 0; i < getNumOutputs(); i++)
         {
             text.append(indent);
-            text.append(((AbstractDataComponentImpl) outputs.get(i)).toString(indent));
+            text.append(((AbstractDataComponentImpl)outputData.getComponent(i)).toString(indent));
         }
 
         text.append("\n  Parameters:\n");
         for (int i = 0; i < getNumParameters(); i++)
         {
             text.append(indent);
-            text.append(((AbstractDataComponentImpl) parameters.get(i)).toString(indent));
+            text.append(((AbstractDataComponentImpl)paramData.getComponent(i)).toString(indent));
         }
 
         return text.toString();
@@ -439,8 +439,8 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         try
         {
-            int inputIndex = getSignalIndex(inputs, inputName);
-            DataComponent input = (DataComponent) inputs.get(inputIndex);
+            int inputIndex = getSignalIndex(inputData, inputName);
+            DataComponent input = inputData.getComponent(inputIndex);
             DataComponent dest = DataComponentHelper.findComponentByPath(dataPath, input);
             connection.setDestinationComponent(dest);
             connection.setDestinationProcess(this);
@@ -458,8 +458,8 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         try
         {
-            int outputIndex = getSignalIndex(outputs, outputName);
-            DataComponent output = (DataComponent) outputs.get(outputIndex);
+            int outputIndex = getSignalIndex(outputData, outputName);
+            DataComponent output = outputData.getComponent(outputIndex);
             DataComponent src = DataComponentHelper.findComponentByPath(dataPath, output);
             connection.setSourceComponent(src);
             connection.setSourceProcess(this);
@@ -477,8 +477,8 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         try
         {
-            int paramIndex = getSignalIndex(parameters, paramName);
-            DataComponent param = (DataComponent) parameters.get(paramIndex);
+            int paramIndex = getSignalIndex(paramData, paramName);
+            DataComponent param = paramData.getComponent(paramIndex);
             DataComponent dest = DataComponentHelper.findComponentByPath(dataPath, param);
             connection.setDestinationComponent(dest);
             connection.setDestinationProcess(this);
@@ -494,7 +494,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     @Override
     public boolean isInputConnected(String inputName)
     {
-        int inputIndex = getSignalIndex(inputs, inputName);
+        int inputIndex = getSignalIndex(inputData, inputName);
         if (inputIndex < 0)
             return false;
         return !inputConnections.get(inputIndex).isEmpty();
@@ -504,7 +504,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     @Override
     public boolean isOutputConnected(String outputName)
     {
-        int outputIndex = getSignalIndex(outputs, outputName);
+        int outputIndex = getSignalIndex(outputData, outputName);
         if (outputIndex < 0)
             return false;
         return !outputConnections.get(outputIndex).isEmpty();
@@ -514,7 +514,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     @Override
     public boolean isParamConnected(String paramName)
     {
-        int paramIndex = getSignalIndex(parameters, paramName);
+        int paramIndex = getSignalIndex(paramData, paramName);
         if (paramIndex < 0)
             return false;
         return !paramConnections.get(paramIndex).isEmpty();
@@ -682,126 +682,126 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     @Override
     public OgcPropertyList<AbstractSWEIdentifiable> getInputList()
     {
-        return inputs;
+        return inputData;
     }
 
 
     @Override
     public int getNumInputs()
     {
-        return inputs.size();
+        return inputData.size();
     }
 
 
     @Override
     public AbstractSWEIdentifiable getInput(String name)
     {
-        return inputs.get(name);
+        return inputData.get(name);
     }
 
 
     @Override
     public void addInput(String name, DataComponent input)
     {
-        inputs.add(name, input);
+        inputData.add(name, input);
     }
 
 
     @Override
     public void addInput(String name, ObservableProperty input)
     {
-        inputs.add(name, input);
+        inputData.add(name, input);
     }
 
 
     @Override
     public void addInput(String name, DataInterface input)
     {
-        inputs.add(name, input);
+        inputData.add(name, input);
     }
     
     
     @Override
     public OgcPropertyList<AbstractSWEIdentifiable> getOutputList()
     {
-        return outputs;
+        return outputData;
     }
 
 
     @Override
     public int getNumOutputs()
     {
-        return outputs.size();
+        return outputData.size();
     }
 
 
     @Override
     public AbstractSWEIdentifiable getOutput(String name)
     {
-        return outputs.get(name);
+        return outputData.get(name);
     }
 
 
     @Override
     public void addOutput(String name, DataComponent output)
     {
-        outputs.add(name, output);
+        outputData.add(name, output);
     }
 
 
     @Override
     public void addOutput(String name, ObservableProperty output)
     {
-        outputs.add(name, output);
+        outputData.add(name, output);
     }
 
 
     @Override
     public void addOutput(String name, DataInterface output)
     {
-        outputs.add(name, output);
+        outputData.add(name, output);
     }
 
 
     @Override
     public int getNumParameters()
     {
-        return parameters.size();
+        return paramData.size();
     }
 
 
     @Override
     public AbstractSWEIdentifiable getParameter(String name)
     {
-        return parameters.get(name);
+        return paramData.get(name);
     }
 
 
     @Override
     public void addParameter(String name, DataComponent parameter)
     {
-        parameters.add(name, parameter);
+        paramData.add(name, parameter);
     }
 
 
     @Override
     public void addParameter(String name, ObservableProperty parameter)
     {
-        parameters.add(name, parameter);
+        paramData.add(name, parameter);
     }
 
 
     @Override
     public void addParameter(String name, DataInterface parameter)
     {
-        parameters.add(name, parameter);
+        paramData.add(name, parameter);
     }
 
 
     @Override
     public OgcPropertyList<AbstractSWEIdentifiable> getParameterList()
     {
-        return parameters;
+        return paramData;
     }
 
 

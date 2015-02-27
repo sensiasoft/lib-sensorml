@@ -114,7 +114,14 @@ public class DataQueue extends DataConnection
 	}
 	
 	
-	/**
+	@Override
+    public boolean isDataAvailable()
+    {
+        return (!queue.isEmpty());
+    }
+
+
+    /**
 	 * Clear all data bocks in the queue
 	 */
 	public synchronized void clear()
