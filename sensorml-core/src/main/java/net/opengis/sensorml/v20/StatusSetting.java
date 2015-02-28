@@ -21,6 +21,7 @@ import net.opengis.swe.v20.DataComponent;
  * POJO class for XML type StatusSettingPropertyType(@http://www.opengis.net/sensorml/2.0).
  *
  */
+@SuppressWarnings("javadoc")
 public interface StatusSetting extends ConfigSetting<DataComponent>
 {
     

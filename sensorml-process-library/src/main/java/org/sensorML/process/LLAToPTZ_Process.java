@@ -27,7 +27,7 @@ import org.vast.math.*;
 import org.vast.physics.Datum;
 import org.vast.physics.MapProjection;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
 /**
@@ -39,7 +39,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * @author Gregoire Berthiau
  * @date Feb 20, 2008
  */
-public class LLAToPTZ_Process extends AbstractProcessImpl
+public class LLAToPTZ_Process extends ExecutableProcessImpl
 {
     private DataValue latTData, lonTData, altTData, latCData, lonCData;
     private DataValue widthData, altCData, latZData, lonZData, altZData, panAtRefData;
@@ -53,7 +53,7 @@ public class LLAToPTZ_Process extends AbstractProcessImpl
     }
    
     @Override
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         try
         {
@@ -95,7 +95,7 @@ public class LLAToPTZ_Process extends AbstractProcessImpl
     }
     
     @Override
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
     	// get lat,lon,alt coordinates from input and convert to SI
     	double deg2rad = Math.PI/180;
@@ -214,7 +214,7 @@ public class LLAToPTZ_Process extends AbstractProcessImpl
     }
     
     
-    public double[] determinePlaneEquation(double[] point1, double[] point2, double[] point3) throws ProcessException
+    public double[] determinePlaneEquation(double[] point1, double[] point2, double[] point3) throws SMLProcessException
     {
     	double d = 1;
     	

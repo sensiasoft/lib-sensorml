@@ -51,6 +51,8 @@ public enum Status
     
     /**
      * To get the enum constant corresponding to the given String representation
+     * @param s string representation of one of this enum tokens
+     * @return Status object singleton corresponding to the given string
      */
     public static Status fromString(String s)
     {

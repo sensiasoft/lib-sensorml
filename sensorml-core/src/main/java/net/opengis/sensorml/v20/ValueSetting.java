@@ -21,6 +21,7 @@ import net.opengis.swe.v20.SimpleComponent;
  * POJO class for XML type ValueSettingPropertyType(@http://www.opengis.net/sensorml/2.0).
  *
  */
+@SuppressWarnings("javadoc")
 public interface ValueSetting extends ConfigSetting<SimpleComponent>
 {
       

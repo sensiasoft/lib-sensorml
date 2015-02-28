@@ -15,7 +15,6 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 package net.opengis.sensorml.v20;
 
 import java.util.List;
-import net.opengis.OgcPropertyList;
 import net.opengis.gml.v32.Reference;
 import net.opengis.swe.v20.AbstractSWEIdentifiable;
 import net.opengis.swe.v20.DataComponent;
@@ -26,6 +25,7 @@ import net.opengis.swe.v20.DataComponent;
  *
  * This is a complex type.
  */
+@SuppressWarnings("javadoc")
 public interface AbstractProcess extends DescribedObject
 {
     
@@ -102,6 +102,12 @@ public interface AbstractProcess extends DescribedObject
     
     
     /**
+     * Gets the data structure of the input with the given name
+     */
+    public DataComponent getInputComponent(String name);
+    
+    
+    /**
      * Adds a new inputAsAbstractDataComponent property
      */
     public void addInput(String name, DataComponent input);
@@ -138,6 +144,12 @@ public interface AbstractProcess extends DescribedObject
     
     
     /**
+     * Gets the data structure of the output with the given name
+     */
+    public DataComponent getOutputComponent(String name);
+    
+    
+    /**
      * Adds a new outputAsAbstractDataComponent property
      */
     public void addOutput(String name, DataComponent output);
@@ -171,6 +183,12 @@ public interface AbstractProcess extends DescribedObject
      * Gets the parameter property with the given name
      */
     public AbstractSWEIdentifiable getParameter(String name);
+    
+    
+    /**
+     * Gets the data structure of the parameter with the given name
+     */
+    public DataComponent getParameterComponent(String name);
     
     
     /**
@@ -225,4 +243,10 @@ public interface AbstractProcess extends DescribedObject
      * Sets the definition property
      */
     public void setDefinition(String definition);
+    
+    
+    /**
+     * Checks if the process is executable
+     */
+    public boolean isExecutable();
 }

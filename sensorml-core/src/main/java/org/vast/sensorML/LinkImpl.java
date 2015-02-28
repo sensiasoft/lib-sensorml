@@ -10,7 +10,6 @@ import net.opengis.sensorml.v20.Link;
  */
 public class LinkImpl implements Link
 {
-    static final long serialVersionUID = 1L;
     protected String source;
     protected String destination;
     protected String id;

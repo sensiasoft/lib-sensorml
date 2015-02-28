@@ -17,11 +17,11 @@
     <!-- ================ -->
     <sml:inputs>
         <sml:InputList>
-            <sml:input name="process_inputs">
+            <sml:input name="weather_inputs">
                 <swe:DataRecord>
                     <swe:field name="temperature">
                         <swe:Quantity definition="http://sweet.jpl.nasa.gov/2.2/quanTemperature.owl#Temperature">
-                            <swe:uom code="cel"/>
+                            <swe:uom code="Cel"/>
                         </swe:Quantity>
                     </swe:field>
                     <swe:field name="windSpeed">
@@ -40,7 +40,7 @@
         <sml:OutputList>
             <sml:output name="windChill">
                 <swe:Quantity definition="http://sweet.jpl.nasa.gov/2.2/quanTemperature.owl#WindChill">
-                    <swe:uom code="cel"/>
+                    <swe:uom code="Cel"/>
                 </swe:Quantity>
             </sml:output>
         </sml:OutputList>      

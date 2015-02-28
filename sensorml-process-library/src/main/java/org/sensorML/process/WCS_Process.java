@@ -39,7 +39,7 @@ import org.vast.ows.OWSUtils;
 import org.vast.ows.wcs.GetCoverageRequest;
 import org.vast.ows.wcs.WCSResponseReader;
 import org.vast.process.DataProcess;
-import org.vast.process.ProcessException;
+import org.vast.process.SMLProcessException;
 import org.vast.util.Bbox;
 
 
@@ -53,7 +53,7 @@ import org.vast.util.Bbox;
  * @author Alexandre Robin
  * @date Jan 20, 2006
  */
-public class WCS_Process extends AbstractProcessImpl
+public class WCS_Process extends ExecutableProcessImpl
 {
     protected Log log = LogFactory.getLog(WCS_Process.class);
     protected DataValue bboxLat1, bboxLon1, bboxLat2, bboxLon2;
@@ -78,7 +78,7 @@ public class WCS_Process extends AbstractProcessImpl
      * Initializes the process
      * Gets handles to input/output components
      */
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         int skipX, skipY, skipZ;
         DataComponent component;
@@ -101,7 +101,7 @@ public class WCS_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException("Invalid I/O structure", e);
+            throw new SMLProcessException("Invalid I/O structure", e);
         }
         
         try
@@ -159,7 +159,7 @@ public class WCS_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException("Invalid Parameters", e);
+            throw new SMLProcessException("Invalid Parameters", e);
         }
     }
 
@@ -167,7 +167,7 @@ public class WCS_Process extends AbstractProcessImpl
     /**
      * Executes process algorithm on inputs and set output data
      */
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
         URL url = null;
 
@@ -195,7 +195,7 @@ public class WCS_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException("Error while requesting data from WCS server: " + url, e);
+            throw new SMLProcessException("Error while requesting data from WCS server: " + url, e);
         }
         finally
         {

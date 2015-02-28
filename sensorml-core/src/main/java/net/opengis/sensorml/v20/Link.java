@@ -21,8 +21,10 @@ package net.opengis.sensorml.v20;
  *
  * This is a complex type.
  */
+@SuppressWarnings("javadoc")
 public interface Link
 {
+    public final static String PATH_SEPARATOR = "/";
     
     
     /**

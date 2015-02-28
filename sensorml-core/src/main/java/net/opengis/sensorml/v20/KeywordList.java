@@ -23,6 +23,7 @@ import net.opengis.gml.v32.Reference;
  *
  * This is a complex type.
  */
+@SuppressWarnings("javadoc")
 public interface KeywordList extends AbstractMetadataList
 {
     

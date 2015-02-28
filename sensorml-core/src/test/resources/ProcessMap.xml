@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ProcessMap>   
+   <Process>
+      <uri>http://blah.blah/windchillMethod01v5.xml</uri>
+      <class>org.vast.sensorML.test.WindChill_Process</class>
+   </Process>
+   <Process>
+      <uri>http://sensors.ws/process/affineTransform1D</uri>
+      <class>org.vast.sensorML.test.AffineTransform1D_Process</class>
+   </Process>
+   <Process>
+      <uri>http://sensors.ws/process/clip</uri>
+      <class>org.vast.sensorML.test.Clip_Process</class>
+   </Process>
+</ProcessMap>

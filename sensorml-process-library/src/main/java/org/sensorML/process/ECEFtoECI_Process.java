@@ -23,7 +23,7 @@ package org.sensorML.process;
 
 import org.vast.data.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
 /**
@@ -34,7 +34,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * @author Kevin Carter
  * @date February 27, 2006
  */
-public class ECEFtoECI_Process extends AbstractProcessImpl
+public class ECEFtoECI_Process extends ExecutableProcessImpl
 {
     DataValue posX, posY, posZ, julianTime;
     DataValue Xo, Yo, Zo;
@@ -49,7 +49,7 @@ public class ECEFtoECI_Process extends AbstractProcessImpl
      * Initializes the process
      * Gets handles to input/output components
      */
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         //I/O mappings
         try
@@ -64,7 +64,7 @@ public class ECEFtoECI_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
 
@@ -72,7 +72,7 @@ public class ECEFtoECI_Process extends AbstractProcessImpl
     /**
      * Executes process algorithm on inputs and set output data
      */
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
         double X = posX.getData().getDoubleValue();
         double Y = posY.getData().getDoubleValue();

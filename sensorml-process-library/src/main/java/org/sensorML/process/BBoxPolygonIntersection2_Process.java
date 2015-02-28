@@ -25,14 +25,13 @@
 
 package org.sensorML.process;
 
-import net.opengis.swe.v20.DataBlock;
-import org.vast.cdm.common.DataType;
+import net.opengis.swe.v20.DataComponent;
 import org.vast.data.*;
 import org.vast.process.*;
+import org.vast.sensorML.ExecutableProcessImpl;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Polygon;
 
 
 /**
@@ -43,7 +42,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * @author Gregoire Berthiau
  * @date Jan 31, 2008
  */
-public class BBoxPolygonIntersection2_Process extends AbstractProcessImpl {
+public class BBoxPolygonIntersection2_Process extends ExecutableProcessImpl {
 
 
 
@@ -60,7 +59,7 @@ public class BBoxPolygonIntersection2_Process extends AbstractProcessImpl {
    * Initializes the process
    * Get handles to input/output components
    */
-   public void init() throws ProcessException {
+   public void init() throws SMLProcessException {
 
       try {
 
@@ -77,7 +76,7 @@ public class BBoxPolygonIntersection2_Process extends AbstractProcessImpl {
   	      LLLatitudeData = inputData.getComponent("boundingBox").getComponent("LLLatitude");
       }
       catch (ClassCastException e) {
-         throw new ProcessException("Invalid I/O data", e);
+         throw new SMLProcessException("Invalid I/O data", e);
       }
    }
 
@@ -85,7 +84,7 @@ public class BBoxPolygonIntersection2_Process extends AbstractProcessImpl {
    * Executes the process
    * Get current values for all components and then executes
    */
-   public void execute() throws ProcessException {
+   public void execute() throws SMLProcessException {
 	   
 	// Set up the polygon against which line intersection will be tested
 	    double LLLatitude = (LLLatitudeData.getData().getDoubleValue());
@@ -211,7 +210,8 @@ public class BBoxPolygonIntersection2_Process extends AbstractProcessImpl {
 	    if (intersectionExists) {
 			C = intersection;
 			numberOfPointsData.getData().setIntValue(C.getNumPoints());
-			DataValue pointNumber = new DataValue("numberOfPoints",DataType.INT);
+			DataValue pointNumber = new CountImpl();
+			pointNumber.setName("numberOfPoints");
 			DataBlockDouble latDBD = new DataBlockDouble(C.getNumPoints());
 			DataBlockDouble lonDBD = new DataBlockDouble(C.getNumPoints());
 			DataBlockDouble pointDBD = new DataBlockDouble(2 * C.getNumPoints());
@@ -241,22 +241,12 @@ public class BBoxPolygonIntersection2_Process extends AbstractProcessImpl {
 			DataBlockInt number = new DataBlockInt(1);
 			number.setIntValue(C.getNumPoints());
 			
-			DataBlockMixed outputBlock = new DataBlockMixed(3, totalCount);
-			outputBlock.setBlock(0, exists);
-			outputBlock.setBlock(1, number);
-			outputBlock.setBlock(2, pointDBD);			
-			outputData.setData(outputBlock);
-			
-			DataBlockMixed intersectionBlock = new DataBlockMixed(2, totalCount-1);
-			intersectionBlock.setBlock(0, number);
-			intersectionBlock.setBlock(1, pointDBD);			
-			outputData.getComponent("intersection").setData(intersectionBlock);
-					
-			outputData.getComponent("intersection").getComponent("numberOfPoints").setData(number);
-			outputData.getComponent("intersection").getComponent("points").setData(pointDBD);
-			outputData.getComponent("intersection").getComponent("points").getComponent("point").setData(pointDBD);
-			outputData.getComponent("intersection").getComponent("points").getComponent("point").getComponent("lon").setData(lonDBD);
-			outputData.getComponent("intersection").getComponent("points").getComponent("point").getComponent("lat").setData(latDBD);
+			intersectionExistsData.setData(exists);
+            
+            DataBlockMixed intersectionBlock = new DataBlockMixed(2, totalCount-1);
+            intersectionBlock.setBlock(0, number);
+            intersectionBlock.setBlock(1, pointDBD);            
+            outputData.getComponent("intersection").setData(intersectionBlock); 
 			
 		}
 	    
@@ -283,23 +273,12 @@ public class BBoxPolygonIntersection2_Process extends AbstractProcessImpl {
 			DataBlockInt number = new DataBlockInt(1);
 			number.setIntValue(2);
 			
-			DataBlockMixed outputBlock = new DataBlockMixed(3, totalCount);
-			outputBlock.setBlock(0, exists);
-			outputBlock.setBlock(1, number);
-			outputBlock.setBlock(2, pointDBD);			
-			outputData.setData(outputBlock);
+			intersectionExistsData.setData(exists);
 			
 			DataBlockMixed intersectionBlock = new DataBlockMixed(2, totalCount-1);
 			intersectionBlock.setBlock(0, number);
 			intersectionBlock.setBlock(1, pointDBD);			
-			outputData.getComponent("intersection").setData(intersectionBlock);
-					
-			outputData.getComponent("intersection").getComponent("numberOfPoints").setData(number);
-			outputData.getComponent("intersection").getComponent("points").setData(pointDBD);
-			outputData.getComponent("intersection").getComponent("points").getComponent("point").setData(pointDBD);
-			outputData.getComponent("intersection").getComponent("points").getComponent("point").getComponent("lon").setData(lonDBD);
-			outputData.getComponent("intersection").getComponent("points").getComponent("point").getComponent("lat").setData(latDBD);
-			
+			outputData.getComponent("intersection").setData(intersectionBlock);			
 		}
 	
 	 }

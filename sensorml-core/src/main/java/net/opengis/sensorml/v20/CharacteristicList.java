@@ -23,6 +23,7 @@ import net.opengis.swe.v20.DataComponent;
  *
  * This is a complex type.
  */
+@SuppressWarnings("javadoc")
 public interface CharacteristicList extends AbstractMetadataList
 {
     

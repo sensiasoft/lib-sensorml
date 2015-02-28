@@ -19,6 +19,7 @@ package net.opengis.sensorml.v20;
  * POJO class for XML type ModeSettingPropertyType(@http://www.opengis.net/sensorml/2.0).
  *
  */
+@SuppressWarnings("javadoc")
 public interface ModeSetting extends ConfigSetting<ModeChoice>
 {
     

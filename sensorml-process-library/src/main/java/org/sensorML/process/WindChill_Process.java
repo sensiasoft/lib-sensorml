@@ -22,7 +22,7 @@ package org.sensorML.process;
 
 import org.vast.data.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
 /**
@@ -36,7 +36,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * @author Alexandre Robin
  * @date Jan 20, 2006
  */
-public class WindChill_Process extends AbstractProcessImpl
+public class WindChill_Process extends ExecutableProcessImpl
 {
     DataValue inputTemp;
     DataValue inputWindSpeed;
@@ -52,7 +52,7 @@ public class WindChill_Process extends AbstractProcessImpl
      * Initializes the process
      * Gets handles to input/output components
      */
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         try
         {
@@ -63,7 +63,7 @@ public class WindChill_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
 
@@ -71,7 +71,7 @@ public class WindChill_Process extends AbstractProcessImpl
     /**
      * Executes process algorithm on inputs and set output data
      */
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
         double T = inputTemp.getData().getDoubleValue();
         double V = inputWindSpeed.getData().getDoubleValue();

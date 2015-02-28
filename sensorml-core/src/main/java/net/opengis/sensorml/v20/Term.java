@@ -23,6 +23,7 @@ import net.opengis.swe.v20.AbstractSWE;
  *
  * This is a complex type.
  */
+@SuppressWarnings("javadoc")
 public interface Term extends AbstractSWE
 {
     

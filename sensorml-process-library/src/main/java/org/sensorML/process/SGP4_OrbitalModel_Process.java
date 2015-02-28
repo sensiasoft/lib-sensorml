@@ -24,7 +24,7 @@ package org.sensorML.process;
 import net.opengis.swe.v20.DataRecord;
 import org.vast.data.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
 /**
@@ -38,7 +38,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * @author Mike Botts
  * @date February 20, 2006
  */
-public class SGP4_OrbitalModel_Process extends AbstractProcessImpl
+public class SGP4_OrbitalModel_Process extends ExecutableProcessImpl
 {
     DataValue inputTime;
     
@@ -79,7 +79,7 @@ public class SGP4_OrbitalModel_Process extends AbstractProcessImpl
      * Initializes the process
      * Gets handles to input/output components
      */
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         try
         {
@@ -115,7 +115,7 @@ public class SGP4_OrbitalModel_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
 
@@ -125,7 +125,7 @@ public class SGP4_OrbitalModel_Process extends AbstractProcessImpl
      * based on Keplerian Orbit elements;
      * Converted from Norad sgp4Propagator (FORTRAN version)
      */
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
    	    // establish main input
     	double time = inputTime.getData().getDoubleValue();

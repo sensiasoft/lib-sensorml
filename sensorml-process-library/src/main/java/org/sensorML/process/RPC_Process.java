@@ -29,7 +29,7 @@ import net.opengis.swe.v20.DataArray;
 import net.opengis.swe.v20.DataRecord;
 import org.vast.data.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
 /**
@@ -52,7 +52,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * 2008/01/27, MEB, updated to account for coefs in any order! -> using coef names
  * 2009/02/25, AR, corrected, cleaned up, and validated
  */
-public class RPC_Process extends AbstractProcessImpl
+public class RPC_Process extends ExecutableProcessImpl
 {
 	class RPCCoef
 	{
@@ -131,7 +131,7 @@ public class RPC_Process extends AbstractProcessImpl
 	 * Initializes the process
 	 * Gets handles to input/output components
 	 */
-	public void init() throws ProcessException
+	public void init() throws SMLProcessException
 	{
 		try
 		{
@@ -193,7 +193,7 @@ public class RPC_Process extends AbstractProcessImpl
 		}
 		catch (Exception e)
 		{
-			throw new ProcessException(ioError, e);
+			throw new SMLProcessException(ioError, e);
 		}
 	}
 
@@ -211,7 +211,7 @@ public class RPC_Process extends AbstractProcessImpl
 	/**
 	 * Executes process algorithm on inputs and set output data
 	 */
-	public void execute() throws ProcessException
+	public void execute() throws SMLProcessException
 	{
 		double posX = inputX.getData().getDoubleValue();
 		double posY = inputY.getData().getDoubleValue();

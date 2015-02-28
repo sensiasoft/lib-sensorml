@@ -15,7 +15,6 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 package net.opengis.sensorml.v20;
 
 import org.vast.sensorML.SMLHelper;
-import net.opengis.OgcPropertyList;
 import net.opengis.swe.v20.AbstractSWEIdentifiable;
 import net.opengis.swe.v20.DataComponent;
 
@@ -28,9 +27,8 @@ import net.opengis.swe.v20.DataComponent;
  * @author Alex Robin <alex.robin@sensiasoftware.com>
  * @since Nov 9, 2014
  */
-public class IOPropertyList extends OgcPropertyList<AbstractSWEIdentifiable>
+public class IOPropertyList extends SMLPropertyList<AbstractSWEIdentifiable>
 {
-   
     
     public IOPropertyList()
     {

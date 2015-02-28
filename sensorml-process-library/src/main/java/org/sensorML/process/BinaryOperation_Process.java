@@ -24,7 +24,7 @@ package org.sensorML.process;
 import net.opengis.swe.v20.DataComponent;
 import org.vast.data.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
 /**
@@ -36,7 +36,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * @author Alexandre Robin & Gregoire Berthiau
  * @date Mar 7, 2007
  */
-public class BinaryOperation_Process extends AbstractProcessImpl
+public class BinaryOperation_Process extends ExecutableProcessImpl
 {
 	DataComponent operatorData;
     private DataValue operand1, operand2, result;
@@ -50,7 +50,7 @@ public class BinaryOperation_Process extends AbstractProcessImpl
     }
 
     
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
     	try
         {
@@ -81,12 +81,12 @@ public class BinaryOperation_Process extends AbstractProcessImpl
         }
         catch (RuntimeException e)
         {
-            throw new ProcessException(ioError);
+            throw new SMLProcessException(ioError);
         }
     }
     
 
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
         double N1 = 0.0;
         double N2 = 0.0;

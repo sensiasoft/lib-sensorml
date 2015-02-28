@@ -22,6 +22,7 @@ import net.opengis.swe.v20.AbstractSWEIdentifiable;
  *
  * This is a complex type.
  */
+@SuppressWarnings("javadoc")
 public interface ObservableProperty extends AbstractSWEIdentifiable
 {
     

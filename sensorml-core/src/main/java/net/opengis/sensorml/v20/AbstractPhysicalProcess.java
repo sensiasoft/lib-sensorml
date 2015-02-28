@@ -30,6 +30,7 @@ import net.opengis.swe.v20.Vector;
  *
  * This is a complex type.
  */
+@SuppressWarnings("javadoc")
 public interface AbstractPhysicalProcess extends AbstractProcess
 {
     

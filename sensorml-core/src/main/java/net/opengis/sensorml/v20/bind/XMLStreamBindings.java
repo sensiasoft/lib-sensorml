@@ -39,8 +39,6 @@ import net.opengis.sensorml.v20.ArraySetting;
 import net.opengis.sensorml.v20.CapabilityList;
 import net.opengis.sensorml.v20.CharacteristicList;
 import net.opengis.sensorml.v20.ClassifierList;
-import net.opengis.sensorml.v20.ComponentList;
-import net.opengis.sensorml.v20.ConnectionList;
 import net.opengis.sensorml.v20.ConstraintSetting;
 import net.opengis.sensorml.v20.ContactList;
 import net.opengis.sensorml.v20.DataInterface;
@@ -944,42 +942,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     public void readPhysicalSystemTypeElements(XMLStreamReader reader, PhysicalSystem bean) throws XMLStreamException
     {
         this.readAbstractPhysicalProcessTypeElements(reader, bean);
-        
-        boolean found;
-        
-        // components
-        found = checkElementName(reader, "components");
-        if (found)
-        {
-            OgcProperty<ComponentList> componentsProp = bean.getComponentsProperty();
-            readPropertyAttributes(reader, componentsProp);
-            
-            reader.nextTag();
-            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-            {
-                componentsProp.setValue(this.readComponentList(reader));
-                reader.nextTag(); // end property tag
-            }
-            
-            reader.nextTag();
-        }
-        
-        // connections
-        found = checkElementName(reader, "connections");
-        if (found)
-        {
-            OgcProperty<ConnectionList> connectionsProp = bean.getConnectionsProperty();
-            readPropertyAttributes(reader, connectionsProp);
-            
-            reader.nextTag();
-            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-            {
-                connectionsProp.setValue(this.readConnectionList(reader));
-                reader.nextTag(); // end property tag
-            }
-            
-            reader.nextTag();
-        }
+        readComponentsAndConnections(reader, bean);
     }
     
     
@@ -1008,28 +971,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     public void writePhysicalSystemTypeElements(XMLStreamWriter writer, PhysicalSystem bean) throws XMLStreamException
     {
         this.writeAbstractPhysicalProcessTypeElements(writer, bean);
-        
-        // components
-        if (bean.isSetComponents())
-        {
-            writer.writeStartElement(NS_URI, "components");
-            OgcProperty<ComponentList> componentsProp = bean.getComponentsProperty();
-            writePropertyAttributes(writer, componentsProp);
-            if (componentsProp.hasValue() && !componentsProp.hasHref())
-                this.writeComponentList(writer, bean.getComponents());
-            writer.writeEndElement();
-        }
-        
-        // connections
-        if (bean.isSetConnections())
-        {
-            writer.writeStartElement(NS_URI, "connections");
-            OgcProperty<ConnectionList> connectionsProp = bean.getConnectionsProperty();
-            writePropertyAttributes(writer, connectionsProp);
-            if (connectionsProp.hasValue() && !connectionsProp.hasHref())
-                this.writeConnectionList(writer, bean.getConnections());
-            writer.writeEndElement();
-        }
+        this.writeComponentsAndConnections(writer, bean);
     }
     
     
@@ -1582,20 +1524,44 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     public void readAggregateProcessTypeElements(XMLStreamReader reader, AggregateProcess bean) throws XMLStreamException
     {
         this.readAbstractProcessTypeElements(reader, bean);
-        
+        readComponentsAndConnections(reader, bean);  
+    }
+    
+    
+    protected void readComponentsAndConnections(XMLStreamReader reader, AggregateProcess bean) throws XMLStreamException
+    {
         boolean found;
         
         // components
         found = checkElementName(reader, "components");
         if (found)
         {
-            OgcProperty<ComponentList> componentsProp = bean.getComponentsProperty();
-            readPropertyAttributes(reader, componentsProp);
-            
+            reader.nextTag(); // skip ComponentList element
             reader.nextTag();
+            
             if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
             {
-                componentsProp.setValue(this.readComponentList(reader));
+                // component
+                do
+                {
+                    found = checkElementName(reader, "component");
+                    if (found)
+                    {
+                        OgcProperty<AbstractProcess> componentProp = new OgcPropertyImpl<AbstractProcess>();
+                        readPropertyAttributes(reader, componentProp);
+                        
+                        reader.nextTag();
+                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                        {
+                            componentProp.setValue(this.readAbstractProcess(reader));
+                            reader.nextTag(); // end property tag
+                        }
+                        
+                        bean.getComponentList().add(componentProp);
+                        reader.nextTag();
+                    }
+                }
+                while (found);
                 reader.nextTag(); // end property tag
             }
             
@@ -1606,13 +1572,28 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         found = checkElementName(reader, "connections");
         if (found)
         {
-            OgcProperty<ConnectionList> connectionsProp = bean.getConnectionsProperty();
-            readPropertyAttributes(reader, connectionsProp);
-            
+            reader.nextTag(); // skip ConnectionList element
             reader.nextTag();
+            
             if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
             {
-                connectionsProp.setValue(this.readConnectionList(reader));
+                // connection
+                do
+                {
+                    found = checkElementName(reader, "connection");
+                    if (found)
+                    {
+                        reader.nextTag();
+                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                        {
+                            bean.addConnection(this.readLink(reader));
+                            reader.nextTag(); // end property tag
+                        }
+                        
+                        reader.nextTag();
+                    }
+                }
+                while (found);
                 reader.nextTag(); // end property tag
             }
             
@@ -1646,222 +1627,53 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     public void writeAggregateProcessTypeElements(XMLStreamWriter writer, AggregateProcess bean) throws XMLStreamException
     {
         this.writeAbstractProcessTypeElements(writer, bean);
+        this.writeComponentsAndConnections(writer, bean);
+    }
+    
+    
+    protected void writeComponentsAndConnections(XMLStreamWriter writer, AggregateProcess bean) throws XMLStreamException
+    {
+        int numItems;
         
         // components
-        if (bean.isSetComponents())
+        if (bean.getNumComponents() > 0)
         {
             writer.writeStartElement(NS_URI, "components");
-            OgcProperty<ComponentList> componentsProp = bean.getComponentsProperty();
-            writePropertyAttributes(writer, componentsProp);
-            if (componentsProp.hasValue() && !componentsProp.hasHref())
-                this.writeComponentList(writer, bean.getComponents());
+            writer.writeStartElement(NS_URI, "ComponentList");
+            
+            // component
+            numItems = bean.getComponentList().size();
+            for (int i = 0; i < numItems; i++)
+            {
+                OgcProperty<AbstractProcess> item = bean.getComponentList().getProperty(i);
+                writer.writeStartElement(NS_URI, "component");
+                writePropertyAttributes(writer, item);
+                if (item.hasValue() && !item.hasHref())
+                    this.writeAbstractProcess(writer, item.getValue());
+                writer.writeEndElement();
+            }
+            
+            writer.writeEndElement();
             writer.writeEndElement();
         }
-        
+
         // connections
-        if (bean.isSetConnections())
+        if (bean.getNumComponents() > 0)
         {
             writer.writeStartElement(NS_URI, "connections");
-            OgcProperty<ConnectionList> connectionsProp = bean.getConnectionsProperty();
-            writePropertyAttributes(writer, connectionsProp);
-            if (connectionsProp.hasValue() && !connectionsProp.hasHref())
-                this.writeConnectionList(writer, bean.getConnections());
-            writer.writeEndElement();
-        }
-    }
-    
-    
-    /**
-     * Read method for ConnectionListType complex type
-     */
-    public ConnectionList readConnectionListType(XMLStreamReader reader) throws XMLStreamException
-    {
-        ConnectionList bean = factory.newConnectionList();
-        
-        Map<String, String> attrMap = collectAttributes(reader);
-        this.readConnectionListTypeAttributes(attrMap, bean);
-        
-        reader.nextTag();
-        this.readConnectionListTypeElements(reader, bean);
-        
-        return bean;
-    }
-    
-    
-    /**
-     * Reads attributes of ConnectionListType complex type
-     */
-    public void readConnectionListTypeAttributes(Map<String, String> attrMap, ConnectionList bean) throws XMLStreamException
-    {
-        ns1Bindings.readAbstractSWETypeAttributes(attrMap, bean);
-        
-    }
-    
-    
-    /**
-     * Reads elements of ConnectionListType complex type
-     */
-    public void readConnectionListTypeElements(XMLStreamReader reader, ConnectionList bean) throws XMLStreamException
-    {
-        ns1Bindings.readAbstractSWETypeElements(reader, bean);
-        
-        boolean found;
-        
-        // connection
-        do
-        {
-            found = checkElementName(reader, "connection");
-            if (found)
+            writer.writeStartElement(NS_URI, "ConnectionList");
+            
+            // connection
+            numItems = bean.getConnectionList().size();
+            for (int i = 0; i < numItems; i++)
             {
-                reader.nextTag();
-                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                {
-                    bean.addConnection(this.readLink(reader));
-                    reader.nextTag(); // end property tag
-                }
-                
-                reader.nextTag();
+                Link item = bean.getConnectionList().get(i);
+                writer.writeStartElement(NS_URI, "connection");
+                this.writeLink(writer, item);
+                writer.writeEndElement();
             }
-        }
-        while (found);
-    }
-    
-    
-    /**
-     * Write method for ConnectionListType complex type
-     */
-    public void writeConnectionListType(XMLStreamWriter writer, ConnectionList bean) throws XMLStreamException
-    {
-        this.writeConnectionListTypeAttributes(writer, bean);
-        this.writeConnectionListTypeElements(writer, bean);
-    }
-    
-    
-    /**
-     * Writes attributes of ConnectionListType complex type
-     */
-    public void writeConnectionListTypeAttributes(XMLStreamWriter writer, ConnectionList bean) throws XMLStreamException
-    {
-        ns1Bindings.writeAbstractSWETypeAttributes(writer, bean);
-    }
-    
-    
-    /**
-     * Writes elements of ConnectionListType complex type
-     */
-    public void writeConnectionListTypeElements(XMLStreamWriter writer, ConnectionList bean) throws XMLStreamException
-    {
-        ns1Bindings.writeAbstractSWETypeElements(writer, bean);
-        int numItems;
-        
-        // connection
-        numItems = bean.getConnectionList().size();
-        for (int i = 0; i < numItems; i++)
-        {
-            Link item = bean.getConnectionList().get(i);
-            writer.writeStartElement(NS_URI, "connection");
-            this.writeLink(writer, item);
+            
             writer.writeEndElement();
-        }
-    }
-    
-    
-    /**
-     * Read method for ComponentListType complex type
-     */
-    public ComponentList readComponentListType(XMLStreamReader reader) throws XMLStreamException
-    {
-        ComponentList bean = factory.newComponentList();
-        
-        Map<String, String> attrMap = collectAttributes(reader);
-        this.readComponentListTypeAttributes(attrMap, bean);
-        
-        reader.nextTag();
-        this.readComponentListTypeElements(reader, bean);
-        
-        return bean;
-    }
-    
-    
-    /**
-     * Reads attributes of ComponentListType complex type
-     */
-    public void readComponentListTypeAttributes(Map<String, String> attrMap, ComponentList bean) throws XMLStreamException
-    {
-        ns1Bindings.readAbstractSWETypeAttributes(attrMap, bean);
-        
-    }
-    
-    
-    /**
-     * Reads elements of ComponentListType complex type
-     */
-    public void readComponentListTypeElements(XMLStreamReader reader, ComponentList bean) throws XMLStreamException
-    {
-        ns1Bindings.readAbstractSWETypeElements(reader, bean);
-        
-        boolean found;
-        
-        // component
-        do
-        {
-            found = checkElementName(reader, "component");
-            if (found)
-            {
-                OgcProperty<AbstractProcess> componentProp = new OgcPropertyImpl<AbstractProcess>();
-                readPropertyAttributes(reader, componentProp);
-                
-                reader.nextTag();
-                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                {
-                    componentProp.setValue(this.readAbstractProcess(reader));
-                    reader.nextTag(); // end property tag
-                }
-                
-                bean.getComponentList().add(componentProp);
-                reader.nextTag();
-            }
-        }
-        while (found);
-    }
-    
-    
-    /**
-     * Write method for ComponentListType complex type
-     */
-    public void writeComponentListType(XMLStreamWriter writer, ComponentList bean) throws XMLStreamException
-    {
-        this.writeComponentListTypeAttributes(writer, bean);
-        this.writeComponentListTypeElements(writer, bean);
-    }
-    
-    
-    /**
-     * Writes attributes of ComponentListType complex type
-     */
-    public void writeComponentListTypeAttributes(XMLStreamWriter writer, ComponentList bean) throws XMLStreamException
-    {
-        ns1Bindings.writeAbstractSWETypeAttributes(writer, bean);
-    }
-    
-    
-    /**
-     * Writes elements of ComponentListType complex type
-     */
-    public void writeComponentListTypeElements(XMLStreamWriter writer, ComponentList bean) throws XMLStreamException
-    {
-        ns1Bindings.writeAbstractSWETypeElements(writer, bean);
-        int numItems;
-        
-        // component
-        numItems = bean.getComponentList().size();
-        for (int i = 0; i < numItems; i++)
-        {
-            OgcProperty<AbstractProcess> item = bean.getComponentList().getProperty(i);
-            writer.writeStartElement(NS_URI, "component");
-            writePropertyAttributes(writer, item);
-            if (item.hasValue() && !item.hasHref())
-                this.writeAbstractProcess(writer, item.getValue());
             writer.writeEndElement();
         }
     }
@@ -4892,56 +4704,6 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     
     
     /**
-     * Read method for ConnectionList elements
-     */
-    public ConnectionList readConnectionList(XMLStreamReader reader) throws XMLStreamException
-    {
-        boolean found = checkElementName(reader, "ConnectionList");
-        if (!found)
-            throw new XMLStreamException(ERROR_INVALID_ELT + reader.getName() + errorLocationString(reader));
-        
-        return this.readConnectionListType(reader);
-    }
-    
-    
-    /**
-     * Write method for ConnectionList element
-     */
-    public void writeConnectionList(XMLStreamWriter writer, ConnectionList bean) throws XMLStreamException
-    {
-        writer.writeStartElement(NS_URI, "ConnectionList");
-        this.writeNamespaces(writer);
-        this.writeConnectionListType(writer, bean);
-        writer.writeEndElement();
-    }
-    
-    
-    /**
-     * Read method for ComponentList elements
-     */
-    public ComponentList readComponentList(XMLStreamReader reader) throws XMLStreamException
-    {
-        boolean found = checkElementName(reader, "ComponentList");
-        if (!found)
-            throw new XMLStreamException(ERROR_INVALID_ELT + reader.getName() + errorLocationString(reader));
-        
-        return this.readComponentListType(reader);
-    }
-    
-    
-    /**
-     * Write method for ComponentList element
-     */
-    public void writeComponentList(XMLStreamWriter writer, ComponentList bean) throws XMLStreamException
-    {
-        writer.writeStartElement(NS_URI, "ComponentList");
-        this.writeNamespaces(writer);
-        this.writeComponentListType(writer, bean);
-        writer.writeEndElement();
-    }
-    
-    
-    /**
      * Read method for Link elements
      */
     public Link readLink(XMLStreamReader reader) throws XMLStreamException
@@ -5031,14 +4793,14 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
      */
     public void writeAbstractProcess(XMLStreamWriter writer, AbstractProcess bean) throws XMLStreamException
     {
-        if (bean instanceof SimpleProcess)
-            writeSimpleProcess(writer, (SimpleProcess)bean);
+        if (bean instanceof PhysicalComponent)
+            writePhysicalComponent(writer, (PhysicalComponent)bean);
         else if (bean instanceof PhysicalSystem)
             writePhysicalSystem(writer, (PhysicalSystem)bean);
-        else if (bean instanceof PhysicalComponent)
-            writePhysicalComponent(writer, (PhysicalComponent)bean);
+        else if (bean instanceof SimpleProcess)
+            writeSimpleProcess(writer, (SimpleProcess)bean); 
         else if (bean instanceof AggregateProcess)
-            writeAggregateProcess(writer, (AggregateProcess)bean);
+            writeAggregateProcess(writer, (AggregateProcess)bean);        
     }
     
     

@@ -4,10 +4,10 @@ package org.sensorML.process;
 
 import org.vast.data.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
-public class GreaterThan_Process extends AbstractProcessImpl {
+public class GreaterThan_Process extends ExecutableProcessImpl {
 
 
    // declare input components
@@ -27,7 +27,7 @@ public class GreaterThan_Process extends AbstractProcessImpl {
    * Initializes the process
    * Get handles to input/output components
    */
-   public void init() throws ProcessException {
+   public void init() throws SMLProcessException {
 
       try {
 
@@ -42,7 +42,7 @@ public class GreaterThan_Process extends AbstractProcessImpl {
 
       }
       catch (ClassCastException e) {
-         throw new ProcessException("Invalid I/O data", e);
+         throw new SMLProcessException("Invalid I/O data", e);
       }
 
    }
@@ -51,7 +51,7 @@ public class GreaterThan_Process extends AbstractProcessImpl {
    * Executes the process
    * Get current values for all components and then executes
    */
-   public void execute() throws ProcessException {
+   public void execute() throws SMLProcessException {
 
 
          // get values for input components

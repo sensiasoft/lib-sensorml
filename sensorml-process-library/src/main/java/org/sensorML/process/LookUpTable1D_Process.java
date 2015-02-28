@@ -23,7 +23,7 @@ package org.sensorML.process;
 import net.opengis.swe.v20.DataBlock;
 import org.vast.data.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
 /**
@@ -36,7 +36,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * @author Alexandre Robin
  * @date Sep 2, 2005
  */
-public class LookUpTable1D_Process extends AbstractProcessImpl
+public class LookUpTable1D_Process extends ExecutableProcessImpl
 {
 	DataValue inputVar;
     DataValue[] outputVars;
@@ -56,7 +56,7 @@ public class LookUpTable1D_Process extends AbstractProcessImpl
     }
 
     
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         try
         {
@@ -90,7 +90,7 @@ public class LookUpTable1D_Process extends AbstractProcessImpl
             tupleSize = paramData.getComponent("table").getComponent(0).getComponentCount();          
             tableSize = tableData.getAtomCount()/(tupleSize);
             if (tupleSize != outputVars.length+1)
-                throw new ProcessException("table and output should have the same size");
+                throw new SMLProcessException("table and output should have the same size");
 
             // read interpolation method
             DataValue interp = (DataValue)paramData.getComponent("interpolationMethod");
@@ -116,7 +116,7 @@ public class LookUpTable1D_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
     
@@ -124,7 +124,7 @@ public class LookUpTable1D_Process extends AbstractProcessImpl
     /**
      * Executes process algorithm on inputs and set output data
      */
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
     	double input = inputVar.getData().getDoubleValue(); 	
     	

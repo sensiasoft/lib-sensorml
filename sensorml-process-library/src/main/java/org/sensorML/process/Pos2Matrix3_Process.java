@@ -27,7 +27,7 @@ import net.opengis.swe.v20.DataRecord;
 import org.vast.data.*;
 import org.vast.math.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
 /**
@@ -39,7 +39,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * @author Alexandre Robin & Gregoire Berthiau
  * @date Mar 7, 2007
  */
-public class Pos2Matrix3_Process extends AbstractProcessImpl
+public class Pos2Matrix3_Process extends ExecutableProcessImpl
 {
     private DataValue rxData, ryData, rzData;
     private DataArray outputMatrix;
@@ -52,7 +52,7 @@ public class Pos2Matrix3_Process extends AbstractProcessImpl
     }
    
     @Override
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         try
         {
@@ -80,7 +80,7 @@ public class Pos2Matrix3_Process extends AbstractProcessImpl
     }
     
     @Override
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
         double rx = 0.0;
         double ry = 0.0;

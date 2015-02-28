@@ -22,6 +22,7 @@ import net.opengis.OgcProperty;
  *
  * This is a complex type.
  */
+@SuppressWarnings("javadoc")
 public interface SimpleProcess extends AbstractProcess
 {
     

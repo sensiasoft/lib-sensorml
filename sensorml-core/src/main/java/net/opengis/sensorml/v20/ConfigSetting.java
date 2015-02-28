@@ -15,6 +15,15 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 package net.opengis.sensorml.v20;
 
 
+/**
+ * <p>
+ * Base interface for all types of configuration settings
+ * </p>
+ *
+ * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @param <RefType> Type of referenced object
+ * @since Feb 28, 2015
+ */
 public interface ConfigSetting<RefType>
 {
 

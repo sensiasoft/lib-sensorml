@@ -21,6 +21,7 @@ package net.opengis.sensorml.v20;
  *
  * This is a complex type.
  */
+@SuppressWarnings("javadoc")
 public interface AbstractAlgorithm
 {
     

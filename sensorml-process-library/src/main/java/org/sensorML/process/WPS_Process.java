@@ -39,7 +39,7 @@ import org.vast.cdm.common.DataStreamParser;
 import org.vast.data.*;
 import org.vast.ogc.OGCRegistry;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 import org.vast.unit.UnitConversion;
 import org.vast.unit.UnitConverter;
 
@@ -53,7 +53,7 @@ import org.vast.unit.UnitConverter;
  * @author Gregoire Berthiau
  * @date Dec 3, 2008
  */
-public class WPS_Process extends AbstractProcessImpl implements DataHandler
+public class WPS_Process extends ExecutableProcessImpl implements DataHandler
 {
     protected DataComponent wpsInputData, wpsOutputData;
     protected InputStream describeProcessDataStream, executeProcessDataStream;
@@ -82,14 +82,14 @@ public class WPS_Process extends AbstractProcessImpl implements DataHandler
 
 
     @Override
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         // Read I/O mappings
         try
         {
             // input Data mapping
         	if(inputData.size()!=1)
-        		throw new ProcessException("a WPS accept only one input," +
+        		throw new SMLProcessException("a WPS accept only one input," +
         				" that can be any SWE Common Data Type, but only one input");
 
             wpsInputData = inputData.getComponent("wpsInputData");
@@ -105,12 +105,12 @@ public class WPS_Process extends AbstractProcessImpl implements DataHandler
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
             
     
-    public void setRequest() throws ProcessException
+    public void setRequest() throws SMLProcessException
     {
         // Read I/O mappings
         try
@@ -142,14 +142,14 @@ public class WPS_Process extends AbstractProcessImpl implements DataHandler
     
     catch (Exception e)
     {
-        throw new ProcessException(ioError, e);
+        throw new SMLProcessException(ioError, e);
     }
 }            
 
     
     
     @Override
-    public void reset() throws ProcessException
+    public void reset() throws SMLProcessException
     {
         endRequest();        
         outputReady = false;
@@ -161,14 +161,14 @@ public class WPS_Process extends AbstractProcessImpl implements DataHandler
     }
     
     
-    protected void checkData() throws ProcessException
+    protected void checkData() throws SMLProcessException
     {
         //TODO check that output is compatible with SOS data
     }
     
     
     @Override
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
     	// get input variables only if previous request is done
         if (done)
@@ -258,7 +258,7 @@ public class WPS_Process extends AbstractProcessImpl implements DataHandler
                 String server = executeProcessRequest.getPostServer();
                 if (server == null)
                     server = executeProcessRequest.getGetServer();                
-                throw new ProcessException("Error while reading data from SOS server: " + server, lastException);
+                throw new SMLProcessException("Error while reading data from SOS server: " + server, lastException);
             }
         
             // if parsing is done (at end of stream)
@@ -276,7 +276,7 @@ public class WPS_Process extends AbstractProcessImpl implements DataHandler
      * Reads all input parameters and set up query accordingly
 
      */
-    protected DescribeProcessResponse initRequest() throws ProcessException
+    protected DescribeProcessResponse initRequest() throws SMLProcessException
     {
         // make sure previous request is cancelled
         endRequest();
@@ -285,7 +285,7 @@ public class WPS_Process extends AbstractProcessImpl implements DataHandler
 			describeProcessResponse = (DescribeProcessResponse)wpsUtils.getWPSResponse(describeProcessRequest);
 		} catch (SOAPException e) {
 			// TODO Auto-generated catch block
-			throw new ProcessException(e.getMessage(), e);
+			throw new SMLProcessException(e.getMessage(), e);
 		}
         return describeProcessResponse;
     }

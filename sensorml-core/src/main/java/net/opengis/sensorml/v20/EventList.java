@@ -22,6 +22,7 @@ import net.opengis.OgcPropertyList;
  *
  * This is a complex type.
  */
+@SuppressWarnings("javadoc")
 public interface EventList extends AbstractMetadataList
 {
     

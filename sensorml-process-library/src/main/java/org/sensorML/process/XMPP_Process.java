@@ -47,12 +47,12 @@ import org.vast.cdm.common.DataStreamParser;
 import org.vast.data.*;
 import org.vast.ows.sas.SASAlertReader;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 import org.vast.unit.UnitConversion;
 import org.vast.unit.UnitConverter;
 
 
-public class XMPP_Process extends AbstractProcessImpl implements DataHandler
+public class XMPP_Process extends ExecutableProcessImpl implements DataHandler
 {
 	
     private DataRecord xmppParametersData;
@@ -74,7 +74,7 @@ public class XMPP_Process extends AbstractProcessImpl implements DataHandler
      * Initializes the process
      * Gets handles to input/output components
      */
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {    
 
     	try
@@ -108,7 +108,7 @@ public class XMPP_Process extends AbstractProcessImpl implements DataHandler
         }
     	catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
         
     }
@@ -117,7 +117,7 @@ public class XMPP_Process extends AbstractProcessImpl implements DataHandler
     /**
      * Executes process algorithm on inputs and set output data
      */
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
     	
     	final DataHandler handler = this;
@@ -139,7 +139,7 @@ public class XMPP_Process extends AbstractProcessImpl implements DataHandler
             }
     		catch (Exception e)
     	    {
-    	       throw new ProcessException("the xmpp client cannot connect to the xmpp server properly", e);
+    	       throw new SMLProcessException("the xmpp client cannot connect to the xmpp server properly", e);
     	    }
     		
     		PacketFilter packetFilter = new PacketFilter(){
@@ -200,7 +200,7 @@ public class XMPP_Process extends AbstractProcessImpl implements DataHandler
     	
      } 	
 
-    private void parseAlert(InputStream in, DataHandler handler) throws ProcessException 
+    private void parseAlert(InputStream in, DataHandler handler) throws SMLProcessException 
     {
 
     	try 
@@ -214,7 +214,7 @@ public class XMPP_Process extends AbstractProcessImpl implements DataHandler
 		} 
     	catch (CDMException e) 
     	{
-			throw new ProcessException(e.getMessage());
+			throw new SMLProcessException(e.getMessage());
 		}
     }
 

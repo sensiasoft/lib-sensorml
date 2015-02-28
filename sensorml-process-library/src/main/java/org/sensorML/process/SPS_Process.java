@@ -60,7 +60,7 @@ import org.vast.ows.sps.V1.SPSSubmitRequest;
 import org.vast.ows.sps.V1.SPSUtil;
 import org.vast.ows.sps.V1.ServiceException;
 import org.vast.process.DataProcess;
-import org.vast.process.ProcessException;
+import org.vast.process.SMLProcessException;
 
 /**
  * <p>
@@ -91,7 +91,7 @@ import org.vast.process.ProcessException;
  * @author Gregoire Berthiau and Johannes Echterhoff
  * @date Nov 29, 2007
  */
-public class SPS_Process extends AbstractProcessImpl {
+public class SPS_Process extends ExecutableProcessImpl {
 
    private static final String CONFIRMED = "confirmed";
 
@@ -128,7 +128,7 @@ public class SPS_Process extends AbstractProcessImpl {
 
    protected String wnsUrl;
 
-   public void execute() throws ProcessException {
+   public void execute() throws SMLProcessException {
 
       // populate Submit request
       SubmitDocument request = (SubmitDocument) this.submitRequest.getSubmitRequest().copy();
@@ -150,10 +150,10 @@ public class SPS_Process extends AbstractProcessImpl {
          taskID = srd.getSubmitRequestResponse().getTaskID();
 
       } catch (SPSException e) {
-         throw new ProcessException(
+         throw new SMLProcessException(
                "Exception when sending Submit request to SPS " + spsUrl, e);
       } catch (ServiceException e) {
-         throw new ProcessException("ServiceException occurred at SPS "
+         throw new SMLProcessException("ServiceException occurred at SPS "
                + spsUrl, e);
       }
 
@@ -167,7 +167,7 @@ public class SPS_Process extends AbstractProcessImpl {
       } else if (responseStatus.equals(Status.PENDING)
             && !this.treatPendingAsRejected) {
          response = PENDING;
-         throw new ProcessException(
+         throw new SMLProcessException(
                "No support for WNS right now. Pending requests can therefore not be handled.");
          // TODO: you would probably have to create a Thread which pulls the SPS
          // until services are available
@@ -193,7 +193,7 @@ public class SPS_Process extends AbstractProcessImpl {
 
       } catch (SPSException e1) {
 
-         throw new ProcessException(
+         throw new SMLProcessException(
                "Exception when sending Submit request to SPS " + spsUrl, e1);
 
       } catch (ServiceException e1) {
@@ -216,19 +216,19 @@ public class SPS_Process extends AbstractProcessImpl {
 
             } catch (SPSException e2) {
 
-               throw new ProcessException(
+               throw new SMLProcessException(
                      "Exception when sending Submit request to SPS " + spsUrl,
                      e2);
 
             } catch (ServiceException e2) {
 
-               throw new ProcessException("ServiceException occurred at SPS "
+               throw new SMLProcessException("ServiceException occurred at SPS "
                      + spsUrl, e2);
 
             }
 
          } else {
-            throw new ProcessException("ServiceException occurred at SPS "
+            throw new SMLProcessException("ServiceException occurred at SPS "
                   + spsUrl, e1);
          }
       }
@@ -263,7 +263,7 @@ public class SPS_Process extends AbstractProcessImpl {
                         writer.toString());
 
                } catch (IOException e) {
-                  throw new ProcessException(
+                  throw new SMLProcessException(
                         "Could not store request element data from DescribeResultAccess response.",
                         e);
                }
@@ -316,7 +316,7 @@ public class SPS_Process extends AbstractProcessImpl {
       return result;
    }
 
-   public void init() throws ProcessException {
+   public void init() throws SMLProcessException {
 
       // Read I/O mappings
       try {
@@ -372,7 +372,7 @@ public class SPS_Process extends AbstractProcessImpl {
                String cardinality = descriptor.getCardinality().toString().trim();
                if (cardinality.equalsIgnoreCase("unbounded")
                      || !cardinality.equals("1")) {
-                  throw new ProcessException("SPS uses InputDescriptor with "
+                  throw new SMLProcessException("SPS uses InputDescriptor with "
                         + "cardinality != 1 for parameter " + paramId
                         + " which is not supported right now.");
                }
@@ -384,7 +384,7 @@ public class SPS_Process extends AbstractProcessImpl {
             // an input of the process matches it
             if (descriptor.getUse().intValue() == InputDescriptor.Use.INT_REQUIRED) {
                if (!this.inputMap.containsKey(paramId)) {
-                  throw new ProcessException("Mandatory parameter " + paramId
+                  throw new SMLProcessException("Mandatory parameter " + paramId
                         + " is not contained in inputs of this process.");
                }
             }
@@ -394,7 +394,7 @@ public class SPS_Process extends AbstractProcessImpl {
          // also exists an InputDescriptor with same name/parameterID
          for (String inputName : this.inputMap.keySet()) {
             if (!this.descriptorMap.containsKey(inputName)) {
-               throw new ProcessException("The SPS does not support a "
+               throw new SMLProcessException("The SPS does not support a "
                      + "parameter called " + inputName);
             }
          }
@@ -404,12 +404,12 @@ public class SPS_Process extends AbstractProcessImpl {
                descriptorMap, this.inputMap.keySet());
 
       } catch (Exception e) {
-         throw new ProcessException(ioError, e);
+         throw new SMLProcessException(ioError, e);
       }
    }
 
    private void insertValues(InputParameterType param,
-         DataComponent dataComponent) throws ProcessException {
+         DataComponent dataComponent) throws SMLProcessException {
 
       XmlCursor cursor = param.getValueArray(0).newCursor();
 
@@ -427,17 +427,17 @@ public class SPS_Process extends AbstractProcessImpl {
     * 
     * @param valueList
     * @param component
-    * @throws ProcessException
+    * @throws SMLProcessException
     *            if invalid element types are encountered
     */
    protected void parseComponent(LinkedList<String> valueList,
-         DataComponent component) throws ProcessException {
+         DataComponent component) throws SMLProcessException {
 
       if (component == null)
          return;
 
       if (component instanceof DataArray)
-         throw new ProcessException("This process cannot handle DataArrays.");
+         throw new SMLProcessException("This process cannot handle DataArrays.");
 
       int componentCount = component.getComponentCount();
 
@@ -452,7 +452,7 @@ public class SPS_Process extends AbstractProcessImpl {
    }
 
    private void populateValues(XmlCursor cursor, LinkedList<String> values)
-         throws ProcessException {
+         throws SMLProcessException {
 
       while (cursor.hasNextToken()) {
 

@@ -24,7 +24,7 @@ package org.sensorML.process;
 import net.opengis.swe.v20.DataRecord;
 import org.vast.data.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
 /**
@@ -35,7 +35,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * @author Kevin Carter
  * @date March 2, 2006
  */
-public class ECItoECEF_Process extends AbstractProcessImpl
+public class ECItoECEF_Process extends ExecutableProcessImpl
 {
     protected final static double RTD = 180. / Math.PI;
     protected final static double DTR = Math.PI / 180.;
@@ -52,7 +52,7 @@ public class ECItoECEF_Process extends AbstractProcessImpl
      * Initializes the process
      * Gets handles to input/output components
      */
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         try
         {
@@ -71,7 +71,7 @@ public class ECItoECEF_Process extends AbstractProcessImpl
             }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
 
@@ -79,7 +79,7 @@ public class ECItoECEF_Process extends AbstractProcessImpl
     /**
      * Executes process algorithm on inputs and set output data
      */
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
         double Xi = eciX.getData().getDoubleValue();
         double Yi = eciY.getData().getDoubleValue();

@@ -24,7 +24,7 @@ import net.opengis.swe.v20.DataComponent;
 import net.opengis.swe.v20.DataType;
 import org.vast.data.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 import org.vast.util.DateTimeFormat;
 import java.io.PrintWriter;
 import java.io.File;
@@ -40,7 +40,7 @@ import java.io.FileNotFoundException;
  * @author Gregoire Berthiau
  * @date November 10, 2007
  */
-public class Printer_Process extends AbstractProcessImpl
+public class Printer_Process extends ExecutableProcessImpl
 {
 	int InputCount, OutputCount, elementIndex = 0, run = 1, TimeZone = -6;
 	DataComponent dataIn, dataOut;
@@ -50,7 +50,7 @@ public class Printer_Process extends AbstractProcessImpl
     DataComponent [] InputComponents, OutputComponents;
     DataValue Time;
     
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         try
         {
@@ -58,7 +58,7 @@ public class Printer_Process extends AbstractProcessImpl
         	OutputCount = outputData.size();
         	
         	if(InputCount!=OutputCount){
-        		throw new ProcessException(ioCorrespondanceError);
+        		throw new SMLProcessException(ioCorrespondanceError);
         	}
         	
         	InputComponents = new DataComponent[InputCount];
@@ -104,11 +104,11 @@ public class Printer_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
 
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
     	for(int i=0; i<InputCount; i++){
     		outputData.getComponent(i).setData(inputData.getComponent(i).getData());

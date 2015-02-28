@@ -28,7 +28,7 @@ import org.vast.math.*;
 import org.vast.physics.Datum;
 import org.vast.physics.MapProjection;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
 /**
@@ -43,7 +43,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * @author Alexandre Robin
  * @date Apr 19, 2010
  */
-public class ENUPointingMatrix3_Process extends AbstractProcessImpl
+public class ENUPointingMatrix3_Process extends ExecutableProcessImpl
 {
     private DataValue latData, lonData;
     private DataArray outputMatrix;
@@ -56,7 +56,7 @@ public class ENUPointingMatrix3_Process extends AbstractProcessImpl
 
     
     @Override
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         try
         {
@@ -79,7 +79,7 @@ public class ENUPointingMatrix3_Process extends AbstractProcessImpl
     
 
     @Override
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
         double lat = 0.0;
         double lon = 0.0;

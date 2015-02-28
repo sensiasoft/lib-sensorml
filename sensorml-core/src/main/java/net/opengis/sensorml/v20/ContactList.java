@@ -23,6 +23,7 @@ import org.isotc211.v2005.gmd.CIResponsibleParty;
  *
  * This is a complex type.
  */
+@SuppressWarnings("javadoc")
 public interface ContactList extends AbstractMetadataList
 {
     

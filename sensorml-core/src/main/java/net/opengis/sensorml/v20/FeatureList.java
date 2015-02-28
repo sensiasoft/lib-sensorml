@@ -23,6 +23,7 @@ import net.opengis.gml.v32.AbstractFeature;
  *
  * This is a complex type.
  */
+@SuppressWarnings("javadoc")
 public interface FeatureList extends AbstractMetadataList
 {
     

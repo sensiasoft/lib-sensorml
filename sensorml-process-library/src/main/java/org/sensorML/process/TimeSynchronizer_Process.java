@@ -25,7 +25,7 @@ import net.opengis.swe.v20.DataBlock;
 import net.opengis.swe.v20.DataComponent;
 import org.vast.data.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
 /**
@@ -38,7 +38,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * @author Gregoire Berthiau
  * @date May 2, 2007
  */
-public class TimeSynchronizer_Process extends AbstractProcessImpl
+public class TimeSynchronizer_Process extends ExecutableProcessImpl
 {
     protected enum Interpolation
 	{
@@ -72,7 +72,7 @@ public class TimeSynchronizer_Process extends AbstractProcessImpl
 
     
     @Override
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         try
         {
@@ -102,7 +102,7 @@ public class TimeSynchronizer_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
     
@@ -118,7 +118,7 @@ public class TimeSynchronizer_Process extends AbstractProcessImpl
     
 
     @Override
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {    	   	
         if (interpolation == Interpolation.STEP)
     	{

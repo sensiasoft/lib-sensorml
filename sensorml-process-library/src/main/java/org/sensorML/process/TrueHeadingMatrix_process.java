@@ -26,7 +26,7 @@ import net.opengis.swe.v20.DataRecord;
 import org.vast.data.*;
 import org.vast.math.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
 /**
@@ -42,7 +42,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * @date Apr 20, 2007
  */
 
-public class TrueHeadingMatrix_process extends AbstractProcessImpl
+public class TrueHeadingMatrix_process extends ExecutableProcessImpl
 {
     private DataValue longitude, latitude, trueHeading;
     private DataArray outputMatrix; 
@@ -53,7 +53,7 @@ public class TrueHeadingMatrix_process extends AbstractProcessImpl
 
     
     @Override
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         try
         {
@@ -69,13 +69,13 @@ public class TrueHeadingMatrix_process extends AbstractProcessImpl
     
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
     
 
     @Override
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
         double lon = 0.0;
         double lat = 0.0;

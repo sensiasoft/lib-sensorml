@@ -29,7 +29,7 @@ import java.util.List;
 import net.opengis.swe.v20.DataRecord;
 import org.vast.data.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
 /**
@@ -41,7 +41,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * @author Alexandre Robin
  * @date February 27, 2006
  */
-public class TLEParser_Process extends AbstractProcessImpl
+public class TLEParser_Process extends ExecutableProcessImpl
 {
     // input time
     protected DataValue time;
@@ -108,7 +108,7 @@ public class TLEParser_Process extends AbstractProcessImpl
      * Gets handles to input/output components
      * Preloads TLE Data File
      */
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         try
         {
@@ -133,7 +133,7 @@ public class TLEParser_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
         
         reset();
@@ -158,7 +158,7 @@ public class TLEParser_Process extends AbstractProcessImpl
     /**
      * Executes process algorithm on inputs and set output data
      */
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
         double t = time.getData().getDoubleValue();
         
@@ -192,7 +192,7 @@ public class TLEParser_Process extends AbstractProcessImpl
         catch (IOException e)
         {
             reset();
-            throw new ProcessException("Cannot read from TLE file", e);            
+            throw new SMLProcessException("Cannot read from TLE file", e);            
         }
     }
     

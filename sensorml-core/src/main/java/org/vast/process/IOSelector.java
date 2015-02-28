@@ -43,7 +43,7 @@ public class IOSelector
 	}
 	
 		
-	public IOSelector(DataComponent parentComponent, String componentPath) throws ProcessException
+	public IOSelector(DataComponent parentComponent, String componentPath) throws SMLProcessException
 	{
 		this.componentPath = componentPath.split("/");
 		this.component = findComponent(parentComponent, this.componentPath);		
@@ -68,7 +68,7 @@ public class IOSelector
     }
 	
 	
-	public DataComponent findComponent(DataComponent parent, String [] dataPath) throws ProcessException
+	public DataComponent findComponent(DataComponent parent, String [] dataPath) throws SMLProcessException
     {
 		DataComponent data = parent;
 		
@@ -80,7 +80,7 @@ public class IOSelector
             data = data.getComponent(dataPath[i]);
             
             if (data == null)
-            	throw new ProcessException("Unknown component " + dataPath[i]);
+            	throw new SMLProcessException("Unknown component " + dataPath[i]);
         }
     	
     	return data;

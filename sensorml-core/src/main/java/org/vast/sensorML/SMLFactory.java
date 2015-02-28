@@ -14,8 +14,6 @@ public class SMLFactory implements Factory
     
     public SimpleProcess newSimpleProcess()
     {
-        // TODO implement logic to instantiate the right process implementation!
-        // how do we do this since parser doesn't know the method URI at this point?
         return new SimpleProcessImpl();
     }
     
@@ -101,18 +99,6 @@ public class SMLFactory implements Factory
     public AggregateProcess newAggregateProcess()
     {
         return new org.vast.sensorML.AggregateProcessImpl();
-    }
-    
-    
-    public ConnectionList newConnectionList()
-    {
-        return new ConnectionListImpl();
-    }
-    
-    
-    public ComponentList newComponentList()
-    {
-        return new ComponentListImpl();
     }
     
     

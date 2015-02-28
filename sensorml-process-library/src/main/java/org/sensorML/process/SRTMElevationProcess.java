@@ -5,11 +5,11 @@ package org.sensorML.process;
 import java.io.IOException;
 import net.opengis.swe.v20.DataRecord;
 import org.vast.data.DataValue;
-import org.vast.process.ProcessException;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.process.SMLProcessException;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
-public class SRTMElevationProcess extends AbstractProcessImpl {
+public class SRTMElevationProcess extends ExecutableProcessImpl {
 
 
 	// declare input components
@@ -34,7 +34,7 @@ public class SRTMElevationProcess extends AbstractProcessImpl {
 	 * Initializes the process
 	 * Get handles to input/output components
 	 */
-	public void init() throws ProcessException {
+	public void init() throws SMLProcessException {
 
 		try {
 
@@ -53,7 +53,7 @@ public class SRTMElevationProcess extends AbstractProcessImpl {
 
 		}
 		catch (ClassCastException e) {
-			throw new ProcessException("Invalid I/O data", e);
+			throw new SMLProcessException("Invalid I/O data", e);
 		}
 
 		// initialize any class variables needed
@@ -64,7 +64,7 @@ public class SRTMElevationProcess extends AbstractProcessImpl {
 	 * Executes the process
 	 * Get current values for all components and then executes
 	 */
-	public void execute() throws ProcessException {
+	public void execute() throws SMLProcessException {
 
 		// get values for input components
 		double lon_in = CoverageIn_lon.getData().getDoubleValue();
@@ -90,7 +90,7 @@ public class SRTMElevationProcess extends AbstractProcessImpl {
 			elevOut = util.getInterpolatedElevation(lat_in, lon_in);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			throw new ProcessException(e.getMessage(), e);
+			throw new SMLProcessException(e.getMessage(), e);
 		}
 
 		// set values for output components

@@ -19,13 +19,14 @@
 
 package org.sensorML.process;
 
+import net.opengis.swe.v20.DataArray;
 import net.opengis.swe.v20.DataBlock;
-import org.vast.cdm.common.DataComponent;
+import net.opengis.swe.v20.DataComponent;
 import org.vast.data.*;
 import org.vast.process.*;
 
 
-public class ArrayBuilder_Process extends AbstractProcessImpl
+public class ArrayBuilder_Process extends ExecutableProcessImpl
 {
     private DataComponent inputComponent;
     private DataArray outputArray;
@@ -43,7 +44,7 @@ public class ArrayBuilder_Process extends AbstractProcessImpl
      * Initializes the process
      * Gets handles to input/output components
      */
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {       
         try
         {
@@ -62,7 +63,7 @@ public class ArrayBuilder_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
 
@@ -70,7 +71,7 @@ public class ArrayBuilder_Process extends AbstractProcessImpl
     /**
      * Executes process algorithm on inputs and set output data
      */
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
         // check if size input has changed
         // if so we have to start a new array

@@ -14,33 +14,36 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package net.opengis.sensorml.v20;
 
-import java.util.List;
-import net.opengis.swe.v20.AbstractSWE;
+import net.opengis.OgcPropertyList;
 
 
 /**
- * POJO class for XML type ConnectionListType(@http://www.opengis.net/sensorml/2.0).
+ * <p>
+ * Specialized property list with an ID as used in SensorML.
+ * </p>
  *
- * This is a complex type.
+ * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @param <ValueType> 
+ * @since Nov 9, 2014
  */
-public interface ConnectionList extends AbstractSWE
+public class SMLPropertyList<ValueType> extends OgcPropertyList<ValueType>
 {
+    protected String id;
     
     
-    /**
-     * Gets the list of connection properties
-     */
-    public List<Link> getConnectionList();
-    
-    
-    /**
-     * Returns number of connection properties
-     */
-    public int getNumConnections();
-    
-    
-    /**
-     * Adds a new connection property
-     */
-    public void addConnection(Link connection);
+    public SMLPropertyList()
+    {
+    }
+
+
+    public String getId()
+    {
+        return id;
+    }
+
+
+    public void setId(String id)
+    {
+        this.id = id;
+    }
 }

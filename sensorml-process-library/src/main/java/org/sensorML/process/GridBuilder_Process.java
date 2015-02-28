@@ -22,10 +22,10 @@ package org.sensorML.process;
 import net.opengis.swe.v20.DataComponent;
 import net.opengis.swe.v20.DataRecord;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
-public class GridBuilder_Process extends AbstractProcessImpl
+public class GridBuilder_Process extends ExecutableProcessImpl
 {
     private DataRecord groundPoint;
     private DataComponent outputGrid;
@@ -41,7 +41,7 @@ public class GridBuilder_Process extends AbstractProcessImpl
      * Initializes the process
      * Gets handles to input/output components
      */
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {       
         try
         {
@@ -53,7 +53,7 @@ public class GridBuilder_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
 
@@ -61,7 +61,7 @@ public class GridBuilder_Process extends AbstractProcessImpl
     /**
      * Executes process algorithm on inputs and set output data
      */
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
 
         groundPoint.getData();

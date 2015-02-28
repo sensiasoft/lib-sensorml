@@ -14,7 +14,8 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package net.opengis.sensorml.v20;
 
-import net.opengis.OgcProperty;
+import java.util.List;
+import net.opengis.OgcPropertyList;
 
 
 /**
@@ -22,54 +23,48 @@ import net.opengis.OgcProperty;
  *
  * This is a complex type.
  */
+@SuppressWarnings("javadoc")
 public interface AggregateProcess extends AbstractProcess
 {
     
-    
     /**
-     * Gets the components property
+     * Gets the list of components
      */
-    public ComponentList getComponents();
-    
-    
-    /**
-     * Gets extra info (name, xlink, etc.) carried by the components property
-     */
-    public OgcProperty<ComponentList> getComponentsProperty();
+    public OgcPropertyList<AbstractProcess> getComponentList();
     
     
     /**
-     * Checks if components is set
+     * Returns number of components
      */
-    public boolean isSetComponents();
+    public int getNumComponents();
     
     
     /**
-     * Sets the components property
+     * Gets the component with the given name
      */
-    public void setComponents(ComponentList components);
+    public AbstractProcess getComponent(String name);    
     
     
     /**
-     * Gets the connections property
+     * Adds a new component
      */
-    public ConnectionList getConnections();
+    public void addComponent(String name, AbstractProcess component);
     
     
     /**
-     * Gets extra info (name, xlink, etc.) carried by the connections property
+     * Gets the list of connections
      */
-    public OgcProperty<ConnectionList> getConnectionsProperty();
-    
+    public List<Link> getConnectionList();
+
     
     /**
-     * Checks if connections is set
+     * Returns number of connections
      */
-    public boolean isSetConnections();
-    
+    public int getNumConnections();
+
     
     /**
-     * Sets the connections property
+     * Adds a new connection
      */
-    public void setConnections(ConnectionList connections);
+    public void addConnection(Link connection);
 }

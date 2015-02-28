@@ -27,7 +27,7 @@ import net.opengis.swe.v20.DataComponent;
 import org.vast.data.*;
 import org.vast.math.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 import org.vast.unit.UnitConverter;
 
 
@@ -39,7 +39,7 @@ import org.vast.unit.UnitConverter;
  * @author Alexandre Robin
  * @date Sep 2, 2005
  */
-public class GenericPositionProcess extends AbstractProcessImpl
+public class GenericPositionProcess extends ExecutableProcessImpl
 {
     DataComponent indexData;
     DataComponent outputTime, outputMatrix;
@@ -60,7 +60,7 @@ public class GenericPositionProcess extends AbstractProcessImpl
     }
 
     
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         try
         {
@@ -118,7 +118,7 @@ public class GenericPositionProcess extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
     
@@ -173,7 +173,7 @@ public class GenericPositionProcess extends AbstractProcessImpl
     }
     
 
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
     	DataBlock data;
     	DataBlock index = indexData.getData();

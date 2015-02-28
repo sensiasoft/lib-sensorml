@@ -40,7 +40,7 @@ import org.vast.math.Vector3d;
 import org.vast.ogc.OGCRegistry;
 import org.vast.ogc.om.ObservationStreamReader;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 import org.vast.unit.UnitConverter;
 import org.vast.util.TimeExtent;
 
@@ -54,7 +54,7 @@ import org.vast.util.TimeExtent;
  * @author Alexandre Robin
  * @date Jan 20, 2006
  */
-public class SOS_Process extends AbstractProcessImpl implements DataHandler
+public class SOS_Process extends ExecutableProcessImpl implements DataHandler
 {
     protected Logger log = LoggerFactory.getLogger(SOS_Process.class);
     
@@ -88,7 +88,7 @@ public class SOS_Process extends AbstractProcessImpl implements DataHandler
 
 
     @Override
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         // Read I/O mappings
         try
@@ -134,12 +134,12 @@ public class SOS_Process extends AbstractProcessImpl implements DataHandler
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
             
     
-    public void setRequest() throws ProcessException
+    public void setRequest() throws SMLProcessException
     {
         // Read I/O mappings
         try
@@ -195,14 +195,14 @@ public class SOS_Process extends AbstractProcessImpl implements DataHandler
     
     catch (Exception e)
     {
-        throw new ProcessException(ioError, e);
+        throw new SMLProcessException(ioError, e);
     }
 }            
 
     
     
     @Override
-    public void reset() throws ProcessException
+    public void reset() throws SMLProcessException
     {
         endRequest();        
         outputReady = false;
@@ -214,14 +214,14 @@ public class SOS_Process extends AbstractProcessImpl implements DataHandler
     }
     
     
-    protected void checkData() throws ProcessException
+    protected void checkData() throws SMLProcessException
     {
         //TODO check that output is compatible with SOS data
     }
     
     
     @Override
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
     	// get input variables only if previous request is done
         if (done)
@@ -319,7 +319,7 @@ public class SOS_Process extends AbstractProcessImpl implements DataHandler
                 String server = request.getPostServer();
                 if (server == null)
                     server = request.getGetServer();
-                throw new ProcessException("Error while reading data from SOS server: " + server, lastException);
+                throw new SMLProcessException("Error while reading data from SOS server: " + server, lastException);
             }
         
             // if parsing is done (at end of stream)

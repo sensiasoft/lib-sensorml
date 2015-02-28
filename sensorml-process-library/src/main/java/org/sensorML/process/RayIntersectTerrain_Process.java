@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.vast.physics.Datum;
 import org.vast.physics.MapProjection;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 import org.vast.data.*;
 
 
@@ -41,7 +41,7 @@ import org.vast.data.*;
  * @author Alexandre Robin
  * @date Sep 2, 2007
  */
-public class RayIntersectTerrain_Process extends AbstractProcessImpl
+public class RayIntersectTerrain_Process extends ExecutableProcessImpl
 {
     protected Logger log = LoggerFactory.getLogger(RayIntersectTerrain_Process.class);
     
@@ -67,7 +67,7 @@ public class RayIntersectTerrain_Process extends AbstractProcessImpl
     }
 
     
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
     	try
         {	// get handle to ray origin vector data
@@ -98,12 +98,12 @@ public class RayIntersectTerrain_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
     
     
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
         double maxError = 15; // 10m
         double error = 0.0;

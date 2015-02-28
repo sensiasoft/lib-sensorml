@@ -29,7 +29,7 @@ import net.opengis.swe.v20.DataComponent;
 import org.vast.data.*;
 import org.vast.math.Vector3d;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
 /**
@@ -44,7 +44,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * Modified: Surrounded parameters with DataRecords to allow separation of 
  *   parameter data from the process. Mike Botts
  */
-public class CSM_FrameCameraModel_Process2 extends AbstractProcessImpl {
+public class CSM_FrameCameraModel_Process2 extends ExecutableProcessImpl {
 
 
 
@@ -71,7 +71,7 @@ public class CSM_FrameCameraModel_Process2 extends AbstractProcessImpl {
    * Initializes the process
    * Get handles to input/output components
    */
-   public void init() throws ProcessException {
+   public void init() throws SMLProcessException {
 
       try {
 
@@ -120,7 +120,7 @@ public class CSM_FrameCameraModel_Process2 extends AbstractProcessImpl {
     	  
       }
       catch (ClassCastException e) {
-         throw new ProcessException("Invalid I/O data", e);
+         throw new SMLProcessException("Invalid I/O data", e);
       }
    }
 
@@ -128,7 +128,7 @@ public class CSM_FrameCameraModel_Process2 extends AbstractProcessImpl {
    * Executes the process
    * Get current values for all components and then executes
    */
-   public void execute() throws ProcessException {
+   public void execute() throws SMLProcessException {
 	   
 	  // get the value of the inputs
 	  double r = rData.getData().getDoubleValue();

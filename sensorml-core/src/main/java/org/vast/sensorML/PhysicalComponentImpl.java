@@ -2,7 +2,7 @@ package org.vast.sensorML;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.vast.process.ProcessException;
+import org.vast.process.SMLProcessException;
 import net.opengis.OgcProperty;
 import net.opengis.OgcPropertyImpl;
 import net.opengis.OgcPropertyList;
@@ -294,13 +294,13 @@ public class PhysicalComponentImpl extends AbstractProcessImpl implements Physic
 
 
     @Override
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {        
     }
 
 
     @Override
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {       
     }
 }

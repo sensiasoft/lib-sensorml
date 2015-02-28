@@ -26,7 +26,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import net.opengis.sensorml.v20.AbstractProcess;
+import net.opengis.sensorml.v20.AggregateProcess;
+import net.opengis.sensorml.v20.SimpleProcess;
 import org.vast.ogc.OGCRegistry;
+import org.vast.process.SMLProcessException;
 import org.vast.xml.DOMHelper;
 import org.vast.xml.IXMLReaderDOM;
 import org.vast.xml.IXMLWriterDOM;
@@ -53,7 +56,8 @@ public class SMLUtils
 	public final static String SENSORML;
     public final static String PROCESS = "Process";
     
-    private String version = "2.0";
+    String version = "2.0";
+    ProcessLoader processLoader = new ProcessLoader();
     
     
     static
@@ -201,5 +205,30 @@ public class SMLUtils
     public void setOutputVersion(String version)
     {
         this.version = version;
+    }
+    
+    
+    /**
+     * Makes a process executable by instantiating and wrapping an implementation of IProcessExec.<br/>
+     * The actual implementation is found using the method URI.
+     * @param process
+     * @throws SMLProcessException
+     */
+    public void makeProcessExecutable(AbstractProcessImpl process) throws SMLProcessException
+    {
+        if (process instanceof AggregateProcess)
+        {
+            // make child processes executable recursively
+            for (AbstractProcess childProcess: ((AggregateProcess)process).getComponentList())
+                makeProcessExecutable((AbstractProcessImpl)childProcess);
+            
+            process.setExecutableImpl(new ExecutableChainImpl());
+        }
+        else if (process instanceof SimpleProcess)
+        {
+            String methodUri = ((SimpleProcess) process).getMethodProperty().getHref();
+            ExecutableProcessImpl processExec = (ExecutableProcessImpl)processLoader.loadProcess(methodUri);
+            process.setExecutableImpl(processExec);
+        }
     }
 }

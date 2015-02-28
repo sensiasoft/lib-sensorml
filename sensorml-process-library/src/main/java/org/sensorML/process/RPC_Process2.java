@@ -25,7 +25,7 @@ import net.opengis.swe.v20.DataArray;
 import net.opengis.swe.v20.DataRecord;
 import org.vast.data.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 /**
 * <p>
@@ -42,7 +42,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * Mike Botts, 2007/10/05, updated for revised schema
  * Mike Botts, 2008/01/03, updated for revised schema
  */
-public class RPC_Process2 extends AbstractProcessImpl
+public class RPC_Process2 extends ExecutableProcessImpl
 {
 	DataValue inputX, inputY, inputZ;
 	DataValue outputX, outputY;
@@ -56,7 +56,7 @@ public class RPC_Process2 extends AbstractProcessImpl
 	 * Initializes the process
 	 * Gets handles to input/output components
 	 */
-	public void init() throws ProcessException
+	public void init() throws SMLProcessException
 	{
 		try
         {
@@ -75,14 +75,14 @@ public class RPC_Process2 extends AbstractProcessImpl
        }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
 	}
 	
 	/**
 	 * Executes process algorithm on inputs and set output data
 	 */
-	public void execute() throws ProcessException
+	public void execute() throws SMLProcessException
 	{	
 				
 		double posX = inputX.getData().getDoubleValue();

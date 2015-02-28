@@ -5,7 +5,7 @@ package org.sensorML.process;
 import net.opengis.swe.v20.DataRecord;
 import org.vast.data.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 import org.vast.math.*;
 
 
@@ -18,7 +18,7 @@ import org.vast.math.*;
 
 
 
-public class CSM_FrameCamera_Colinear_Process extends AbstractProcessImpl {
+public class CSM_FrameCamera_Colinear_Process extends ExecutableProcessImpl {
 
 
    // declare input components
@@ -68,7 +68,7 @@ public class CSM_FrameCamera_Colinear_Process extends AbstractProcessImpl {
    * Initializes the process
    * Get handles to input/output components
    */
-   public void init() throws ProcessException {
+   public void init() throws SMLProcessException {
 
       try {
 
@@ -120,7 +120,7 @@ public class CSM_FrameCamera_Colinear_Process extends AbstractProcessImpl {
 
       }
       catch (ClassCastException e) {
-         throw new ProcessException("Invalid I/O data", e);
+         throw new SMLProcessException("Invalid I/O data", e);
       }
 
       // initialize any class variables needed
@@ -131,7 +131,7 @@ public class CSM_FrameCamera_Colinear_Process extends AbstractProcessImpl {
    * Executes the process
    * Get current values for all components and then executes
    */
-   public void execute() throws ProcessException {
+   public void execute() throws SMLProcessException {
 
 
          // get values for input components

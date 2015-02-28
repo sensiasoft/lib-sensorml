@@ -23,6 +23,7 @@ import net.opengis.swe.v20.EncodedValues;
  * POJO class for XML type ArraySettingPropertyType(@http://www.opengis.net/sensorml/2.0).
  *
  */
+@SuppressWarnings("javadoc")
 public interface ArraySetting extends ConfigSetting<DataArray>
 {
     

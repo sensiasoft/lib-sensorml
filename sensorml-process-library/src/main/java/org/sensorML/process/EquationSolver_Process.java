@@ -23,7 +23,7 @@ package org.sensorML.process;
 import net.opengis.swe.v20.DataComponent;
 import org.vast.data.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 import com.bestcode.mathparser.IMathParser;
 import com.bestcode.mathparser.MathParserFactory;
 
@@ -40,7 +40,7 @@ import com.bestcode.mathparser.MathParserFactory;
  * @author Gregoire Berthiau
  * @date Jan 16, 2008
  */
-public class EquationSolver_Process extends AbstractProcessImpl
+public class EquationSolver_Process extends ExecutableProcessImpl
 {
 	int numberOfInputs;
 	double result;
@@ -51,7 +51,7 @@ public class EquationSolver_Process extends AbstractProcessImpl
 	IMathParser parser;
 	
     @Override
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         try
         {
@@ -76,12 +76,12 @@ public class EquationSolver_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
     
     @Override
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
     	// get result from math expression
 		try {
@@ -95,7 +95,7 @@ public class EquationSolver_Process extends AbstractProcessImpl
 		}
 	
 		if(String.valueOf(result).contains("infinity")){
-			throw new ProcessException("The result is infinity, you must have divided by 0.", e);
+			throw new SMLProcessException("The result is infinity, you must have divided by 0.", e);
 		}
 		
 		resultData.getData().setDoubleValue(result);		

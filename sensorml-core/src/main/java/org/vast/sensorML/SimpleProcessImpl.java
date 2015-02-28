@@ -1,6 +1,5 @@
 package org.vast.sensorML;
 
-import org.vast.process.ProcessException;
 import net.opengis.OgcProperty;
 import net.opengis.OgcPropertyImpl;
 import net.opengis.sensorml.v20.ProcessMethod;
@@ -14,7 +13,6 @@ import net.opengis.sensorml.v20.SimpleProcess;
  */
 public class SimpleProcessImpl extends AbstractProcessImpl implements SimpleProcess
 {
-    static final long serialVersionUID = 1L;
     protected OgcProperty<ProcessMethod> method;
     
     
@@ -64,17 +62,5 @@ public class SimpleProcessImpl extends AbstractProcessImpl implements SimpleProc
         if (this.method == null)
             this.method = new OgcPropertyImpl<ProcessMethod>();
         this.method.setValue(method);
-    }
-
-
-    @Override
-    public void init() throws ProcessException
-    {        
-    }
-
-
-    @Override
-    public void execute() throws ProcessException
-    {        
     }
 }

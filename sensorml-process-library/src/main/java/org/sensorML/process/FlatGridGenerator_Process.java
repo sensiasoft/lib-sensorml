@@ -30,7 +30,7 @@ import net.opengis.swe.v20.DataBlock;
 import net.opengis.swe.v20.DataRecord;
 import org.vast.data.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
 /**
@@ -42,7 +42,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * @author Alexandre Robin
  * @date Jan 20, 2006
  */
-public class FlatGridGenerator_Process extends AbstractProcessImpl
+public class FlatGridGenerator_Process extends ExecutableProcessImpl
 {
     protected DataValue bboxLat1, bboxLon1, bboxLat2, bboxLon2;
     protected DataValue outputWidth, outputLength;
@@ -60,7 +60,7 @@ public class FlatGridGenerator_Process extends AbstractProcessImpl
      * Initializes the process
      * Gets handles to input/output components and read fixed parameters values
      */
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         try
         {
@@ -80,7 +80,7 @@ public class FlatGridGenerator_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException("Invalid I/O structure", e);
+            throw new SMLProcessException("Invalid I/O structure", e);
         }
         
         try
@@ -101,7 +101,7 @@ public class FlatGridGenerator_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException("Invalid Parameters", e);
+            throw new SMLProcessException("Invalid Parameters", e);
         }
     }
 
@@ -109,7 +109,7 @@ public class FlatGridGenerator_Process extends AbstractProcessImpl
     /**
      * Executes process algorithm on inputs and set output data
      */
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
         double lon1 = bboxLon1.getData().getDoubleValue() * Math.PI/180;
         double lat1 = bboxLat1.getData().getDoubleValue() * Math.PI/180;

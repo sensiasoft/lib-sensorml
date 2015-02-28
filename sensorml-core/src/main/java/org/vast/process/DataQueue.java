@@ -34,10 +34,10 @@ import net.opengis.swe.v20.DataBlock;
  * </p>
  * 
  * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * TODO add support for unit conversion in queues
  * */
 public class DataQueue extends DataConnection
 {
-	// TODO implement events
 	public int waitCount = 0;
 	public boolean repeat = false;
 	protected LinkedList<DataBlock> queue;
@@ -65,8 +65,8 @@ public class DataQueue extends DataConnection
 
 	/**
 	 * Gets the first DataBlock from the queue
-	 * @param timeout
-	 * @return DataBlock or null if nothing is available
+	 * @param timeout maximum time to wait until data is available, in ms
+	 * @return DataBlock or null if nothing is available after time out
 	 * @throws InterruptedException
 	 */
 	public synchronized DataBlock get(long timeout) throws InterruptedException
@@ -105,7 +105,7 @@ public class DataQueue extends DataConnection
 	/**
 	 * Default version of previous method with timeout set to 0
 	 * This will make us wait until a new value arrives on the queue
-	 * @return
+	 * @return DataBlock or null if nothing is available
 	 * @throws InterruptedException
 	 */
 	public DataBlock get() throws InterruptedException

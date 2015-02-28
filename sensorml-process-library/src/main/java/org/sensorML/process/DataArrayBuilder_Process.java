@@ -23,7 +23,7 @@ package org.sensorML.process;
 import net.opengis.swe.v20.DataComponent;
 import org.vast.data.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
 /**
@@ -35,14 +35,14 @@ import org.vast.sensorML.AbstractProcessImpl;
  * @author Alexandre Robin
  * @date May 2, 2007
  */
-public class DataArrayBuilder_Process extends AbstractProcessImpl
+public class DataArrayBuilder_Process extends ExecutableProcessImpl
 {
 	int ArrayDataIndex, ValueDataIndex, ArrayElementCount, i=0;
 	DataComponent ArrayData, ValueData;    
 	double value;
 	
     @Override
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         try
         {
@@ -55,12 +55,12 @@ public class DataArrayBuilder_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
     
     @Override
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
     	value = ValueData.getData().getDoubleValue();
     	ArrayData.getData().setDoubleValue(i, value);

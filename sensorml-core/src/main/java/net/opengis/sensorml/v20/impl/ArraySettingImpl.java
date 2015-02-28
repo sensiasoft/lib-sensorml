@@ -49,6 +49,8 @@ public class ArraySettingImpl implements ArraySetting
     
     /**
      * Constructor with default text encoding
+     * @param ref 
+     * @param values 
      */
     public ArraySettingImpl(String ref, EncodedValues values)
     {

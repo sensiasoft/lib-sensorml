@@ -22,7 +22,7 @@ package org.sensorML.process;
 
 import org.vast.data.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
 /**
@@ -36,7 +36,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * @author Alexandre Robin
  * @date Jan 20, 2006
  */
-public class ScalarCompare_Process extends AbstractProcessImpl
+public class ScalarCompare_Process extends ExecutableProcessImpl
 {
     private DataValue inputValue,tresholdValue;
     private DataValue outputValueLess, outputValueMore, outputValueEqual;
@@ -53,7 +53,7 @@ public class ScalarCompare_Process extends AbstractProcessImpl
 
 
     @Override
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         try
         {
@@ -71,7 +71,7 @@ public class ScalarCompare_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
     
@@ -95,7 +95,7 @@ public class ScalarCompare_Process extends AbstractProcessImpl
 
 
     @Override
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
         if (less)
         {

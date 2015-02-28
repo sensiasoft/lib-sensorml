@@ -24,7 +24,7 @@ package org.sensorML.process;
 import net.opengis.swe.v20.DataBlock;
 import net.opengis.swe.v20.DataComponent;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 import org.vast.math.*;
 
 
@@ -37,12 +37,12 @@ import org.vast.math.*;
  * @author Gregoire Berthiau
  * @date Jan 16, 2008
  */
-public class MatrixByMatrixMultiplication_Process extends AbstractProcessImpl
+public class MatrixByMatrixMultiplication_Process extends ExecutableProcessImpl
 {
 	DataComponent Mat1, Mat2, resultMatrix, coeffData;
     double coeff;
 	
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
     	try
         {
@@ -54,12 +54,12 @@ public class MatrixByMatrixMultiplication_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
     
 
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
 
         DataBlock MatrixData1 = Mat1.getData();

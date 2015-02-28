@@ -28,6 +28,7 @@ import org.isotc211.v2005.gmd.MDKeywords;
  *
  * This is a complex type.
  */
+@SuppressWarnings("javadoc")
 public interface Event extends AbstractSWEIdentifiable
 {
     

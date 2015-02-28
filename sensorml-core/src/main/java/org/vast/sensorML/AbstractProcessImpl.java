@@ -3,17 +3,11 @@ package org.vast.sensorML;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.vast.cdm.common.CDMException;
 import org.vast.data.AbstractDataComponentImpl;
-import org.vast.data.DataComponentHelper;
 import org.vast.process.DataConnectionList;
 import org.vast.process.DataConnection;
-import org.vast.process.DataQueue;
 import org.vast.process.IProcessExec;
-import org.vast.process.ProcessException;
-import org.vast.util.ExceptionSystem;
+import org.vast.process.SMLProcessException;
 import net.opengis.OgcPropertyList;
 import net.opengis.gml.v32.Reference;
 import net.opengis.sensorml.v20.AbstractModes;
@@ -26,24 +20,23 @@ import net.opengis.sensorml.v20.ObservableProperty;
 import net.opengis.sensorml.v20.impl.DescribedObjectImpl;
 import net.opengis.sensorml.v20.impl.FeatureListImpl;
 import net.opengis.swe.v20.AbstractSWEIdentifiable;
-import net.opengis.swe.v20.DataBlock;
 import net.opengis.swe.v20.DataComponent;
 
 
 /**
- * POJO class for XML type AbstractProcessType(@http://www.opengis.net/sensorml/2.0).
+ * <p>
+ * This class implements both AbstractProcess from SensorML v2.0 bindings
+ * and IProcessExec to allow execution if an executable implementation is
+ * provided.<br/>
+ * In order to provide execution capabilitiy, this class can wrap an
+ * implementation of IProcessExec corresponding to a particular algorithm.
+ * </p>
  *
- * This is a complex type.
+ * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @since Feb 28, 2015
  */
 public abstract class AbstractProcessImpl extends DescribedObjectImpl implements AbstractProcess, IProcessExec, Runnable
 {
-    static final long serialVersionUID = 1L;
-    private final static Logger LOGGER = Logger.getLogger(AbstractProcessImpl.class.getName());
-
-    protected static final String ioError = "Invalid I/O Structure";
-    protected static final String initError = "Error while initializing process ";
-    protected static final String execError = "Error while executing process ";
-
     protected Reference typeOf;
     protected AbstractSettings configuration;
     protected FeatureList featuresOfInterest;
@@ -52,349 +45,114 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     protected IOPropertyList paramData = new IOPropertyList();
     protected List<AbstractModes> modesList = new ArrayList<AbstractModes>();
     protected String definition;
-
-    //////////////////////////////////
-    // variables used for execution //
-    //////////////////////////////////
-    protected transient List<DataConnectionList> inputConnections = null;
-    protected transient List<DataConnectionList> outputConnections = null;
-    protected transient List<DataConnectionList> paramConnections = null;
-    protected transient Thread processThread = null; // internal process thread
-    protected transient boolean started = false;
-    protected transient boolean usingQueueBuffers = false;
-    protected transient boolean needSync = false;
+    
+    protected transient IProcessExec executableProcess;
 
 
     public AbstractProcessImpl()
     {
     }
-
-
-    /* (non-Javadoc)
-     * @see org.vast.process.IProcess#init()
-     */
-    @Override
-    public abstract void init() throws ProcessException;
-
-
-    /* (non-Javadoc)
-     * @see org.vast.process.IProcess#reset()
-     */
-    @Override
-    public void reset() throws ProcessException
+    
+    
+    public void setExecutableImpl(ExecutableProcessImpl processExec) throws SMLProcessException
     {
-        // DO NOTHING BY DEFAULT
+        this.executableProcess = processExec;
+        processExec.assignWrapperProcess(this);
+    }
+    
+    
+    public boolean isExecutable()
+    {
+        return (executableProcess != null);
+    }
+    
+    
+    protected final void checkExecutable() throws SMLProcessException
+    {
+        if (executableProcess == null)
+            throw new SMLProcessException("This process is not executable");
     }
 
 
-    /* (non-Javadoc)
-     * @see org.vast.process.IProcess#execute()
-     */
     @Override
-    public abstract void execute() throws ProcessException;
+    public void init() throws SMLProcessException
+    {
+        checkExecutable();
+        executableProcess.init();
+    }
 
 
-    /* (non-Javadoc)
-     * @see org.vast.process.IProcess#dispose()
-     */
+    @Override
+    public void reset() throws SMLProcessException
+    {
+        checkExecutable();
+        executableProcess.reset();
+    }
+
+
+    @Override
+    public void execute() throws SMLProcessException
+    {
+        checkExecutable();
+        executableProcess.execute();
+    }
+
+
     @Override
     public void dispose()
     {
+        if (executableProcess != null)
+            executableProcess.dispose();
     }
 
 
-    /* (non-Javadoc)
-     * @see org.vast.process.IProcess#canRun()
-     */
     @Override
     public boolean canRun()
     {
-        if (!checkAvailability(inputConnections, true))
+        if (executableProcess != null)
+            return executableProcess.canRun();
+        else
             return false;
-
-        if (!checkAvailability(paramConnections, true))
-            return false;
-
-        if (!checkAvailability(outputConnections, false))
-            return false;
-
-        return true;
     }
 
 
-    /**
-     * Checks if all connections in the list and marked as needed
-     * have the specified availability state.
-     * @return true if all needed connections satisfy the condition, false otherwise
-     */
-    protected boolean checkAvailability(List<DataConnectionList> allConnections, boolean availability)
-    {
-        // loop through all connection lists
-        for (int i = 0; i < allConnections.size(); i++)
-        {
-            DataConnectionList connectionList = allConnections.get(i);
-
-            if (connectionList.isNeeded())
-            {
-                // loop through all connections in each list
-                for (int j = 0; j < connectionList.size(); j++)
-                {
-                    DataConnection connection = connectionList.get(j);
-                    if (connection.isDataAvailable() != availability)
-                        return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-
-    /**
-     * Checks that the availability flags of all connections
-     * in the list is equal to the specified state.
-     * @param connectionList
-     * @param availability
-     * @return true if all connections satisfy the condition, false otherwise.
-     */
-    protected boolean checkAvailability(DataConnectionList connectionList, boolean availability)
-    {
-        // loop through all connections in the list
-        for (int j = 0; j < connectionList.size(); j++)
-        {
-            DataConnection connection = connectionList.get(j);
-            if (connection.isDataAvailable() != availability)
-                return false;
-        }
-
-        return true;
-    }
-
-
-    /**
-     * Sets i/o availability flags in sync mode (not threaded)
-     * This default method just sets all needed flags to the
-     * specified state. It must be overriden by processes needing
-     * a different behavior.
-     * @param allConnections (inputs, outputs or parameters)
-     * @availability availability flag
-     */
-    @Override
-    public void setAvailability(List<DataConnectionList> allConnections, boolean availability)
-    {
-        // loop through all connection lists
-        for (int i = 0; i < allConnections.size(); i++)
-        {
-            DataConnectionList connectionList = allConnections.get(i);
-
-            if (connectionList.isNeeded())
-                setAvailability(connectionList, availability);
-        }
-    }
-
-
-    /**
-     * Sets the availability flags of all connections in the list
-     * to the specified state. (even if not needed!)
-     * @param connectionList
-     * @param availability
-     */
-    protected void setAvailability(DataConnectionList connectionList, boolean availability)
-    {
-        // loop through all connections in the list
-        for (int j = 0; j < connectionList.size(); j++)
-        {
-            DataConnection connection = connectionList.get(j);
-            connection.setDataAvailable(availability);
-        }
-    }
-
-
-    /**
-     * Fetch new data from input queues in async mode (threaded)
-     * Thread will wait until each queue needing data receives next block
-     */
-    protected void fetchData(List<DataConnectionList> allConnections) throws InterruptedException
-    {
-        // go through all connections and get next dataBlock from them
-        for (int i = 0; i < allConnections.size(); i++)
-        {
-            DataConnectionList connectionList = allConnections.get(i);
-
-            if (connectionList.isNeeded())
-            {
-                // loop through all connections
-                for (int j = 0; j < connectionList.size(); j++)
-                {
-                    // get datablock from queue and assign it to destination component
-                    DataQueue dataQueue = (DataQueue) connectionList.get(j);
-                    DataComponent dataComponent = dataQueue.getDestinationComponent();
-                    DataBlock block = dataQueue.get();
-                    dataComponent.setData(block);
-                }
-            }
-        }
-    }
-
-
-    /**
-     * Writes new data to output queues in async mode (threaded)
-     */
-    protected void writeData(List<DataConnectionList> allConnections) throws InterruptedException
-    {
-        for (int i = 0; i < allConnections.size(); i++)
-        {
-            DataConnectionList connectionList = allConnections.get(i);
-
-            if (connectionList.isNeeded())
-            {
-                // loop through all connections
-                for (int j = 0; j < connectionList.size(); j++)
-                {
-                    // get datablock from source component and add to queue
-                    DataQueue dataQueue = (DataQueue) connectionList.get(j);
-                    DataComponent dataComponent = dataQueue.getSourceComponent();
-                    DataBlock block = dataComponent.getData();
-                    dataQueue.add(block);
-                }
-
-                // renew output dataBlock
-                DataComponent comp = inputData.getComponent(i);
-                comp.renewDataBlock();
-            }
-        }
-    }
-
-
-    /**
-     * Transfers input data in sync mode (not threaded)
-     */
-    public void transferData(List<DataConnectionList> allConnections)
-    {
-        // loop through all inputs
-        for (int i = 0; i < allConnections.size(); i++)
-        {
-            DataConnectionList connectionList = allConnections.get(i);
-
-            if (connectionList.isNeeded())
-            {
-                // loop through all connections
-                for (int j = 0; j < connectionList.size(); j++)
-                {
-                    DataConnection connection = connectionList.get(j);
-                    connection.transferDataBlocks();
-                }
-            }
-        }
-    }
-
-
-    /* (non-Javadoc)
-     * @see org.vast.process.IProcess#createNewOutputBlocks()
-     */
     @Override
     public void createNewOutputBlocks()
     {
-        for (int i = 0; i < getNumOutputs(); i++)
-        {
-            DataComponent comp = outputData.getComponent(i);
-            comp.renewDataBlock();
-        }
+        if (executableProcess != null)
+            executableProcess.createNewOutputBlocks();
     }
 
 
-    /* (non-Javadoc)
-     * @see org.vast.process.IProcess#createNewInputBlocks()
-     */
     @Override
     public void createNewInputBlocks()
     {
-        for (int i = 0; i < getNumInputs(); i++)
-        {
-            DataComponent comp = inputData.getComponent(i);
-            comp.renewDataBlock();
-        }
+        if (executableProcess != null)
+            executableProcess.createNewInputBlocks();
     }
 
 
-    /* (non-Javadoc)
-     * @see org.vast.process.IProcess#run()
-     */
     @Override
     public void run()
     {
-        do
-        {
-            try
-            {
-                // fetch inputs, execute process and write outputs
-                this.fetchData(inputConnections);
-                this.fetchData(paramConnections);
-                this.execute();
-                this.writeData(outputConnections);
-            }
-            catch (ProcessException e)
-            {
-                ExceptionSystem.display(e);
-            }
-            catch (InterruptedException e)
-            {
-                started = false;
-            }
-        }
-        while (started);
+        if (executableProcess != null)
+            executableProcess.run();
     }
 
 
-    /* (non-Javadoc)
-     * @see org.vast.process.IProcess#start()
-     */
     @Override
-    public synchronized void start() throws ProcessException
+    public synchronized void start() throws SMLProcessException
     {
-        if (!started)
-        {
-            if (LOGGER.isLoggable(Level.FINE))
-            {
-                String processClass = getClass().getName();
-                processClass = processClass.substring(processClass.lastIndexOf('.') + 1);
-                LOGGER.fine("Process " + id + " (" + processClass + ") Thread started");
-            }
-
-            this.init();
-            started = true;
-            usingQueueBuffers = true;
-            processThread = new Thread(this);
-            processThread.setName(this.id);
-            processThread.start();
-        }
+        checkExecutable();
+        executableProcess.start();
     }
 
 
-    /* (non-Javadoc)
-     * @see org.vast.process.IProcess#stop()
-     */
     @Override
     public synchronized void stop()
     {
-        if (started)
-        {
-            if (LOGGER.isLoggable(Level.FINE))
-            {
-                String processClass = getClass().getName();
-                processClass = processClass.substring(processClass.lastIndexOf('.') + 1);
-                LOGGER.fine("Process " + id + " (" + processClass + ") Thread stopped");
-            }
-
-            // set a stop flag and let the run method return cleanely
-            started = false;
-
-            // make sure we exit the wait loop
-            if (processThread != null)
-                processThread.interrupt();
-
-            processThread = null;
-        }
+        if (executableProcess != null)
+            executableProcess.stop();
     }
 
 
@@ -436,110 +194,130 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
 
 
     @Override
-    public void connectInput(String inputName, String dataPath, DataConnection connection) throws ProcessException
+    public void connectInput(String inputName, String dataPath, DataConnection connection) throws SMLProcessException
     {
-        try
-        {
-            int inputIndex = getSignalIndex(inputData, inputName);
-            DataComponent input = inputData.getComponent(inputIndex);
-            DataComponent dest = DataComponentHelper.findComponentByPath(dataPath, input);
-            connection.setDestinationComponent(dest);
-            connection.setDestinationProcess(this);
-            inputConnections.get(inputIndex).add(connection);
-        }
-        catch (CDMException e)
-        {
-            throw new ProcessException("Unable to connect signal to input '" + inputName + "'", e);
-        }
+        checkExecutable();
+        executableProcess.connectInput(inputName, dataPath, connection);
     }
 
 
     @Override
-    public void connectOutput(String outputName, String dataPath, DataConnection connection) throws ProcessException
+    public void connectOutput(String outputName, String dataPath, DataConnection connection) throws SMLProcessException
     {
-        try
-        {
-            int outputIndex = getSignalIndex(outputData, outputName);
-            DataComponent output = outputData.getComponent(outputIndex);
-            DataComponent src = DataComponentHelper.findComponentByPath(dataPath, output);
-            connection.setSourceComponent(src);
-            connection.setSourceProcess(this);
-            outputConnections.get(outputIndex).add(connection);
-        }
-        catch (CDMException e)
-        {
-            throw new ProcessException("Unable to connect signal to output '" + outputName + "'", e);
-        }
+        checkExecutable();
+        executableProcess.connectOutput(outputName, dataPath, connection);
     }
 
 
     @Override
-    public void connectParameter(String paramName, String dataPath, DataConnection connection) throws ProcessException
+    public void connectParameter(String paramName, String dataPath, DataConnection connection) throws SMLProcessException
     {
-        try
-        {
-            int paramIndex = getSignalIndex(paramData, paramName);
-            DataComponent param = paramData.getComponent(paramIndex);
-            DataComponent dest = DataComponentHelper.findComponentByPath(dataPath, param);
-            connection.setDestinationComponent(dest);
-            connection.setDestinationProcess(this);
-            paramConnections.get(paramIndex).add(connection);
-        }
-        catch (CDMException e)
-        {
-            throw new ProcessException("Unable to connect signal to parameter '" + paramName + "'", e);
-        }
+        checkExecutable();
+        executableProcess.connectParameter(paramName, dataPath, connection);
     }
 
 
     @Override
     public boolean isInputConnected(String inputName)
     {
-        int inputIndex = getSignalIndex(inputData, inputName);
-        if (inputIndex < 0)
+        if (executableProcess != null)
+            return executableProcess.isInputConnected(inputName);
+        else
             return false;
-        return !inputConnections.get(inputIndex).isEmpty();
     }
 
 
     @Override
     public boolean isOutputConnected(String outputName)
     {
-        int outputIndex = getSignalIndex(outputData, outputName);
-        if (outputIndex < 0)
+        if (executableProcess != null)
+            return executableProcess.isOutputConnected(outputName);
+        else
             return false;
-        return !outputConnections.get(outputIndex).isEmpty();
     }
 
 
     @Override
     public boolean isParamConnected(String paramName)
     {
-        int paramIndex = getSignalIndex(paramData, paramName);
-        if (paramIndex < 0)
+        if (executableProcess != null)
+            return executableProcess.isParamConnected(paramName);
+        else
             return false;
-        return !paramConnections.get(paramIndex).isEmpty();
     }
 
 
     @Override
     public List<DataConnectionList> getInputConnections()
     {
-        return inputConnections;
+        if (executableProcess != null)
+            return executableProcess.getInputConnections();
+        else
+            return null;
     }
 
 
     @Override
     public List<DataConnectionList> getParamConnections()
     {
-        return outputConnections;
+        if (executableProcess != null)
+            return executableProcess.getParamConnections();
+        else
+            return null;
     }
 
 
     @Override
     public List<DataConnectionList> getOutputConnections()
     {
-        return paramConnections;
+        if (executableProcess != null)
+            return executableProcess.getOutputConnections();
+        else
+            return null;
+    }
+    
+    
+    @Override
+    public boolean isUsingQueueBuffers()
+    {
+        if (executableProcess != null)
+            return executableProcess.isUsingQueueBuffers();
+        else
+            return false;
+    }
+
+
+    @Override
+    public void setUsingQueueBuffers(boolean usingQueueBuffers)
+    {
+        if (executableProcess != null)
+            executableProcess.setUsingQueueBuffers(usingQueueBuffers);        
+    }
+
+
+    @Override
+    public boolean needSync()
+    {
+        if (executableProcess != null)
+            return executableProcess.needSync();
+        else
+            return false;
+    }
+
+
+    @Override
+    public void setAvailability(List<DataConnectionList> allConnections, boolean availability)
+    {
+        if (executableProcess != null)
+            executableProcess.setAvailability(allConnections, availability);        
+    }
+
+
+    @Override
+    public void transferData(List<DataConnectionList> allConnections)
+    {
+        if (executableProcess != null)
+            executableProcess.transferData(allConnections);        
     }
 
 
@@ -552,35 +330,6 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
         }
 
         return -1;
-    }
-
-
-    @Override
-    public boolean isUsingQueueBuffers()
-    {
-        return usingQueueBuffers;
-    }
-
-
-    @Override
-    public void setUsingQueueBuffers(boolean usingQueueBuffers)
-    {
-        this.usingQueueBuffers = usingQueueBuffers;
-    }
-
-
-    @Override
-    public boolean needSync()
-    {
-        return needSync;
-    }
-
-
-    @Override
-    protected void finalize() throws Throwable
-    {
-        super.finalize();
-        this.dispose();
     }
 
 
@@ -702,6 +451,13 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
 
 
     @Override
+    public DataComponent getInputComponent(String name)
+    {
+        return SMLHelper.getIOComponent(getInput(name));
+    }
+    
+
+    @Override
     public void addInput(String name, DataComponent input)
     {
         inputData.add(name, input);
@@ -741,6 +497,13 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     {
         return outputData.get(name);
     }
+    
+    
+    @Override
+    public DataComponent getOutputComponent(String name)
+    {
+        return SMLHelper.getIOComponent(getOutput(name));
+    }
 
 
     @Override
@@ -775,6 +538,13 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     public AbstractSWEIdentifiable getParameter(String name)
     {
         return paramData.get(name);
+    }
+    
+    
+    @Override
+    public DataComponent getParameterComponent(String name)
+    {
+        return SMLHelper.getIOComponent(getParameter(name));
     }
 
 

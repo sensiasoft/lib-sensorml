@@ -40,7 +40,7 @@ import org.vast.unit.UnitConverter;
  * <p>
  * Implementation of data connection for the processing engine.
  * This class is capable of automatically converting units if source and target
- * are not in the same unit (units have to be physcially compatible)
+ * are not in the same unit (units have to be physically compatible)
  * </p>
  * 
  * @author Alex Robin <alex.robin@sensiasoftware.com>
@@ -87,7 +87,7 @@ public class DataConnection
     }
     
     
-    protected void setupUnitConverters() throws ProcessException
+    protected void setupUnitConverters() throws SMLProcessException
     {
         if (sourceComponent == null || destinationComponent == null)
             return;
@@ -111,7 +111,7 @@ public class DataConnection
     }
     
     
-    protected UnitConverter getUnitConverter(DataComponent src, DataComponent dest) throws ProcessException
+    protected UnitConverter getUnitConverter(DataComponent src, DataComponent dest) throws SMLProcessException
     {
         if (src instanceof HasUom && dest instanceof HasUom)
         {
@@ -160,9 +160,9 @@ public class DataConnection
      * @param src 
      * @param dest 
      * @return Warning message or null if no warning
-     * @throws ProcessException 
+     * @throws SMLProcessException 
      */
-    public static String check(DataComponent src, DataComponent dest) throws ProcessException
+    public static String check(DataComponent src, DataComponent dest) throws SMLProcessException
     {
         if (src == null || dest == null)
             return null;
@@ -175,7 +175,7 @@ public class DataConnection
         while (it1.hasNext())
         {
             if (!it2.hasNext())
-                throw new ProcessException("Structures of source and destination are not compatible");
+                throw new SMLProcessException("Structures of source and destination are not compatible");
             
             DataComponent c1 = it1.next();
             DataComponent c2 = it2.next();
@@ -183,7 +183,7 @@ public class DataConnection
             
             // test that aggregates are the same
             if (!c1.getClass().isInstance(c2) || c1.getComponentCount() != c2.getComponentCount())
-                throw new ProcessException("Components '" + c1.getName() + "' and '" + c2.getName() + "' are not compatible");
+                throw new SMLProcessException("Components '" + c1.getName() + "' and '" + c2.getName() + "' are not compatible");
             
             // check that scalars are compatible
             if (c1 instanceof HasUom && c2 instanceof HasUom)
@@ -194,7 +194,7 @@ public class DataConnection
                 if (uom1 != null && uom2 != null)
                 {
                     if (!uom1.isCompatible(uom2))
-                        throw new ProcessException("Unit of component '" + c1.getName() + "' is not compatible with unit of '" + c2.getName() + "'");
+                        throw new SMLProcessException("Unit of component '" + c1.getName() + "' is not compatible with unit of '" + c2.getName() + "'");
                 }
                 
                 if (((DataValue)c1).getDataType() != ((DataValue)c2).getDataType())
@@ -209,7 +209,7 @@ public class DataConnection
     }
     
     
-    public String check() throws ProcessException
+    public String check() throws SMLProcessException
     {
         return DataConnection.check(this.sourceComponent, this.destinationComponent);
     }
@@ -221,7 +221,7 @@ public class DataConnection
 	}
 
 
-	public void setDestinationComponent(DataComponent destinationComponent) throws ProcessException
+	public void setDestinationComponent(DataComponent destinationComponent) throws SMLProcessException
 	{
 		this.destinationComponent = destinationComponent;
 		setupUnitConverters();
@@ -246,7 +246,7 @@ public class DataConnection
 	}
 
 
-	public void setSourceComponent(DataComponent sourceComponent) throws ProcessException
+	public void setSourceComponent(DataComponent sourceComponent) throws SMLProcessException
 	{
 		this.sourceComponent = sourceComponent;
 		setupUnitConverters();

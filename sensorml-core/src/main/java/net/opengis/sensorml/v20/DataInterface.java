@@ -25,6 +25,7 @@ import net.opengis.swe.v20.DataStream;
  *
  * This is a complex type.
  */
+@SuppressWarnings("javadoc")
 public interface DataInterface extends AbstractSWEIdentifiable
 {
     

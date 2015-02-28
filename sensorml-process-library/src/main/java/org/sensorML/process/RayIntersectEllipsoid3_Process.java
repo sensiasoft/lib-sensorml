@@ -27,8 +27,8 @@ package org.sensorML.process;
 
 import net.opengis.swe.v20.DataComponent;
 import org.vast.physics.Datum;
-import org.vast.process.ProcessException;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.process.SMLProcessException;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 /**
  * <p>
@@ -53,7 +53,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * @author Alexandre Robin
  * @date Apr 8, 2010
  */
-public class RayIntersectEllipsoid3_Process extends AbstractProcessImpl {
+public class RayIntersectEllipsoid3_Process extends ExecutableProcessImpl {
 	private Log log;
 
 	/**
@@ -81,7 +81,7 @@ public class RayIntersectEllipsoid3_Process extends AbstractProcessImpl {
 		log = LogFactory.getLog(getClass());
 	}
 
-	public void init() throws ProcessException {
+	public void init() throws SMLProcessException {
 		if (log.isTraceEnabled()) { log.trace("init()"); }
 
 		// Get inputs.
@@ -124,7 +124,7 @@ public class RayIntersectEllipsoid3_Process extends AbstractProcessImpl {
 		}
 	}
 
-	public void execute() throws ProcessException {
+	public void execute() throws SMLProcessException {
 		// First, extract input values.
 		double rayOriginX = DataUtils.getDoubleValue(xInput);
 		double rayOriginY = DataUtils.getDoubleValue(yInput);

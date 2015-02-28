@@ -24,7 +24,7 @@
  
 ******************************* END LICENSE BLOCK ***************************/
 
-package org.vast.sensorML;
+package org.vast.sensorML.test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -78,7 +78,7 @@ import org.vast.xml.IndentingXMLStreamWriter;
 import org.xml.sax.InputSource;
 
 
-public class TestSmlBindingsV20 extends XMLTestCase
+public class TestSMLBindingsV20 extends XMLTestCase
 {
     
     public void setUp() throws Exception
@@ -184,9 +184,15 @@ public class TestSmlBindingsV20 extends XMLTestCase
     }
     
     
-    public void testReadWriteWeatherStation() throws Exception
+    public void testReadWriteDavisSensor() throws Exception
     {
         readWriteCompareProcessXml("/examples_v20/Davis_7817_complete.xml");
+    } 
+    
+    
+    public void testReadWriteWeatherStation() throws Exception
+    {
+        readWriteCompareProcessXml("/examples_v20/WeatherStation.xml");
     } 
     
     
@@ -317,13 +323,13 @@ public class TestSmlBindingsV20 extends XMLTestCase
         newConstraint.addValue(20.0);
         config.addSetConstraint(new ConstraintSettingImpl("parameters/samplingRate", newConstraint));
         sensor.setConfiguration(config);
-        system.getComponents().addComponent("sensor1", sensor);
+        system.addComponent("sensor1", sensor);
         
         // connections
         Link link = new LinkImpl();
         link.setSource("sensor1/outputs/temp");
         link.setDestination("outputs/weather_data/temp");
-        system.getConnections().addConnection(link);
+        system.addConnection(link);
         
         // write to byte array
         ByteArrayOutputStream os1 = new ByteArrayOutputStream(10000);

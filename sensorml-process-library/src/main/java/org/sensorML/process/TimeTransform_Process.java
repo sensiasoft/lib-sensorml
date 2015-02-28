@@ -22,7 +22,7 @@ package org.sensorML.process;
 
 import net.opengis.swe.v20.DataComponent;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
 /**
@@ -33,7 +33,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * @author Alexandre Robin
  * @date Sep 2, 2005
  */
-public class TimeTransform_Process extends AbstractProcessImpl
+public class TimeTransform_Process extends ExecutableProcessImpl
 {
 	DataComponent refTime, localTime, resultTime;
     
@@ -43,7 +43,7 @@ public class TimeTransform_Process extends AbstractProcessImpl
     }
 
     
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {   	
     	try
         {
@@ -53,12 +53,12 @@ public class TimeTransform_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
     
 
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
         // compute transformed time
         double time = refTime.getData().getDoubleValue() + localTime.getData().getDoubleValue();

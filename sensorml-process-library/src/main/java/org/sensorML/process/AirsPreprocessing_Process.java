@@ -36,7 +36,7 @@ import java.util.*;
 import net.opengis.swe.v20.DataBlock;
 import net.opengis.swe.v20.DataComponent;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 
 
 /**
@@ -47,7 +47,7 @@ import org.vast.sensorML.AbstractProcessImpl;
  * @author Gregoire Berthiau
  * @since May 20, 2008
  */
-public class AirsPreprocessing_Process extends AbstractProcessImpl
+public class AirsPreprocessing_Process extends ExecutableProcessImpl
 {
 	int  scanLineNumber;
 	DataComponent statusData, scanLineData, AirsData;    
@@ -62,7 +62,7 @@ public class AirsPreprocessing_Process extends AbstractProcessImpl
 	//String dirPrefix = "/data/publicweb/Smart/";
 	
     @Override
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
         try
         {
@@ -85,13 +85,13 @@ public class AirsPreprocessing_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
         
     }
     
     @Override
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
     	
     	cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));

@@ -25,7 +25,7 @@ import net.opengis.swe.v20.DataBlock;
 import net.opengis.swe.v20.DataComponent;
 import org.vast.data.*;
 import org.vast.process.*;
-import org.vast.sensorML.AbstractProcessImpl;
+import org.vast.sensorML.ExecutableProcessImpl;
 import org.vast.math.*;
 
 
@@ -37,7 +37,7 @@ import org.vast.math.*;
  * @author Alexandre Robin & Gregoire Berthiau
  * @date Mar 7, 2007
  */
-public class VectorMatrixMultiplication_Process extends AbstractProcessImpl
+public class VectorMatrixMultiplication_Process extends ExecutableProcessImpl
 {
 	DataComponent localMat;
     private DataValue vxData, vyData, vzData;
@@ -50,7 +50,7 @@ public class VectorMatrixMultiplication_Process extends AbstractProcessImpl
     }
 
     
-    public void init() throws ProcessException
+    public void init() throws SMLProcessException
     {
     	try
         {
@@ -67,12 +67,12 @@ public class VectorMatrixMultiplication_Process extends AbstractProcessImpl
         }
         catch (Exception e)
         {
-            throw new ProcessException(ioError, e);
+            throw new SMLProcessException(ioError, e);
         }
     }
     
 
-    public void execute() throws ProcessException
+    public void execute() throws SMLProcessException
     {
         double vx = 0.0;
         double vy = 0.0;
