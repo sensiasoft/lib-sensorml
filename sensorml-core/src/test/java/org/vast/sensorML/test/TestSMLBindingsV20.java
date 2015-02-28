@@ -149,62 +149,62 @@ public class TestSMLBindingsV20 extends XMLTestCase
     
     public void testReadWriteSimpleSensor() throws Exception
     {
-        readWriteCompareProcessXml("/examples_v20/SimpleSensor.xml");
+        readWriteCompareProcessXml("examples_v20/SimpleSensor.xml");
     }
     
     
     public void testReadWriteGammaSensor() throws Exception
     {
         //readWriteCompareProcessXml("examples_v20/gamma2070.xml");
-        readWriteCompareProcessXml("/examples_v20/gamma2070_more.xml");
+        readWriteCompareProcessXml("examples_v20/gamma2070_more.xml");
     }
     
     
     public void testReadWriteCameraSensor() throws Exception
     {
-        readWriteCompareProcessXml("/examples_v20/KCM-HD_Camera_inline.xml");
+        readWriteCompareProcessXml("examples_v20/KCM-HD_Camera_inline.xml");
     }
     
     
     public void testReadWriteConfiguredCameraSensor() throws Exception
     {
-        readWriteCompareProcessXml("/examples_v20/KCM-HD Camera.xml");
+        readWriteCompareProcessXml("examples_v20/KCM-HD Camera.xml");
     }
     
     
     public void testReadWriteSensorWithModes() throws Exception
     {
-        readWriteCompareProcessXml("/examples_v20/SensorWithModes.xml");
+        readWriteCompareProcessXml("examples_v20/SensorWithModes.xml");
     } 
     
     
     public void testReadWriteDerivedInstance() throws Exception
     {
-        readWriteCompareProcessXml("/examples_v20/OwnerInstance.xml");
+        readWriteCompareProcessXml("examples_v20/OwnerInstance.xml");
     }
     
     
     public void testReadWriteDavisSensor() throws Exception
     {
-        readWriteCompareProcessXml("/examples_v20/Davis_7817_complete.xml");
+        readWriteCompareProcessXml("examples_v20/Davis_7817_complete.xml");
     } 
     
     
     public void testReadWriteWeatherStation() throws Exception
     {
-        readWriteCompareProcessXml("/examples_v20/WeatherStation.xml");
+        readWriteCompareProcessXml("examples_v20/WeatherStation.xml");
     } 
     
     
     public void testReadWriteModeInstance() throws Exception
     {
-        readWriteCompareProcessXml("/examples_v20/ModeInstance.xml");
+        readWriteCompareProcessXml("examples_v20/ModeInstance.xml");
     }
     
     
     public void testReadWriteSensorwithDataStreamOutput() throws Exception
     {
-        readWriteCompareProcessXml("/examples_v20/SimpleStreaming RS232.xml");
+        readWriteCompareProcessXml("examples_v20/SimpleStreaming RS232.xml");
     }
     
     

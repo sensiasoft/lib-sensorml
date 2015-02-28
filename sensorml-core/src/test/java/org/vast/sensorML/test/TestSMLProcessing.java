@@ -32,7 +32,7 @@ public class TestSMLProcessing
     @Before
     public void init() throws Exception
     {
-        URL processMapUrl = TestSMLProcessing.class.getResource("/ProcessMap.xml");
+        URL processMapUrl = TestSMLProcessing.class.getResource("ProcessMap.xml");
         ProcessLoader.loadMaps(processMapUrl.toString(), true);
     }
     
@@ -41,7 +41,7 @@ public class TestSMLProcessing
     {
         // parse SensorML file
         AbstractProcessImpl process = (AbstractProcessImpl)smlUtils.readProcess(TestSMLProcessing.class.getResourceAsStream(path));
-        smlUtils.writeProcess(System.out, process, true);
+        //smlUtils.writeProcess(System.out, process, true);
         
         // make process executable        
         smlUtils.makeProcessExecutable(process);
@@ -58,7 +58,7 @@ public class TestSMLProcessing
     @Test
     public void testExecSimpleProcess() throws Exception
     {
-        AbstractProcessImpl process = getExecutableProcess("/examples_v20/WindChill.xml");
+        AbstractProcessImpl process = getExecutableProcess("examples_v20/WindChill.xml");
         
         for (int i=0; i<10; i++)
         {
@@ -72,7 +72,7 @@ public class TestSMLProcessing
             process.execute();
             
             // read output
-            System.out.println("windChill=" + process.getOutputComponent("windChill").getData().getDoubleValue());
+            //System.out.println("windChill=" + process.getOutputComponent("windChill").getData().getDoubleValue());
         }
     }
     
@@ -80,7 +80,7 @@ public class TestSMLProcessing
     @Test
     public void testExecProcessChainNoThreads() throws Exception
     {
-        AbstractProcessImpl process = getExecutableProcess("/examples_v20/testAggregateProcess.xml");
+        AbstractProcessImpl process = getExecutableProcess("examples_v20/testAggregateProcess.xml");
         
         for (int i=0; i<10; i++)
         {
@@ -94,7 +94,7 @@ public class TestSMLProcessing
             
             // read output
             double out = process.getOutputComponent("valueOut").getData().getDoubleValue();
-            System.out.println("valueOut=" + out);        
+            //System.out.println("valueOut=" + out);        
             
             double expected = 2.3*in + 1.76;
             if (expected < 15.0)
