@@ -63,9 +63,9 @@ public class ProcessLoader
      */
     public synchronized IProcessExec loadProcess(String uri) throws SMLProcessException
     {
-        // if process map is not loaded, just return a dummy process.
-        if (processMap == null || uri == null)
-            return null;
+        // process map should be loaded at this point
+        if (processMap == null)
+            throw new SMLProcessException("No process map file loaded");
               
         // map URN to class name (full name including package)
         String className = processMap.get(uri);
@@ -76,7 +76,7 @@ public class ProcessLoader
             // for now return a dummy process
             // TODO should actually resolve the URN and parse the ProcessMethod
             //return new Dummy_Process();
-            throw new SMLProcessException("Invalid DataProcess: " + uri);
+            throw new SMLProcessException("No executable process implementation found for URI " + uri);
         }
         
         // try to create process
@@ -93,7 +93,7 @@ public class ProcessLoader
         }
         catch (ClassNotFoundException e)
         {
-            throw new SMLProcessException("ProcessModel '" + className + "' was not found");
+            throw new SMLProcessException("Class '" + className + "' implementing process '" + uri  + "' was not found");
         }
         catch (NoSuchMethodException e)
         {
