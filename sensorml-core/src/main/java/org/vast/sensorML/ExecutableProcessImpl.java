@@ -1,3 +1,16 @@
+/***************************** BEGIN LICENSE BLOCK ***************************
+
+The contents of this file are subject to the Mozilla Public License, v. 2.0.
+If a copy of the MPL was not distributed with this file, You can obtain one
+at http://mozilla.org/MPL/2.0/.
+
+Software distributed under the License is distributed on an "AS IS" basis,
+WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+for the specific language governing rights and limitations under the License.
+ 
+Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
+ 
+******************************* END LICENSE BLOCK ***************************/
 
 package org.vast.sensorML;
 
@@ -7,12 +20,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vast.cdm.common.CDMException;
 import org.vast.data.AbstractDataComponentImpl;
-import org.vast.data.DataComponentHelper;
 import org.vast.process.DataConnectionList;
 import org.vast.process.DataConnection;
 import org.vast.process.DataQueue;
 import org.vast.process.IProcessExec;
 import org.vast.process.SMLProcessException;
+import org.vast.swe.SWEHelper;
 import org.vast.util.ExceptionSystem;
 import net.opengis.OgcPropertyList;
 import net.opengis.sensorml.v20.AbstractProcess;
@@ -24,8 +37,8 @@ import net.opengis.swe.v20.DataComponent;
 /**
  * <p>
  * Abstract base for all executable process implementations.<br/>
- * This class provides logic to run a process synchronously or in its
- * own thread using {@link #start()} and {@link #stop()}.
+ * This class provides logic to run a process synchronously by simply calling
+ * {@link #execute()} or in its own thread using {@link #start()} and {@link #stop()}.
  * </p>
  *
  * @author Alex Robin <alex.robin@sensiasoftware.com>
@@ -40,6 +53,7 @@ public abstract class ExecutableProcessImpl implements IProcessExec, Runnable
     protected static final String initError = "Error while initializing process ";
     protected static final String execError = "Error while executing process ";
 
+    protected SWEHelper sweHelper = new SWEHelper();
     protected AbstractProcess wrapperProcess;
     protected IOPropertyList inputData = new IOPropertyList();
     protected IOPropertyList outputData = new IOPropertyList();
@@ -59,21 +73,24 @@ public abstract class ExecutableProcessImpl implements IProcessExec, Runnable
         this.wrapperProcess = wrapperProcess;
         
         // prepare inputs
-        this.inputData = wrapperProcess.getInputList();
+        if (this.inputData.size() == 0)
+            this.inputData = wrapperProcess.getInputList();
         int numInputs = wrapperProcess.getNumInputs();
         inputConnections = new ArrayList<DataConnectionList>(numInputs);
         for (int i = 0; i < numInputs; i++)
             inputConnections.add(new DataConnectionList());
         
         // prepare outputs
-        this.outputData = wrapperProcess.getOutputList();
+        if (this.outputData.size() == 0)
+            this.outputData = wrapperProcess.getOutputList();
         int numOutputs = wrapperProcess.getNumOutputs();
         outputConnections = new ArrayList<DataConnectionList>(numOutputs);
         for (int i = 0; i < numOutputs; i++)
             outputConnections.add(new DataConnectionList());
         
         // prepare parameters
-        this.paramData = wrapperProcess.getParameterList();
+        if (this.paramData.size() == 0)
+            this.paramData = wrapperProcess.getParameterList();
         int numParams = wrapperProcess.getNumParameters();
         paramConnections = new ArrayList<DataConnectionList>(numParams);
         for (int i = 0; i < numParams; i++)
@@ -427,7 +444,7 @@ public abstract class ExecutableProcessImpl implements IProcessExec, Runnable
         {
             int inputIndex = getSignalIndex(inputData, inputName);
             DataComponent input = inputData.getComponent(inputIndex);
-            DataComponent dest = DataComponentHelper.findComponentByPath(dataPath, input);
+            DataComponent dest = SWEHelper.findComponentByPath(input, dataPath);
             connection.setDestinationComponent(dest);
             connection.setDestinationProcess(this);
             inputConnections.get(inputIndex).add(connection);
@@ -446,7 +463,7 @@ public abstract class ExecutableProcessImpl implements IProcessExec, Runnable
         {
             int outputIndex = getSignalIndex(outputData, outputName);
             DataComponent output = outputData.getComponent(outputIndex);
-            DataComponent src = DataComponentHelper.findComponentByPath(dataPath, output);
+            DataComponent src = SWEHelper.findComponentByPath(output, dataPath);
             connection.setSourceComponent(src);
             connection.setSourceProcess(this);
             outputConnections.get(outputIndex).add(connection);
@@ -465,7 +482,7 @@ public abstract class ExecutableProcessImpl implements IProcessExec, Runnable
         {
             int paramIndex = getSignalIndex(paramData, paramName);
             DataComponent param = paramData.getComponent(paramIndex);
-            DataComponent dest = DataComponentHelper.findComponentByPath(dataPath, param);
+            DataComponent dest = SWEHelper.findComponentByPath(param, dataPath);
             connection.setDestinationComponent(dest);
             connection.setDestinationProcess(this);
             paramConnections.get(paramIndex).add(connection);
