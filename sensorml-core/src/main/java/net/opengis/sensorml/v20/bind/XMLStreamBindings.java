@@ -26,6 +26,7 @@ import net.opengis.OgcPropertyImpl;
 import net.opengis.gml.v32.AbstractFeature;
 import net.opengis.gml.v32.AbstractTimeGeometricPrimitive;
 import net.opengis.gml.v32.Point;
+import net.opengis.gml.v32.Reference;
 import net.opengis.gml.v32.TimeInstant;
 import net.opengis.gml.v32.TimePeriod;
 import net.opengis.sensorml.v20.AbstractAlgorithm;
@@ -3863,7 +3864,8 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         found = checkElementName(reader, "codeSpace");
         if (found)
         {
-            bean.setCodeSpace(ns2Bindings.readReferenceType(reader));
+            Reference ref = ns2Bindings.readReferenceType(reader);
+            bean.setCodeSpace(ref.getHref());
             reader.nextTag(); // end property tag
             reader.nextTag();
         }
@@ -3915,7 +3917,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         if (bean.isSetCodeSpace())
         {
             writer.writeStartElement(NS_URI, "codeSpace");
-            ns2Bindings.writeReferenceType(writer, bean.getCodeSpace());
+            writer.writeAttribute(XLINK_NS_URI, "href", bean.getCodeSpace());
             writer.writeEndElement();
         }
         
@@ -3988,7 +3990,8 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         found = checkElementName(reader, "codeSpace");
         if (found)
         {
-            bean.setCodeSpace(ns2Bindings.readReferenceType(reader));
+            Reference ref = ns2Bindings.readReferenceType(reader);
+            bean.setCodeSpace(ref.getHref());
             reader.nextTag(); // end property tag
             reader.nextTag();
         }
@@ -4044,7 +4047,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         if (bean.isSetCodeSpace())
         {
             writer.writeStartElement(NS_URI, "codeSpace");
-            ns2Bindings.writeReferenceType(writer, bean.getCodeSpace());
+            writer.writeAttribute(XLINK_NS_URI, "href", bean.getCodeSpace());
             writer.writeEndElement();
         }
         

@@ -15,7 +15,6 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 package net.opengis.sensorml.v20.impl;
 
 import org.vast.data.AbstractSWEImpl;
-import net.opengis.gml.v32.Reference;
 import net.opengis.sensorml.v20.Term;
 
 
@@ -28,7 +27,7 @@ public class TermImpl extends AbstractSWEImpl implements Term
 {
     static final long serialVersionUID = 1L;
     protected String label = "";
-    protected Reference codeSpace;
+    protected String codeSpace;
     protected String value = "";
     protected String definition;
     
@@ -62,7 +61,7 @@ public class TermImpl extends AbstractSWEImpl implements Term
      * Gets the codeSpace property
      */
     @Override
-    public Reference getCodeSpace()
+    public String getCodeSpace()
     {
         return codeSpace;
     }
@@ -82,7 +81,7 @@ public class TermImpl extends AbstractSWEImpl implements Term
      * Sets the codeSpace property
      */
     @Override
-    public void setCodeSpace(Reference codeSpace)
+    public void setCodeSpace(String codeSpace)
     {
         this.codeSpace = codeSpace;
     }

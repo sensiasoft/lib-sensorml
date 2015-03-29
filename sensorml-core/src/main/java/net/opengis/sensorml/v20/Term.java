@@ -14,7 +14,6 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package net.opengis.sensorml.v20;
 
-import net.opengis.gml.v32.Reference;
 import net.opengis.swe.v20.AbstractSWE;
 
 
@@ -41,21 +40,21 @@ public interface Term extends AbstractSWE
     
     
     /**
-     * Gets the codeSpace property
+     * Gets the codeSpace URI
      */
-    public Reference getCodeSpace();
+    public String getCodeSpace();
     
     
     /**
-     * Checks if codeSpace is set
+     * Checks if codeSpace URI is set
      */
     public boolean isSetCodeSpace();
     
     
     /**
-     * Sets the codeSpace property
+     * Sets the codeSpace URI
      */
-    public void setCodeSpace(Reference codeSpace);
+    public void setCodeSpace(String codeSpace);
     
     
     /**

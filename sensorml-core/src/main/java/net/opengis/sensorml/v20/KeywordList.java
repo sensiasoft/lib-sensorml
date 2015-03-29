@@ -29,9 +29,9 @@ public interface KeywordList extends AbstractMetadataList
     
     
     /**
-     * Gets the codeSpace property
+     * Gets the codeSpace URI
      */
-    public Reference getCodeSpace();
+    public String getCodeSpace();
     
     
     /**
@@ -41,9 +41,9 @@ public interface KeywordList extends AbstractMetadataList
     
     
     /**
-     * Sets the codeSpace property
+     * Sets the codeSpace URI
      */
-    public void setCodeSpace(Reference codeSpace);
+    public void setCodeSpace(String codeSpace);
     
     
     /**

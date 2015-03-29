@@ -16,7 +16,6 @@ package net.opengis.sensorml.v20.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.opengis.gml.v32.Reference;
 import net.opengis.sensorml.v20.KeywordList;
 
 
@@ -28,7 +27,7 @@ import net.opengis.sensorml.v20.KeywordList;
 public class KeywordListImpl extends AbstractMetadataListImpl implements KeywordList
 {
     static final long serialVersionUID = 1L;
-    protected Reference codeSpace;
+    protected String codeSpace;
     protected List<String> keywordList = new ArrayList<String>();
     
     
@@ -41,7 +40,7 @@ public class KeywordListImpl extends AbstractMetadataListImpl implements Keyword
      * Gets the codeSpace property
      */
     @Override
-    public Reference getCodeSpace()
+    public String getCodeSpace()
     {
         return codeSpace;
     }
@@ -61,7 +60,7 @@ public class KeywordListImpl extends AbstractMetadataListImpl implements Keyword
      * Sets the codeSpace property
      */
     @Override
-    public void setCodeSpace(Reference codeSpace)
+    public void setCodeSpace(String codeSpace)
     {
         this.codeSpace = codeSpace;
     }
