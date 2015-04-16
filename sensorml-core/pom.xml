@@ -1,12 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <artifactId>sensorml-core</artifactId>
+  <name>SensorML Core Library</name>
+  <description>Core components of SensorML library</description>
   <parent>
     <groupId>org.vast.opengis</groupId>
     <artifactId>sensorml-all</artifactId>
     <version>1.0</version>
     <relativePath>../sensorml-all/pom.xml</relativePath>
   </parent>
-  <artifactId>sensorml-core</artifactId>
   <dependencies>
      <dependency>
         <groupId>xerces</groupId>
@@ -19,7 +21,6 @@
         <version>1.0</version>
      </dependency>
   </dependencies>
-  <description>Core components of SensorML library</description>
   <build>
       <plugins>
          <plugin>
