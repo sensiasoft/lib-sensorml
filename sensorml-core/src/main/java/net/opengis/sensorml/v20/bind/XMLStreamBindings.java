@@ -707,7 +707,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
      */
     public ModeSetting readModeSettingPropertyType(XMLStreamReader reader) throws XMLStreamException
     {
-        ModeSetting bean = factory.newModeSettingProperty();
+        ModeSetting bean = factory.newModeSetting();
         String val;
         
         // ref
@@ -743,7 +743,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
      */
     public ValueSetting readValueSettingPropertyType(XMLStreamReader reader) throws XMLStreamException
     {
-        ValueSetting bean = factory.newValueSettingProperty();
+        ValueSetting bean = factory.newValueSetting();
         String val;
         
         // ref        
@@ -779,7 +779,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
      */
     public ConstraintSetting readConstraintSettingPropertyType(XMLStreamReader reader) throws XMLStreamException
     {
-        ConstraintSetting bean = factory.newConstraintSettingProperty();
+        ConstraintSetting bean = factory.newConstraintSetting();
         String val;
         
         // ref        
@@ -840,7 +840,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
      */
     public ArraySetting readArraySettingPropertyType(XMLStreamReader reader) throws XMLStreamException
     {
-        ArraySetting bean = factory.newArraySettingProperty();
+        ArraySetting bean = factory.newArraySetting();
         String val;
         boolean  found;
         
@@ -5234,7 +5234,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     
     public StatusSetting readStatusSettingPropertyType(XMLStreamReader reader) throws XMLStreamException
     {
-        StatusSetting bean = factory.newStatusSettingProperty();
+        StatusSetting bean = factory.newStatusSetting();
         String val;
         
         // ref        

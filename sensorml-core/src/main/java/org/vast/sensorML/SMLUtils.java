@@ -27,7 +27,9 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import net.opengis.sensorml.v20.AbstractProcess;
 import net.opengis.sensorml.v20.AggregateProcess;
+import net.opengis.sensorml.v20.Settings;
 import net.opengis.sensorml.v20.SimpleProcess;
+import net.opengis.sensorml.v20.ValueSetting;
 import org.vast.ogc.OGCRegistry;
 import org.vast.process.SMLProcessException;
 import org.vast.xml.DOMHelper;
@@ -230,5 +232,29 @@ public class SMLUtils
             ExecutableProcessImpl processExec = (ExecutableProcessImpl)processLoader.loadProcess(methodUri);
             process.setExecutableImpl(processExec);
         }
+    }
+    
+    
+    /**
+     * Generates a configured instance by copying I/Os definition from parent instance 
+     * (if typeOf property is present), and applying configuration settings.
+     * @param process process with typeOf and configuration settings
+     * @param mergeMetadata if true, parent metadata will also be copied to the new instance
+     * @return new process instance with configuration values set
+     */
+    public static AbstractProcess getConfiguredInstance(AbstractProcess process, boolean mergeMetadata)
+    {
+        // retrieve parent instance by resolving typeOf reference
+        String typeOfUrl = process.getTypeOf().getHref();
+        if (typeOfUrl != null)
+        {
+            Settings settings = (Settings)process.getConfiguration();
+            for (ValueSetting setting: settings.getSetValueList())
+            {
+                String refPath = setting.getRef();
+            }
+        }
+                
+        return process;
     }
 }

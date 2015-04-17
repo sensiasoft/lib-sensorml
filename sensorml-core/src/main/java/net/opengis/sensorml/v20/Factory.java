@@ -33,19 +33,19 @@ public interface Factory
     public Settings newSettings();
     
     
-    public ModeSetting newModeSettingProperty();
+    public ModeSetting newModeSetting();
     
     
-    public ValueSetting newValueSettingProperty();
+    public ValueSetting newValueSetting();
     
     
-    public ConstraintSetting newConstraintSettingProperty();
+    public ConstraintSetting newConstraintSetting();
     
     
-    public StatusSetting newStatusSettingProperty();
+    public StatusSetting newStatusSetting();
     
     
-    public ArraySetting newArraySettingProperty();
+    public ArraySetting newArraySetting();
     
     
     public PhysicalSystem newPhysicalSystem();

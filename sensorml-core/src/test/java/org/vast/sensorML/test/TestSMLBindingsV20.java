@@ -35,7 +35,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import net.opengis.NamespaceRegister;
 import net.opengis.gml.v32.Point;
-import net.opengis.gml.v32.impl.PointImpl;
+import net.opengis.gml.v32.impl.GMLFactory;
 import net.opengis.gml.v32.impl.ReferenceImpl;
 import net.opengis.sensorml.v20.AbstractProcess;
 import net.opengis.sensorml.v20.CharacteristicList;
@@ -47,33 +47,17 @@ import net.opengis.sensorml.v20.PhysicalSystem;
 import net.opengis.sensorml.v20.Settings;
 import net.opengis.sensorml.v20.SpatialFrame;
 import net.opengis.sensorml.v20.Status;
-import net.opengis.sensorml.v20.impl.CharacteristicListImpl;
-import net.opengis.sensorml.v20.impl.ConstraintSettingImpl;
-import net.opengis.sensorml.v20.impl.ContactListImpl;
-import net.opengis.sensorml.v20.impl.LinkImpl;
-import net.opengis.sensorml.v20.impl.ModeSettingImpl;
-import net.opengis.sensorml.v20.impl.ObservablePropertyImpl;
-import net.opengis.sensorml.v20.impl.SettingsImpl;
-import net.opengis.sensorml.v20.impl.SpatialFrameImpl;
-import net.opengis.sensorml.v20.impl.StatusSettingImpl;
-import net.opengis.sensorml.v20.impl.ValueSettingImpl;
 import net.opengis.swe.v20.AllowedValues;
 import net.opengis.swe.v20.DataRecord;
 import net.opengis.swe.v20.Quantity;
-import net.opengis.swe.v20.Time;
 import org.custommonkey.xmlunit.Validator;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.isotc211.v2005.gco.impl.CodeListValueImpl;
 import org.isotc211.v2005.gmd.CIResponsibleParty;
-import org.isotc211.v2005.gmd.impl.CIResponsiblePartyImpl;
-import org.vast.data.AllowedValuesImpl;
-import org.vast.data.DataRecordImpl;
-import org.vast.data.QuantityImpl;
-import org.vast.data.TimeImpl;
-import org.vast.sensorML.PhysicalComponentImpl;
-import org.vast.sensorML.PhysicalSystemImpl;
+import org.vast.sensorML.SMLHelper;
 import org.vast.sensorML.SMLStaxBindings;
+import org.vast.swe.SWEHelper;
 import org.vast.xml.IndentingXMLStreamWriter;
 import org.xml.sax.InputSource;
 
@@ -210,27 +194,26 @@ public class TestSMLBindingsV20 extends XMLTestCase
     
     public void testGenerateInstance() throws Exception
     {
-        SMLStaxBindings smlBindings = new SMLStaxBindings();
-                        
+        SMLStaxBindings smlBindings = new SMLStaxBindings();                        
         XMLOutputFactory output = XMLOutputFactory.newInstance();//new com.ctc.wstx.stax.WstxOutputFactory();
         XMLInputFactory input = XMLInputFactory.newInstance();//new com.ctc.wstx.stax.WstxInputFactory();
         System.out.println("Using " + output.getClass().getSimpleName());
         
-        PhysicalSystem system = new PhysicalSystemImpl();
+        SMLHelper smlFac = new SMLHelper();
+        SWEHelper sweFac = new SWEHelper();
+        PhysicalSystem system = smlFac.newPhysicalSystem();
         system.setId("MY_SYSTEM");
         
         // characteristics
-        CharacteristicList mechSpecs = new CharacteristicListImpl();
-        Quantity weightSpec = new QuantityImpl();
-        weightSpec.setDefinition("http://sweet.jpl.nasa.gov/2.3/propMass.owl#Mass");
-        weightSpec.getUom().setCode("kg");
+        CharacteristicList mechSpecs = smlFac.newCharacteristicList();
+        Quantity weightSpec = sweFac.newQuantity("http://sweet.jpl.nasa.gov/2.3/propMass.owl#Mass", "Weight", null, "kg");
         weightSpec.setValue(12.3);
         mechSpecs.addCharacteristic("weight", weightSpec);
         system.addCharacteristics("mechanical", mechSpecs);
         
         // contact
-        ContactList contacts = new ContactListImpl();
-        CIResponsibleParty contact = new CIResponsiblePartyImpl();
+        ContactList contacts = smlFac.newContactList();
+        CIResponsibleParty contact = smlFac.newResponsibleParty();
         contact.setIndividualName("Gérard Blanquet");
         contact.setOrganisationName("Time Soft S.A.");
         contact.getContactInfo().getAddress().addDeliveryPoint("10 rue du Nord");
@@ -241,57 +224,47 @@ public class TestSMLBindingsV20 extends XMLTestCase
         contacts.addContact(contact);
         system.addContacts(contacts);
         
-        // input
-        ObservableProperty obs = new ObservablePropertyImpl();
+        // inputs
+        ObservableProperty obs = smlFac.newObservableProperty();
         obs.setDefinition("http://mmisw.org/ont/cf/parameter/weather");
         system.addInput("weather_phenomena", obs);
         system.getInputList().add("rain", "http://remotedef.xml", null);
         
-        // outputs                
-        DataRecord rec = new DataRecordImpl();
+        // outputs
+        // create output record and set description                
+        DataRecord rec = sweFac.newDataRecord();
         rec.setLabel("Weather Data Record");
-        rec.setDescription("Record of synchronous weather measurements");   
+        rec.setDescription("Record of synchronous weather measurements");
+                
+        // sampling time
+        rec.addField("time", sweFac.newTimeStampIsoUTC());
         
-        Time t = new TimeImpl();
-        t.setDefinition("http://www.opengis.net/def/property/OGC/0/SamplingTime");
-        t.setReferenceFrame("http://www.opengis.net/def/trs/OGC/0/GPS");
-        t.setLabel("Sampling Time");
-        t.getUom().setHref("http://www.opengis.net/def/uom/ISO-8601/0/Gregorian");
-        rec.addField("time", t);
+        // temperature measurement
+        rec.addField("temp", sweFac.newQuantity("http://mmisw.org/ont/cf/parameter/air_temperature", "Air Temperature", null, "Cel"));
         
-        Quantity q1 = new QuantityImpl();
-        q1.setDefinition("http://mmisw.org/ont/cf/parameter/air_temperature");
-        q1.setLabel("Air Temperature");
-        q1.getUom().setCode("Cel");
-        Quantity acc = new QuantityImpl();
-        acc.setDefinition("http://mmisw.org/ont/cf/parameter/accuracy");
-        acc.getUom().setCode("%");
-        q1.addQuality(acc);
-        rec.addField("temp", q1);
+        // pressure
+        rec.addField("press", sweFac.newQuantity("http://mmisw.org/ont/cf/parameter/air_pressure_at_sea_level", "Air Pressure", null, "mbar"));
         
-        Quantity q2 = new QuantityImpl();
-        q2.setDefinition("http://mmisw.org/ont/cf/parameter/air_pressure_at_sea_level");
-        q2.setLabel("Air Pressure");
-        q2.getUom().setCode("mbar");
-        rec.addField("press", q2);
+        // wind speed
+        rec.addField("wind_speed", sweFac.newQuantity("http://mmisw.org/ont/cf/parameter/wind_speed", "Wind Speed", null, "km/h"));
         
-        Quantity q3 = new QuantityImpl();
-        q3.setDefinition("http://mmisw.org/ont/cf/parameter/wind_speed");
-        q3.setLabel("Wind Speed");
-        q3.getUom().setCode("km/h");
-        rec.addField("wind_speed", q3);
+        // wind direction
+        rec.addField("wind_dir", sweFac.newQuantity("http://mmisw.org/ont/cf/parameter/wind_to_direction", "Wind Direction", null, "deg"));
         
-        Quantity q4 = new QuantityImpl();
-        q4.setDefinition("http://mmisw.org/ont/cf/parameter/wind_to_direction");
-        q4.setLabel("Wind Direction");
-        q4.getUom().setCode("deg");
-        rec.addField("wind_dir", q4);
+        // add accuracy info to temp output
+        Quantity acc = sweFac.newQuantity("http://mmisw.org/ont/cf/parameter/accuracy", "Accuracy", null, "%");
+        ((Quantity)rec.getField("temp")).addQuality(acc);
         
-        system.addOutput("weather_data", rec);
+        // add as output
+        system.addOutput("weather_data", rec);                      
         system.getOutputList().add("status_info", "http://remotedef.xml", null);
         
+        // parameters
+        system.addParameter("samplingPeriod", sweFac.newQuantity("http://sensorml.com/ont/swe/property/SamplingPeriod", "Sampling Period", null, "s"));
+       
+        
         // reference frame
-        SpatialFrame systemFrame = new SpatialFrameImpl();
+        SpatialFrame systemFrame = smlFac.newSpatialFrame();
         systemFrame.setId("SYSTEM_FRAME");
         systemFrame.setLabel("System Reference Frame");
         systemFrame.setDescription("Cartesian reference frame attached to system assembly");
@@ -302,31 +275,33 @@ public class TestSMLBindingsV20 extends XMLTestCase
         system.addLocalReferenceFrame(systemFrame);
         
         // position
-        Point pos = new PointImpl();
+        GMLFactory gmlFac = new GMLFactory();
+        Point pos = gmlFac.newPoint();
         pos.setId("P01");
         pos.setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326");
         pos.setPos(new double[] {45.6, 2.3});
         system.addPositionAsPoint(pos);
         
+        
         // sub-component
-        PhysicalComponent sensor = new PhysicalComponentImpl();
+        PhysicalComponent sensor = smlFac.newPhysicalComponent();
         sensor.setId("SENS01");
         sensor.setTypeOf(new ReferenceImpl("http://www.mymanufacturer.net/mysensor001.xml"));
-        Settings config = new SettingsImpl();
-        config.addSetValue(new ValueSettingImpl("parameters/samplingRate", "10.0"));
-        config.addSetStatus(new StatusSettingImpl("parameters/active", Status.ENABLED));
+        Settings config = smlFac.newSettings();
+        config.addSetValue(smlFac.newValueSetting("parameters/samplingRate", "10.0"));
+        config.addSetStatus(smlFac.newStatusSetting("parameters/active", Status.ENABLED));
         //config.addSetArrayValues(new ArraySettingImpl("parameters/calibrationTable", new EncodedValuesImpl("10.0, 20.0")));
-        config.addSetMode(new ModeSettingImpl("modes/choice1", "highAccuracy"));
-        AllowedValues newConstraint = new AllowedValuesImpl();
+        config.addSetMode(smlFac.newModeSetting("modes/choice1", "highAccuracy"));
+        AllowedValues newConstraint = sweFac.newAllowedValues();
         newConstraint.addValue(5.0);
         newConstraint.addValue(10.0);
         newConstraint.addValue(20.0);
-        config.addSetConstraint(new ConstraintSettingImpl("parameters/samplingRate", newConstraint));
+        config.addSetConstraint(smlFac.newConstraintSetting("parameters/samplingRate", newConstraint));
         sensor.setConfiguration(config);
         system.addComponent("sensor1", sensor);
         
         // connections
-        Link link = new LinkImpl();
+        Link link = smlFac.newLink();
         link.setSource("sensor1/outputs/temp");
         link.setDestination("outputs/weather_data/temp");
         system.addConnection(link);

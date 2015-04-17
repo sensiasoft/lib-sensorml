@@ -16,6 +16,7 @@ package org.vast.sensorML;
 
 import net.opengis.sensorml.v20.*;
 import net.opengis.sensorml.v20.impl.*;
+import net.opengis.swe.v20.DataConstraint;
 
 
 public class SMLFactory implements Factory
@@ -56,31 +57,55 @@ public class SMLFactory implements Factory
     }
     
     
-    public ModeSetting newModeSettingProperty()
+    public ModeSetting newModeSetting()
     {
         return new ModeSettingImpl();
     }
     
     
-    public StatusSetting newStatusSettingProperty()
+    public ModeSetting newModeSetting(String ref, String modeName)
+    {
+        return new ModeSettingImpl(ref, modeName);
+    }
+    
+    
+    public StatusSetting newStatusSetting()
     {
         return new StatusSettingImpl();
     }
     
     
-    public ValueSetting newValueSettingProperty()
+    public StatusSetting newStatusSetting(String ref, Status value)
+    {
+        return new StatusSettingImpl(ref, value);
+    }
+    
+    
+    public ValueSetting newValueSetting()
     {
         return new ValueSettingImpl();
     }
     
     
-    public ConstraintSetting newConstraintSettingProperty()
+    public ValueSetting newValueSetting(String ref, String value)
+    {
+        return new ValueSettingImpl(ref, value);
+    }
+    
+    
+    public ConstraintSetting newConstraintSetting()
     {
         return new ConstraintSettingImpl();
     }
     
     
-    public ArraySetting newArraySettingProperty()
+    public ConstraintSetting newConstraintSetting(String ref, DataConstraint value)
+    {
+        return new ConstraintSettingImpl(ref, value);
+    }
+    
+    
+    public ArraySetting newArraySetting()
     {
         return new ArraySettingImpl();
     }

@@ -14,6 +14,8 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package org.vast.sensorML;
 
+import org.isotc211.v2005.gmd.CIResponsibleParty;
+import org.isotc211.v2005.gmd.impl.CIResponsiblePartyImpl;
 import net.opengis.sensorml.v20.DataInterface;
 import net.opengis.swe.v20.AbstractSWEIdentifiable;
 import net.opengis.swe.v20.DataComponent;
@@ -21,8 +23,14 @@ import net.opengis.swe.v20.DataEncoding;
 import net.opengis.swe.v20.DataStream;
 
 
-public class SMLHelper
+public class SMLHelper extends SMLFactory
 {
+    
+    public CIResponsibleParty newResponsibleParty()
+    {
+        return new CIResponsiblePartyImpl();
+    }
+    
     
     /**
      * Helper to get the input/output/parameter component description whether
@@ -58,4 +66,10 @@ public class SMLHelper
         else 
             return null;
     }
+    
+    
+    /*public static DataComponent findComponentByPath(String path, DataComponent parent)
+    {
+        
+    }*/
 }
