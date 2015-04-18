@@ -7,6 +7,10 @@
   <name>SensorML Library</name>
   <url>https://github.com/sensiasoft/lib-sensorml/tree/master/sensorml-all</url>
   <description>Java bindings and associated data processing framework for the SensorML language</description>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
   <licenses>
     <license>
       <name>Mozilla Public License Version 1.1</name>

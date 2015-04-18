@@ -58,8 +58,9 @@ public class SMLUtils
 	public final static String SENSORML;
     public final static String PROCESS = "Process";
     
-    String version = "2.0";
-    ProcessLoader processLoader = new ProcessLoader();
+    private String version = "2.0";
+    private String encoding = "UTF-8";
+    private ProcessLoader processLoader = new ProcessLoader();
     
     
     static
@@ -124,7 +125,7 @@ public class SMLUtils
         try
         {
             SMLStaxBindings staxReader = new SMLStaxBindings();
-            XMLStreamReader reader = XMLImplFinder.getStaxInputFactory().createXMLStreamReader(is);
+            XMLStreamReader reader = XMLImplFinder.getStaxInputFactory().createXMLStreamReader(is, encoding);
             reader.nextTag();
             return staxReader.readAbstractProcess(reader);
         }
@@ -164,7 +165,7 @@ public class SMLUtils
         try
         {
             SMLStaxBindings smlWriter = new SMLStaxBindings();
-            XMLStreamWriter writer = XMLImplFinder.getStaxOutputFactory().createXMLStreamWriter(os);
+            XMLStreamWriter writer = XMLImplFinder.getStaxOutputFactory().createXMLStreamWriter(os, encoding);
             if (indent)
                 writer = new IndentingXMLStreamWriter(writer);
             smlWriter.setNamespacePrefixes(writer);
@@ -207,6 +208,16 @@ public class SMLUtils
     public void setOutputVersion(String version)
     {
         this.version = version;
+    }
+    
+    
+    /**
+     * To set output encoding (defaults to UTF-8)
+     * @param encoding
+     */
+    public void setEncoding(String encoding)
+    {
+        this.encoding = encoding;
     }
     
     

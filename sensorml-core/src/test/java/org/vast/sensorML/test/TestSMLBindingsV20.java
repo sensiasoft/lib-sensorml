@@ -64,6 +64,8 @@ import org.xml.sax.InputSource;
 
 public class TestSMLBindingsV20 extends XMLTestCase
 {
+    private static String encoding = "UTF-8";
+    
     
     public void setUp() throws Exception
     {
@@ -91,7 +93,7 @@ public class TestSMLBindingsV20 extends XMLTestCase
         // read from file
         InputStream is = getClass().getResourceAsStream(path);
         XMLInputFactory input = XMLInputFactory.newInstance();//new com.ctc.wstx.stax.WstxInputFactory();
-        XMLStreamReader reader = input.createXMLStreamReader(is);
+        XMLStreamReader reader = input.createXMLStreamReader(is, encoding);
         reader.nextTag();
         AbstractProcess smlObj = smlHelper.readAbstractProcess(reader);
         is.close();
@@ -108,7 +110,7 @@ public class TestSMLBindingsV20 extends XMLTestCase
         nsContext.registerNamespace("gco", org.isotc211.v2005.gco.bind.XMLStreamBindings.NS_URI);
         nsContext.registerNamespace("gmd", org.isotc211.v2005.gmd.bind.XMLStreamBindings.NS_URI);
         
-        XMLStreamWriter writer = output.createXMLStreamWriter(os);
+        XMLStreamWriter writer = output.createXMLStreamWriter(os, encoding);
         writer.setNamespaceContext(nsContext);
         writer.writeStartDocument();
         smlHelper.declareNamespacesOnRootElement();
@@ -116,7 +118,7 @@ public class TestSMLBindingsV20 extends XMLTestCase
         writer.writeEndDocument();
         writer.close();
         
-        writer = new IndentingXMLStreamWriter(output.createXMLStreamWriter(System.out));
+        writer = new IndentingXMLStreamWriter(output.createXMLStreamWriter(System.out, encoding));
         writer.setNamespaceContext(nsContext);
         writer.writeStartDocument();
         smlHelper.declareNamespacesOnRootElement();
@@ -308,12 +310,13 @@ public class TestSMLBindingsV20 extends XMLTestCase
         
         // write to byte array
         ByteArrayOutputStream os1 = new ByteArrayOutputStream(10000);
-        XMLStreamWriter writer = output.createXMLStreamWriter(os1);
+        XMLStreamWriter writer = output.createXMLStreamWriter(os1, encoding);
         smlBindings.setNamespacePrefixes(writer);
         writer.writeStartDocument();            
         smlBindings.declareNamespacesOnRootElement();
         smlBindings.writePhysicalSystem(writer, system);
         writer.writeEndDocument();
+        writer.close();
         
         // write to sysout
         /*for (byte b: os1.toByteArray())
@@ -323,26 +326,28 @@ public class TestSMLBindingsV20 extends XMLTestCase
         
         // read back
         ByteArrayInputStream is = new ByteArrayInputStream(os1.toByteArray());
-        XMLStreamReader reader = input.createXMLStreamReader(is);
+        XMLStreamReader reader = input.createXMLStreamReader(is, encoding);
         reader.nextTag();
         system = smlBindings.readPhysicalSystem(reader);
         
         // write back to byte array
         ByteArrayOutputStream os2 = new ByteArrayOutputStream(10000);
-        writer = output.createXMLStreamWriter(os2);
+        writer = output.createXMLStreamWriter(os2, encoding);
         smlBindings.setNamespacePrefixes(writer);
         writer.writeStartDocument();            
         smlBindings.declareNamespacesOnRootElement();
         smlBindings.writePhysicalSystem(writer, system);
         writer.writeEndDocument();
+        writer.close();
         
         // write back to sysout
-        writer = new IndentingXMLStreamWriter(output.createXMLStreamWriter(System.out));
+        writer = new IndentingXMLStreamWriter(output.createXMLStreamWriter(System.out, encoding));
         smlBindings.setNamespacePrefixes(writer);
         writer.writeStartDocument();            
         smlBindings.declareNamespacesOnRootElement();
         smlBindings.writePhysicalSystem(writer, system);
         writer.writeEndDocument();
+        writer.close();
         System.out.println();
         
         // compare with original
