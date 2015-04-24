@@ -6,7 +6,4 @@
    <Namespace type="SensorML" version="2.0" uri="http://www.opengis.net/sensorml/2.0"/>
    <Namespace type="IC" uri="urn:us:gov:ic:ism:v2"/>
    <!-- -->
-   <Reader type="SensorML" subType="Process" version="2.0" class="org.vast.sensorML.SMLProcessReaderDomV20"/>
-   <Writer type="SensorML" subType="Process" version="2.0" class="org.vast.sensorML.SMLProcessWriterDomV20"/>
-   <!-- -->
 </Map>

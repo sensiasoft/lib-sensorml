@@ -26,7 +26,7 @@ import org.vast.sensorML.SMLUtils;
 
 public class TestSMLProcessing
 {
-    SMLUtils smlUtils = new SMLUtils();
+    SMLUtils smlUtils = new SMLUtils(SMLUtils.V2_0);
     
     
     @Before

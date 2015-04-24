@@ -20,6 +20,7 @@
 
 package org.vast.sensorML;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import javax.xml.stream.XMLStreamException;
@@ -33,10 +34,7 @@ import net.opengis.sensorml.v20.ValueSetting;
 import org.vast.ogc.OGCRegistry;
 import org.vast.process.SMLProcessException;
 import org.vast.xml.DOMHelper;
-import org.vast.xml.IXMLReaderDOM;
-import org.vast.xml.IXMLWriterDOM;
-import org.vast.xml.IndentingXMLStreamWriter;
-import org.vast.xml.XMLImplFinder;
+import org.vast.xml.XMLBindingsUtils;
 import org.vast.xml.XMLReaderException;
 import org.vast.xml.XMLWriterException;
 import org.w3c.dom.Element;
@@ -52,14 +50,12 @@ import org.w3c.dom.Element;
  * @author Alex Robin <alex.robin@sensiasoftware.com>
  * @since Apr 10, 2007
  * */
-public class SMLUtils
+public class SMLUtils extends XMLBindingsUtils
 {
 	public final static String IC;
 	public final static String SENSORML;
-    public final static String PROCESS = "Process";
+    public final static String V2_0 = "2.0";
     
-    private String version = "2.0";
-    private String encoding = "UTF-8";
     private ProcessLoader processLoader = new ProcessLoader();
     
     
@@ -78,11 +74,9 @@ public class SMLUtils
     }
     
     
-    /**
-     * Creates this helper for the default SensorML version (2.0)
-     */
-    public SMLUtils()
-    {        
+    enum ObjectType
+    {
+        Process { public String toString() { return "SML Process"; } }
     }
     
     
@@ -92,7 +86,8 @@ public class SMLUtils
      */
     public SMLUtils(String version)
     {
-        this.version = version;
+        // TODO select proper bindings for selected version
+        staxBindings = new SMLStaxBindings();
     }
     
     
@@ -105,11 +100,7 @@ public class SMLUtils
      */
     public AbstractProcess readProcess(DOMHelper dom, Element processElt) throws XMLReaderException
     {
-        IXMLReaderDOM<AbstractProcess> reader = (IXMLReaderDOM<AbstractProcess>)OGCRegistry.createReader(
-                                                    SENSORML,
-                                                    PROCESS,
-                                                    getVersion(dom, processElt));
-        return reader.read(dom, processElt);
+        return (AbstractProcess)readFromDom(dom, processElt, ObjectType.Process);
     }
     
     
@@ -122,17 +113,7 @@ public class SMLUtils
      */
     public AbstractProcess readProcess(InputStream is) throws XMLReaderException
     {
-        try
-        {
-            SMLStaxBindings staxReader = new SMLStaxBindings();
-            XMLStreamReader reader = XMLImplFinder.getStaxInputFactory().createXMLStreamReader(is, encoding);
-            reader.nextTag();
-            return staxReader.readAbstractProcess(reader);
-        }
-        catch (XMLStreamException e)
-        {
-            throw new XMLReaderException("Error while reading SensorML description", e);
-        }
+        return (AbstractProcess)readFromStream(is, ObjectType.Process);
     }
     
     
@@ -145,11 +126,7 @@ public class SMLUtils
      */
     public Element writeProcess(DOMHelper dom, AbstractProcess process) throws XMLWriterException
     {
-        IXMLWriterDOM<AbstractProcess> writer = (IXMLWriterDOM<AbstractProcess>)OGCRegistry.createWriter(
-                                                    SENSORML,
-                                                    PROCESS,
-                                                    this.version);
-        return writer.write(dom, process);
+        return writeToDom(dom, process, ObjectType.Process);
     }
     
     
@@ -158,25 +135,12 @@ public class SMLUtils
      * @param os Output stream to write to
      * @param process Process object to serialize
      * @param indent Set to true to indent the output
-     * @throws XMLWriterException if an error occurs while generating the DOM tree or writing to the stream
+     * @throws XMLWriterException if an error occurs while generating the XML content
+     * @throws IOException if an error occurs while writing to output the stream
      */
-    public void writeProcess(OutputStream os, AbstractProcess process, boolean indent) throws XMLWriterException
+    public void writeProcess(OutputStream os, AbstractProcess process, boolean indent) throws XMLWriterException, IOException
     {
-        try
-        {
-            SMLStaxBindings smlWriter = new SMLStaxBindings();
-            XMLStreamWriter writer = XMLImplFinder.getStaxOutputFactory().createXMLStreamWriter(os, encoding);
-            if (indent)
-                writer = new IndentingXMLStreamWriter(writer);
-            smlWriter.setNamespacePrefixes(writer);
-            smlWriter.declareNamespacesOnRootElement();
-            smlWriter.writeAbstractProcess(writer, process);
-            writer.close();
-        }
-        catch (XMLStreamException e)
-        {
-            throw new XMLWriterException("Error while writing SensorML document to output stream", e);
-        }
+        writeToStream(os, process, ObjectType.Process, indent);
     }
     
     
@@ -201,23 +165,31 @@ public class SMLUtils
     }
     
     
-    /**
-     * Used to set the SensorML version to use for XML output
-     * @param version
-     */
-    public void setOutputVersion(String version)
+    protected Object readFromXmlStream(XMLStreamReader reader, Enum<?> eltType) throws XMLStreamException
     {
-        this.version = version;
+        reader.nextTag();
+        SMLStaxBindings smlBindings = (SMLStaxBindings)staxBindings;
+        
+        switch ((ObjectType)eltType)
+        {
+            case Process:
+                return smlBindings.readAbstractProcess(reader);
+        }
+        
+        return null;
     }
     
     
-    /**
-     * To set output encoding (defaults to UTF-8)
-     * @param encoding
-     */
-    public void setEncoding(String encoding)
+    protected void writeToXmlStream(XMLStreamWriter writer, Object sweObj, Enum<?> eltType) throws XMLStreamException
     {
-        this.encoding = encoding;
+        SMLStaxBindings smlBindings = (SMLStaxBindings)staxBindings;
+        
+        switch ((ObjectType)eltType)
+        {
+            case Process:
+                smlBindings.writeAbstractProcess(writer, (AbstractProcess)sweObj);
+                return;
+        }
     }
     
     

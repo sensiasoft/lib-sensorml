@@ -29,11 +29,6 @@ package org.vast.sensorML.test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-import net.opengis.NamespaceRegister;
 import net.opengis.gml.v32.Point;
 import net.opengis.gml.v32.impl.GMLFactory;
 import net.opengis.gml.v32.impl.ReferenceImpl;
@@ -56,15 +51,13 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.isotc211.v2005.gco.impl.CodeListValueImpl;
 import org.isotc211.v2005.gmd.CIResponsibleParty;
 import org.vast.sensorML.SMLHelper;
-import org.vast.sensorML.SMLStaxBindings;
+import org.vast.sensorML.SMLUtils;
 import org.vast.swe.SWEHelper;
-import org.vast.xml.IndentingXMLStreamWriter;
 import org.xml.sax.InputSource;
 
 
 public class TestSMLBindingsV20 extends XMLTestCase
 {
-    private static String encoding = "UTF-8";
     
     
     public void setUp() throws Exception
@@ -88,43 +81,18 @@ public class TestSMLBindingsV20 extends XMLTestCase
     
     protected void readWriteCompareProcessXml(String path) throws Exception
     {
-        SMLStaxBindings smlHelper = new SMLStaxBindings();
+        SMLUtils smlUtils = new SMLUtils(SMLUtils.V2_0);
                 
         // read from file
         InputStream is = getClass().getResourceAsStream(path);
-        XMLInputFactory input = XMLInputFactory.newInstance();//new com.ctc.wstx.stax.WstxInputFactory();
-        XMLStreamReader reader = input.createXMLStreamReader(is, encoding);
-        reader.nextTag();
-        AbstractProcess smlObj = smlHelper.readAbstractProcess(reader);
+        AbstractProcess smlObj = smlUtils.readProcess(is);
         is.close();
         
         // write back to stdout and buffer
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
         System.out.println();
-        XMLOutputFactory output = XMLOutputFactory.newInstance();//new com.ctc.wstx.stax.WstxOutputFactory();
-        NamespaceRegister nsContext = new NamespaceRegister();
-        nsContext.registerNamespace("xlink", net.opengis.swe.v20.bind.XMLStreamBindings.XLINK_NS_URI);
-        nsContext.registerNamespace("sml", net.opengis.sensorml.v20.bind.XMLStreamBindings.NS_URI);
-        nsContext.registerNamespace("swe", net.opengis.swe.v20.bind.XMLStreamBindings.NS_URI);
-        nsContext.registerNamespace("gml", net.opengis.gml.v32.bind.XMLStreamBindings.NS_URI);
-        nsContext.registerNamespace("gco", org.isotc211.v2005.gco.bind.XMLStreamBindings.NS_URI);
-        nsContext.registerNamespace("gmd", org.isotc211.v2005.gmd.bind.XMLStreamBindings.NS_URI);
-        
-        XMLStreamWriter writer = output.createXMLStreamWriter(os, encoding);
-        writer.setNamespaceContext(nsContext);
-        writer.writeStartDocument();
-        smlHelper.declareNamespacesOnRootElement();
-        smlHelper.writeAbstractProcess(writer, smlObj);
-        writer.writeEndDocument();
-        writer.close();
-        
-        writer = new IndentingXMLStreamWriter(output.createXMLStreamWriter(System.out, encoding));
-        writer.setNamespaceContext(nsContext);
-        writer.writeStartDocument();
-        smlHelper.declareNamespacesOnRootElement();
-        smlHelper.writeAbstractProcess(writer, smlObj);
-        writer.writeEndDocument();        
-        writer.close();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        smlUtils.writeProcess(os, smlObj, false);
+        smlUtils.writeProcess(System.out, smlObj, true);
         
         // compare with original
         InputSource src1 = new InputSource(getClass().getResourceAsStream(path));
@@ -196,13 +164,12 @@ public class TestSMLBindingsV20 extends XMLTestCase
     
     public void testGenerateInstance() throws Exception
     {
-        SMLStaxBindings smlBindings = new SMLStaxBindings();                        
-        XMLOutputFactory output = XMLOutputFactory.newInstance();//new com.ctc.wstx.stax.WstxOutputFactory();
-        XMLInputFactory input = XMLInputFactory.newInstance();//new com.ctc.wstx.stax.WstxInputFactory();
-        System.out.println("Using " + output.getClass().getSimpleName());
+        SMLUtils smlUtils = new SMLUtils(SMLUtils.V2_0);
         
         SMLHelper smlFac = new SMLHelper();
         SWEHelper sweFac = new SWEHelper();
+        GMLFactory gmlFac = new GMLFactory();
+        
         PhysicalSystem system = smlFac.newPhysicalSystem();
         system.setId("MY_SYSTEM");
         
@@ -277,7 +244,6 @@ public class TestSMLBindingsV20 extends XMLTestCase
         system.addLocalReferenceFrame(systemFrame);
         
         // position
-        GMLFactory gmlFac = new GMLFactory();
         Point pos = gmlFac.newPoint();
         pos.setId("P01");
         pos.setSrsName("http://www.opengis.net/def/crs/EPSG/0/4326");
@@ -310,13 +276,7 @@ public class TestSMLBindingsV20 extends XMLTestCase
         
         // write to byte array
         ByteArrayOutputStream os1 = new ByteArrayOutputStream(10000);
-        XMLStreamWriter writer = output.createXMLStreamWriter(os1, encoding);
-        smlBindings.setNamespacePrefixes(writer);
-        writer.writeStartDocument();            
-        smlBindings.declareNamespacesOnRootElement();
-        smlBindings.writePhysicalSystem(writer, system);
-        writer.writeEndDocument();
-        writer.close();
+        smlUtils.writeProcess(os1, system, false);
         
         // write to sysout
         /*for (byte b: os1.toByteArray())
@@ -326,28 +286,14 @@ public class TestSMLBindingsV20 extends XMLTestCase
         
         // read back
         ByteArrayInputStream is = new ByteArrayInputStream(os1.toByteArray());
-        XMLStreamReader reader = input.createXMLStreamReader(is, encoding);
-        reader.nextTag();
-        system = smlBindings.readPhysicalSystem(reader);
+        system = (PhysicalSystem)smlUtils.readProcess(is);
         
         // write back to byte array
         ByteArrayOutputStream os2 = new ByteArrayOutputStream(10000);
-        writer = output.createXMLStreamWriter(os2, encoding);
-        smlBindings.setNamespacePrefixes(writer);
-        writer.writeStartDocument();            
-        smlBindings.declareNamespacesOnRootElement();
-        smlBindings.writePhysicalSystem(writer, system);
-        writer.writeEndDocument();
-        writer.close();
+        smlUtils.writeProcess(os2, system, false);
         
         // write back to sysout
-        writer = new IndentingXMLStreamWriter(output.createXMLStreamWriter(System.out, encoding));
-        smlBindings.setNamespacePrefixes(writer);
-        writer.writeStartDocument();            
-        smlBindings.declareNamespacesOnRootElement();
-        smlBindings.writePhysicalSystem(writer, system);
-        writer.writeEndDocument();
-        writer.close();
+        smlUtils.writeProcess(System.out, system, true);
         System.out.println();
         
         // compare with original
