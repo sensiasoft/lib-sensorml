@@ -32,6 +32,7 @@ public class SimpleProcessImpl extends AbstractProcessImpl implements SimpleProc
     
     public SimpleProcessImpl()
     {
+        this.qName = SimpleProcess.DEFAULT_QNAME;
     }
     
     

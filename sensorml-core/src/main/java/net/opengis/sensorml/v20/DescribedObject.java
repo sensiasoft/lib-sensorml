@@ -31,8 +31,9 @@ import org.isotc211.v2005.gmd.MDLegalConstraints;
 @SuppressWarnings("javadoc")
 public interface DescribedObject extends AbstractFeature
 {
+    public final static String DEFAULT_NS_URI = "http://www.opengis.net/sensorml/2.0";
     
-    
+        
     /**
      * Gets the list of extension properties
      */

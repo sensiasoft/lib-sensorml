@@ -38,6 +38,7 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     
     public AggregateProcessImpl()
     {
+        this.qName = AggregateProcess.DEFAULT_QNAME;
     }
     
  

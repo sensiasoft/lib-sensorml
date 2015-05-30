@@ -37,7 +37,6 @@ import net.opengis.swe.v20.Vector;
  */
 public class PhysicalSystemImpl extends AggregateProcessImpl implements PhysicalSystem
 {
-    static final long serialVersionUID = 1L;
     protected Reference attachedTo;
     protected List<SpatialFrame> localReferenceFrameList = new ArrayList<SpatialFrame>();
     protected List<TemporalFrame> localTimeFrameList = new ArrayList<TemporalFrame>();
@@ -47,6 +46,7 @@ public class PhysicalSystemImpl extends AggregateProcessImpl implements Physical
     
     public PhysicalSystemImpl()
     {
+        this.qName = PhysicalSystem.DEFAULT_QNAME;
     }
     
     

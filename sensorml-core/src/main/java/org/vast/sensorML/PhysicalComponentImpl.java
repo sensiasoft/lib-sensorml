@@ -41,7 +41,6 @@ import net.opengis.swe.v20.Vector;
  */
 public class PhysicalComponentImpl extends AbstractProcessImpl implements PhysicalComponent
 {
-    static final long serialVersionUID = 1L;
     protected Reference attachedTo;
     protected List<SpatialFrame> localReferenceFrameList = new ArrayList<SpatialFrame>();
     protected List<TemporalFrame> localTimeFrameList = new ArrayList<TemporalFrame>();
@@ -52,6 +51,7 @@ public class PhysicalComponentImpl extends AbstractProcessImpl implements Physic
     
     public PhysicalComponentImpl()
     {
+        this.qName = PhysicalComponent.DEFAULT_QNAME;
     }
     
     

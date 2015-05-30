@@ -66,4 +66,5 @@ public class ModeImpl extends DescribedObjectImpl implements Mode
     {
         this.configuration.setValue(configuration);
     }
+
 }

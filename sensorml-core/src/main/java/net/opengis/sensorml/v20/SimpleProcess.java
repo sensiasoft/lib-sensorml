@@ -14,6 +14,7 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package net.opengis.sensorml.v20;
 
+import javax.xml.namespace.QName;
 import net.opengis.OgcProperty;
 
 
@@ -25,6 +26,7 @@ import net.opengis.OgcProperty;
 @SuppressWarnings("javadoc")
 public interface SimpleProcess extends AbstractProcess
 {
+    public final static QName DEFAULT_QNAME = new QName(DEFAULT_NS_URI, SimpleProcess.class.getSimpleName());
     
     
     /**

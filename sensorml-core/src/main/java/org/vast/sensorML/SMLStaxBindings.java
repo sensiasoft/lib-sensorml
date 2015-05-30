@@ -25,11 +25,23 @@
 
 package org.vast.sensorML;
 
+import java.util.Arrays;
+import java.util.Collection;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import net.opengis.gml.v32.AbstractFeature;
 import net.opengis.gml.v32.impl.GMLFactory;
+import net.opengis.sensorml.v20.AggregateProcess;
+import net.opengis.sensorml.v20.PhysicalComponent;
+import net.opengis.sensorml.v20.PhysicalSystem;
+import net.opengis.sensorml.v20.SimpleProcess;
 import net.opengis.sensorml.v20.bind.XMLStreamBindings;
 import org.isotc211.v2005.gco.impl.GCOFactory;
 import org.isotc211.v2005.gmd.impl.GMDFactory;
 import org.vast.data.SWEFactory;
+import org.vast.ogc.gml.IFeatureStaxBindings;
 
 
 /**
@@ -40,25 +52,76 @@ import org.vast.data.SWEFactory;
  * @author Alex Robin <alex.robin@sensiasoftware.com>
  * @since Sep 25, 2014
  */
-public class SMLStaxBindings extends XMLStreamBindings
+public class SMLStaxBindings extends XMLStreamBindings implements IFeatureStaxBindings
 {
-        
+
     public SMLStaxBindings()
     {
-        super(
-            new SMLFactory(),
-            new SWEFactory(),
-            new GMLFactory(),
-            new GMDFactory(),
-            new GCOFactory()
-        );
-        
+        super(new SMLFactory(), new SWEFactory(), new GMLFactory(), new GMDFactory(), new GCOFactory());
+
         nsContext.registerNamespace("xlink", net.opengis.swe.v20.bind.XMLStreamBindings.XLINK_NS_URI);
         nsContext.registerNamespace("sml", net.opengis.sensorml.v20.bind.XMLStreamBindings.NS_URI);
         nsContext.registerNamespace("swe", net.opengis.swe.v20.bind.XMLStreamBindings.NS_URI);
         nsContext.registerNamespace("gml", net.opengis.gml.v32.bind.XMLStreamBindings.NS_URI);
         nsContext.registerNamespace("gco", org.isotc211.v2005.gco.bind.XMLStreamBindings.NS_URI);
         nsContext.registerNamespace("gmd", org.isotc211.v2005.gmd.bind.XMLStreamBindings.NS_URI);
+    }
+
+
+    @Override
+    public Collection<QName> getSupportedFeatureTypes()
+    {
+        return Arrays.asList
+        (
+            SimpleProcess.DEFAULT_QNAME,
+            AggregateProcess.DEFAULT_QNAME,
+            PhysicalComponent.DEFAULT_QNAME,
+            PhysicalSystem.DEFAULT_QNAME
+        );
+    }
+
+
+    @Override
+    public AbstractFeature readFeature(XMLStreamReader reader, QName qName) throws XMLStreamException
+    {
+        String eltName = qName.getLocalPart();
+        
+        if (eltName.equals(SimpleProcess.DEFAULT_QNAME.getLocalPart()))
+            return this.readSimpleProcess(reader);
+        
+        else if (eltName.equals(AggregateProcess.DEFAULT_QNAME.getLocalPart()))
+            return this.readAggregateProcess(reader);
+        
+        else if (eltName.equals(PhysicalComponent.DEFAULT_QNAME.getLocalPart()))
+            return this.readPhysicalComponent(reader);
+        
+        else if (eltName.equals(PhysicalSystem.DEFAULT_QNAME.getLocalPart()))
+            return this.readPhysicalSystem(reader);
+        
+        else
+            throw new IllegalStateException("Unsupported feature type: " + qName);
+    }
+
+
+    @Override
+    public void writeFeature(XMLStreamWriter writer, AbstractFeature bean) throws XMLStreamException
+    {
+        String eltName = bean.getQName().getLocalPart();
+        
+        if (eltName.equals(SimpleProcess.DEFAULT_QNAME.getLocalPart()))
+            this.writeSimpleProcess(writer, (SimpleProcess)bean);
+        
+        else if (eltName.equals(AggregateProcess.DEFAULT_QNAME.getLocalPart()))
+            this.writeAggregateProcess(writer, (AggregateProcess)bean);
+        
+        else if (eltName.equals(PhysicalComponent.DEFAULT_QNAME.getLocalPart()))
+            this.writePhysicalComponent(writer, (PhysicalComponent)bean);
+        
+        else if (eltName.equals(PhysicalSystem.DEFAULT_QNAME.getLocalPart()))
+            this.writePhysicalSystem(writer, (PhysicalSystem)bean);
+        
+        else
+            throw new IllegalStateException("Unsupported feature type: " + bean.getQName());
     }
 
 }

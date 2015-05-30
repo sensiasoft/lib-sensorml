@@ -14,6 +14,8 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package net.opengis.sensorml.v20;
 
+import javax.xml.namespace.QName;
+
 
 /**
  * POJO class for XML type PhysicalComponentType(@http://www.opengis.net/sensorml/2.0).
@@ -22,5 +24,6 @@ package net.opengis.sensorml.v20;
  */
 public interface PhysicalComponent extends AbstractPhysicalProcess, SimpleProcess
 {
-
+    public final static QName DEFAULT_QNAME = new QName(DEFAULT_NS_URI, PhysicalComponent.class.getSimpleName());    
+    
 }

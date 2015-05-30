@@ -15,6 +15,7 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 package net.opengis.sensorml.v20;
 
 import java.util.List;
+import javax.xml.namespace.QName;
 import net.opengis.OgcPropertyList;
 
 
@@ -26,6 +27,8 @@ import net.opengis.OgcPropertyList;
 @SuppressWarnings("javadoc")
 public interface AggregateProcess extends AbstractProcess
 {
+    public final static QName DEFAULT_QNAME = new QName(DEFAULT_NS_URI, AggregateProcess.class.getSimpleName());
+    
     
     /**
      * Gets the list of components
