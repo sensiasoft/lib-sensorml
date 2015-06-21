@@ -67,8 +67,23 @@ public class MapProjection
     }
     
     
+    public final static double [] LLAtoECF(double[] lla, double[] ecef, Datum datum)
+    {
+        return LLAtoECF(lla[0], lla[1], lla[2], ecef, datum);
+    }
+    
+    
     public final static double [] LLAtoECF(double lon, double lat, double altitude, Datum datum)
     {
+        return LLAtoECF(lon, lat, altitude, null, datum);
+    }
+        
+        
+    public final static double [] LLAtoECF(double lon, double lat, double altitude, double[] ecef, Datum datum)
+    {
+        if (ecef == null)
+            ecef = new double[3];
+        
         if (datum == null)
             datum = new Datum();
         
@@ -79,16 +94,31 @@ public class MapProjection
         double cosLat = Math.cos(lat);
         double N = a / Math.sqrt(1.0 - e2 * sinLat * sinLat);
 
-        double x = (N + altitude) * cosLat * Math.cos(lon);
-        double y = (N + altitude) * cosLat * Math.sin(lon);
-        double z = (N * (1.0 - e2) + altitude) * sinLat;
+        ecef[0] = (N + altitude) * cosLat * Math.cos(lon);
+        ecef[1] = (N + altitude) * cosLat * Math.sin(lon);
+        ecef[2] = (N * (1.0 - e2) + altitude) * sinLat;
 
-        return new double [] {x, y, z};
+        return ecef;
     }
 
 
+    public final static double [] ECFtoLLA(double[] ecef, double[] lla, Datum datum)
+    {
+        return ECFtoLLA(ecef[0], ecef[1], ecef[2], lla, datum);
+    }
+    
+    
     public final static double [] ECFtoLLA(double x, double y, double z, Datum datum)
     {
+        return ECFtoLLA(x, y, z, null, datum);
+    }
+        
+        
+    public final static double [] ECFtoLLA(double x, double y, double z, double[] lla, Datum datum)
+    {
+        if (lla == null)
+            lla = new double[3];
+        
         if (datum == null)
             datum = new Datum();
         
@@ -116,7 +146,10 @@ public class MapProjection
         else if (longitude < -Math.PI)
         	longitude += 2*Math.PI;
         
-        return new double [] {longitude, geodeticLat, altitude};
+        lla[0] = longitude;
+        lla[1] = geodeticLat;
+        lla[2] = altitude;        
+        return lla;
     }
     
     
