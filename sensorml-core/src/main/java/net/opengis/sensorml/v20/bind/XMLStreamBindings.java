@@ -84,6 +84,7 @@ import org.isotc211.v2005.gmd.CIOnlineResource;
 import org.isotc211.v2005.gmd.CIResponsibleParty;
 import org.isotc211.v2005.gmd.MDKeywords;
 import org.isotc211.v2005.gmd.MDLegalConstraints;
+import org.vast.ogc.gml.GMLStaxBindings;
 import net.opengis.sensorml.v20.Factory;
 
 
@@ -103,7 +104,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     {
         this.factory = factory;
         ns1Bindings = new net.opengis.swe.v20.bind.XMLStreamBindings(ns1Factory);
-        ns2Bindings = new net.opengis.gml.v32.bind.XMLStreamBindings(ns2Factory);
+        ns2Bindings = new GMLStaxBindings(ns2Factory);
         ns3Bindings = new org.isotc211.v2005.gmd.bind.XMLStreamBindings(ns3Factory, ns4Factory);
     }
     
