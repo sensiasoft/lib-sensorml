@@ -71,7 +71,7 @@
    <!--                  Station Location                 -->
    <!-- ================================================= -->
    <sml:position>
-      <gml:Point gml:id="stationLocation" srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+      <gml:Point gml:id="stationLocation" srsName="http://www.opengis.net/def/crs/EPSG/0/4326" srsDimension="2">
          <gml:pos>47.8 88.56</gml:pos>
       </gml:Point>
    </sml:position>
