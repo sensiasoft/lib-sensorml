@@ -107,6 +107,7 @@ public class SMLStaxBindings extends XMLStreamBindings implements IFeatureStaxBi
     public void writeFeature(XMLStreamWriter writer, AbstractFeature bean) throws XMLStreamException
     {
         String eltName = bean.getQName().getLocalPart();
+        ensurePrefix(writer, bean.getQName());
         
         if (eltName.equals(SimpleProcess.DEFAULT_QNAME.getLocalPart()))
             this.writeSimpleProcess(writer, (SimpleProcess)bean);
