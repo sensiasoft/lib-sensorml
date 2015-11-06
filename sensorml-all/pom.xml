@@ -2,7 +2,7 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.vast.opengis</groupId>
    <artifactId>sensorml-all</artifactId>
-   <version>1.0</version>
+   <version>1.1-SNAPSHOT</version>
    <packaging>pom</packaging>
    <name>SensorML Library</name>
    <url>http://docs.opensensorhub.org/${project.artifactId}</url>

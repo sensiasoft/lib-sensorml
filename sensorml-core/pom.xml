@@ -6,14 +6,14 @@
   <parent>
     <groupId>org.vast.opengis</groupId>
     <artifactId>sensorml-all</artifactId>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
     <relativePath>../sensorml-all/pom.xml</relativePath>
   </parent>
   <dependencies>
      <dependency>
         <groupId>org.vast.opengis</groupId>
         <artifactId>swe-common-om</artifactId>
-        <version>1.0</version>
+        <version>${project.version}</version>
      </dependency>
   </dependencies>
   <build>
