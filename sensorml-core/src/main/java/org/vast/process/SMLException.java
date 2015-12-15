@@ -28,18 +28,18 @@ package org.vast.process;
  *
  * @author Alex Robin <alex.robin@sensiasoftware.com>
  * */
-public class SMLProcessException extends Exception
+public class SMLException extends Exception
 {
     static final long serialVersionUID = 0;
     
     
-    public SMLProcessException(String message)
+    public SMLException(String message)
     {
         super(message);
     }
     
     
-    public SMLProcessException(String message, Throwable cause)
+    public SMLException(String message, Throwable cause)
     {
         super(message, cause);
     }

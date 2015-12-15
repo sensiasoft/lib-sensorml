@@ -87,7 +87,7 @@ public class DataConnection
     }
     
     
-    protected void setupUnitConverters() throws SMLProcessException
+    protected void setupUnitConverters() throws SMLException
     {
         if (sourceComponent == null || destinationComponent == null)
             return;
@@ -111,7 +111,7 @@ public class DataConnection
     }
     
     
-    protected UnitConverter getUnitConverter(DataComponent src, DataComponent dest) throws SMLProcessException
+    protected UnitConverter getUnitConverter(DataComponent src, DataComponent dest) throws SMLException
     {
         if (src instanceof HasUom && dest instanceof HasUom)
         {
@@ -160,9 +160,9 @@ public class DataConnection
      * @param src 
      * @param dest 
      * @return Warning message or null if no warning
-     * @throws SMLProcessException 
+     * @throws SMLException 
      */
-    public static String check(DataComponent src, DataComponent dest) throws SMLProcessException
+    public static String check(DataComponent src, DataComponent dest) throws SMLException
     {
         if (src == null || dest == null)
             return null;
@@ -175,7 +175,7 @@ public class DataConnection
         while (it1.hasNext())
         {
             if (!it2.hasNext())
-                throw new SMLProcessException("Structures of source and destination are not compatible");
+                throw new SMLException("Structures of source and destination are not compatible");
             
             DataComponent c1 = it1.next();
             DataComponent c2 = it2.next();
@@ -183,7 +183,7 @@ public class DataConnection
             
             // test that aggregates are the same
             if (!c1.getClass().isInstance(c2) || c1.getComponentCount() != c2.getComponentCount())
-                throw new SMLProcessException("Components '" + c1.getName() + "' and '" + c2.getName() + "' are not compatible");
+                throw new SMLException("Components '" + c1.getName() + "' and '" + c2.getName() + "' are not compatible");
             
             // check that scalars are compatible
             if (c1 instanceof HasUom && c2 instanceof HasUom)
@@ -194,7 +194,7 @@ public class DataConnection
                 if (uom1 != null && uom2 != null)
                 {
                     if (!uom1.isCompatible(uom2))
-                        throw new SMLProcessException("Unit of component '" + c1.getName() + "' is not compatible with unit of '" + c2.getName() + "'");
+                        throw new SMLException("Unit of component '" + c1.getName() + "' is not compatible with unit of '" + c2.getName() + "'");
                 }
                 
                 if (((DataValue)c1).getDataType() != ((DataValue)c2).getDataType())
@@ -209,7 +209,7 @@ public class DataConnection
     }
     
     
-    public String check() throws SMLProcessException
+    public String check() throws SMLException
     {
         return DataConnection.check(this.sourceComponent, this.destinationComponent);
     }
@@ -221,7 +221,7 @@ public class DataConnection
 	}
 
 
-	public void setDestinationComponent(DataComponent destinationComponent) throws SMLProcessException
+	public void setDestinationComponent(DataComponent destinationComponent) throws SMLException
 	{
 		this.destinationComponent = destinationComponent;
 		setupUnitConverters();
@@ -246,7 +246,7 @@ public class DataConnection
 	}
 
 
-	public void setSourceComponent(DataComponent sourceComponent) throws SMLProcessException
+	public void setSourceComponent(DataComponent sourceComponent) throws SMLException
 	{
 		this.sourceComponent = sourceComponent;
 		setupUnitConverters();

@@ -24,7 +24,7 @@ import org.vast.process.DataConnectionList;
 import org.vast.process.DataConnection;
 import org.vast.process.DataQueue;
 import org.vast.process.IProcessExec;
-import org.vast.process.SMLProcessException;
+import org.vast.process.SMLException;
 import org.vast.swe.SWEHelper;
 import org.vast.util.ExceptionSystem;
 import net.opengis.OgcPropertyList;
@@ -53,7 +53,6 @@ public abstract class ExecutableProcessImpl implements IProcessExec, Runnable
     protected static final String initError = "Error while initializing process ";
     protected static final String execError = "Error while executing process ";
 
-    protected SWEHelper sweHelper = new SWEHelper();
     protected AbstractProcess wrapperProcess;
     protected IOPropertyList inputData = new IOPropertyList();
     protected IOPropertyList outputData = new IOPropertyList();
@@ -68,29 +67,47 @@ public abstract class ExecutableProcessImpl implements IProcessExec, Runnable
     protected transient boolean needSync = false;
 
 
-    protected void assignWrapperProcess(AbstractProcess wrapperProcess) throws SMLProcessException
+    protected void assignWrapperProcess(AbstractProcess wrapperProcess) throws SMLException
     {
         this.wrapperProcess = wrapperProcess;
         
         // prepare inputs
-        if (this.inputData.size() == 0)
-            this.inputData = wrapperProcess.getInputList();
+        IOPropertyList wrapperInputs = wrapperProcess.getInputList();
+        if (inputData.size() != 0)
+        {
+            // replace wrapper inputs if defined by this exec impl
+            wrapperInputs.clear();
+            wrapperInputs.addAll(inputData);
+        }
+        inputData = wrapperProcess.getInputList();
         int numInputs = wrapperProcess.getNumInputs();
         inputConnections = new ArrayList<DataConnectionList>(numInputs);
         for (int i = 0; i < numInputs; i++)
             inputConnections.add(new DataConnectionList());
         
         // prepare outputs
-        if (this.outputData.size() == 0)
-            this.outputData = wrapperProcess.getOutputList();
+        IOPropertyList wrapperOutputs = wrapperProcess.getOutputList();
+        if (outputData.size() != 0)
+        {
+            // replace wrapper outputs if defined by this exec impl
+            wrapperOutputs.clear();
+            wrapperOutputs.addAll(outputData);
+        }
+        outputData = wrapperProcess.getOutputList();
         int numOutputs = wrapperProcess.getNumOutputs();
         outputConnections = new ArrayList<DataConnectionList>(numOutputs);
         for (int i = 0; i < numOutputs; i++)
             outputConnections.add(new DataConnectionList());
         
         // prepare parameters
-        if (this.paramData.size() == 0)
-            this.paramData = wrapperProcess.getParameterList();
+        IOPropertyList wrapperParams = wrapperProcess.getParameterList();
+        if (paramData.size() != 0)
+        {
+            // replace wrapper params if defined by this exec impl
+            wrapperParams.clear();
+            wrapperParams.addAll(paramData);
+        }
+        paramData = wrapperProcess.getParameterList();
         int numParams = wrapperProcess.getNumParameters();
         paramConnections = new ArrayList<DataConnectionList>(numParams);
         for (int i = 0; i < numParams; i++)
@@ -99,11 +116,11 @@ public abstract class ExecutableProcessImpl implements IProcessExec, Runnable
 
 
     @Override
-    public abstract void init() throws SMLProcessException;
+    public abstract void init() throws SMLException;
 
 
     @Override
-    public abstract void execute() throws SMLProcessException;
+    public abstract void execute() throws SMLException;
     
     
     @Override
@@ -113,7 +130,7 @@ public abstract class ExecutableProcessImpl implements IProcessExec, Runnable
  
 
     @Override
-    public void reset() throws SMLProcessException
+    public void reset() throws SMLException
     {
     }
     
@@ -341,7 +358,7 @@ public abstract class ExecutableProcessImpl implements IProcessExec, Runnable
                 this.execute();
                 this.writeData(outputConnections);
             }
-            catch (SMLProcessException e)
+            catch (SMLException e)
             {
                 ExceptionSystem.display(e);
             }
@@ -355,7 +372,7 @@ public abstract class ExecutableProcessImpl implements IProcessExec, Runnable
 
 
     @Override
-    public synchronized void start() throws SMLProcessException
+    public synchronized void start() throws SMLException
     {
         if (!started)
         {
@@ -438,7 +455,7 @@ public abstract class ExecutableProcessImpl implements IProcessExec, Runnable
 
 
     @Override
-    public void connectInput(String inputName, String dataPath, DataConnection connection) throws SMLProcessException
+    public void connectInput(String inputName, String dataPath, DataConnection connection) throws SMLException
     {
         try
         {
@@ -451,13 +468,13 @@ public abstract class ExecutableProcessImpl implements IProcessExec, Runnable
         }
         catch (CDMException e)
         {
-            throw new SMLProcessException("Unable to connect signal to input '" + inputName + "'", e);
+            throw new SMLException("Unable to connect signal to input '" + inputName + "'", e);
         }
     }
 
 
     @Override
-    public void connectOutput(String outputName, String dataPath, DataConnection connection) throws SMLProcessException
+    public void connectOutput(String outputName, String dataPath, DataConnection connection) throws SMLException
     {
         try
         {
@@ -470,13 +487,13 @@ public abstract class ExecutableProcessImpl implements IProcessExec, Runnable
         }
         catch (CDMException e)
         {
-            throw new SMLProcessException("Unable to connect signal to output '" + outputName + "'", e);
+            throw new SMLException("Unable to connect signal to output '" + outputName + "'", e);
         }
     }
 
 
     @Override
-    public void connectParameter(String paramName, String dataPath, DataConnection connection) throws SMLProcessException
+    public void connectParameter(String paramName, String dataPath, DataConnection connection) throws SMLException
     {
         try
         {
@@ -489,7 +506,7 @@ public abstract class ExecutableProcessImpl implements IProcessExec, Runnable
         }
         catch (CDMException e)
         {
-            throw new SMLProcessException("Unable to connect signal to parameter '" + paramName + "'", e);
+            throw new SMLException("Unable to connect signal to parameter '" + paramName + "'", e);
         }
     }
 
@@ -521,6 +538,27 @@ public abstract class ExecutableProcessImpl implements IProcessExec, Runnable
         if (paramIndex < 0)
             return false;
         return !paramConnections.get(paramIndex).isEmpty();
+    }
+    
+    
+    @Override
+    public IOPropertyList getInputList()
+    {
+        return inputData;
+    }
+    
+    
+    @Override
+    public IOPropertyList getOutputList()
+    {
+        return outputData;
+    }
+    
+    
+    @Override
+    public IOPropertyList getParameterList()
+    {
+        return paramData;
     }
 
 

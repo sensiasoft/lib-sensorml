@@ -16,13 +16,13 @@ import java.util.List;
 public interface IProcessChainExec extends IProcessExec
 {
 
-    public void connectInternalInput(String inputName, String dataPath, DataConnection connection) throws SMLProcessException;
+    public void connectInternalInput(String inputName, String dataPath, DataConnection connection) throws SMLException;
 
 
-    public void connectInternalOutput(String outputName, String dataPath, DataConnection connection) throws SMLProcessException;
+    public void connectInternalOutput(String outputName, String dataPath, DataConnection connection) throws SMLException;
 
 
-    public void connectInternalParam(String paramName, String dataPath, DataConnection connection) throws SMLProcessException;
+    public void connectInternalParam(String paramName, String dataPath, DataConnection connection) throws SMLException;
 
 
     public boolean isChildrenThreadsOn();

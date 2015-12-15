@@ -49,7 +49,7 @@ public class AffineTransform1D_Process extends ExecutableProcessImpl
      * Initializes the process
      * Gets handles to input/output components
      */
-    public void init() throws SMLProcessException
+    public void init() throws SMLException
     {
         try
         {
@@ -60,7 +60,7 @@ public class AffineTransform1D_Process extends ExecutableProcessImpl
         }
         catch (Exception e)
         {
-            throw new SMLProcessException(ioError, e);
+            throw new SMLException(ioError, e);
         }
     }
 
@@ -68,7 +68,7 @@ public class AffineTransform1D_Process extends ExecutableProcessImpl
     /**
      * Executes process algorithm on inputs and set output data
      */
-    public void execute() throws SMLProcessException
+    public void execute() throws SMLException
     {
         double x = xIn.getData().getDoubleValue();
         double a = aParam.getData().getDoubleValue();

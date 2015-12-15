@@ -11,6 +11,7 @@
 package org.vast.process;
 
 import java.util.List;
+import net.opengis.sensorml.v20.IOPropertyList;
 
 
 public interface IProcessExec
@@ -25,26 +26,26 @@ public interface IProcessExec
     /**
      * Initialize the process and its internal variables (fixed parameters).
      * This is called only once before the process is executed.
-     * @throws SMLProcessException
+     * @throws SMLException
      */
-    public void init() throws SMLProcessException;
+    public void init() throws SMLException;
 
 
     /**
      * Execute is typically called several times on a process and should
      * contain all the logic to transform input/parameter values to 
      * output values. This method should be optimized as much as possible.
-     * @throws SMLProcessException
+     * @throws SMLException
      */
-    public void execute() throws SMLProcessException;
+    public void execute() throws SMLException;
 
     
     /**
      * Resets the process (especially asnchronous ones) before it can be run again.
      * This method should properly initialize all process state variables
-     * @throws SMLProcessException
+     * @throws SMLException
      */
-    public void reset() throws SMLProcessException;
+    public void reset() throws SMLException;
     
     
     /**
@@ -83,15 +84,33 @@ public interface IProcessExec
 
     /**
      * Start process thread
-     * @throws SMLProcessException
+     * @throws SMLException
      */
-    public void start() throws SMLProcessException;
+    public void start() throws SMLException;
 
 
     /**
      * Stop process thread gracefully
      */
     public void stop();
+    
+    
+    /**
+     * @return list of inputs
+     */
+    public IOPropertyList getInputList();
+    
+    
+    /**
+     * @return list of outputs
+     */
+    public IOPropertyList getOutputList();
+    
+    
+    /**
+     * @return list of parameters
+     */
+    public IOPropertyList getParameterList();
     
     
     /**
@@ -117,9 +136,9 @@ public interface IProcessExec
      * @param inputName name of input to connect
      * @param dataPath path of component to connect
      * @param connection connection object whose destination will be set to the specified component
-     * @throws SMLProcessException
+     * @throws SMLException
      */
-    public void connectInput(String inputName, String dataPath, DataConnection connection) throws SMLProcessException;
+    public void connectInput(String inputName, String dataPath, DataConnection connection) throws SMLException;
 
 
     /**
@@ -127,9 +146,9 @@ public interface IProcessExec
      * @param outputName name of output to connect
      * @param dataPath path of component to connect
      * @param connection connection object whose source will be set to the specified component
-     * @throws SMLProcessException
+     * @throws SMLException
      */
-    public void connectOutput(String outputName, String dataPath, DataConnection connection) throws SMLProcessException;
+    public void connectOutput(String outputName, String dataPath, DataConnection connection) throws SMLException;
 
 
     /**
@@ -137,9 +156,9 @@ public interface IProcessExec
      * @param paramName name of parameter to connect
      * @param dataPath path of component to connect
      * @param connection connection object whose destination will be set to the specified component
-     * @throws SMLProcessException
+     * @throws SMLException
      */
-    public void connectParameter(String paramName, String dataPath, DataConnection connection) throws SMLProcessException;
+    public void connectParameter(String paramName, String dataPath, DataConnection connection) throws SMLException;
 
 
     /**

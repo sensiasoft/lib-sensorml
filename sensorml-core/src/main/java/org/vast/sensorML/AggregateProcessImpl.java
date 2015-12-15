@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.vast.process.DataConnection;
 import org.vast.process.IProcessChainExec;
-import org.vast.process.SMLProcessException;
+import org.vast.process.SMLException;
 import net.opengis.OgcPropertyList;
 import net.opengis.sensorml.v20.AbstractProcess;
 import net.opengis.sensorml.v20.AggregateProcess;
@@ -43,7 +43,7 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     
  
     @Override
-    public void connectInternalInput(String inputName, String dataPath, DataConnection connection) throws SMLProcessException
+    public void connectInternalInput(String inputName, String dataPath, DataConnection connection) throws SMLException
     {
         checkExecutable();
         ((IProcessChainExec)executableProcess).connectInternalInput(inputName, dataPath, connection);
@@ -51,7 +51,7 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     
     
     @Override
-    public void connectInternalOutput(String outputName, String dataPath, DataConnection connection) throws SMLProcessException
+    public void connectInternalOutput(String outputName, String dataPath, DataConnection connection) throws SMLException
     {
         checkExecutable();
         ((IProcessChainExec)executableProcess).connectInternalOutput(outputName, dataPath, connection);
@@ -59,7 +59,7 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     
     
     @Override
-    public void connectInternalParam(String paramName, String dataPath, DataConnection connection) throws SMLProcessException
+    public void connectInternalParam(String paramName, String dataPath, DataConnection connection) throws SMLException
     {
         checkExecutable();
         ((IProcessChainExec)executableProcess).connectInternalParam(paramName, dataPath, connection);

@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.vast.sensorML.AbstractProcessImpl;
 import org.vast.sensorML.ProcessLoader;
+import org.vast.sensorML.SMLHelper;
 import org.vast.sensorML.SMLUtils;
 
 
@@ -44,7 +45,7 @@ public class TestSMLProcessing
         //smlUtils.writeProcess(System.out, process, true);
         
         // make process executable        
-        smlUtils.makeProcessExecutable(process);
+        SMLHelper.makeProcessExecutable(process);
         
         // init process
         process.createNewInputBlocks();

@@ -59,13 +59,13 @@ public class ProcessLoader
      * Loads the DataProcess implementation corresponding to the given URI.
      * @param uri The URI of the method (i.e. the specific process to instantiate)
      * @return the newly created process object
-     * @throws SMLProcessException
+     * @throws SMLException
      */
-    public synchronized IProcessExec loadProcess(String uri) throws SMLProcessException
+    public synchronized IProcessExec loadProcess(String uri) throws SMLException
     {
         // process map should be loaded at this point
         if (processMap == null)
-            throw new SMLProcessException("No process map file loaded");
+            throw new SMLException("No process map file loaded");
               
         // map URN to class name (full name including package)
         String className = processMap.get(uri);
@@ -76,7 +76,7 @@ public class ProcessLoader
             // for now return a dummy process
             // TODO should actually resolve the URN and parse the ProcessMethod
             //return new Dummy_Process();
-            throw new SMLProcessException("No executable process implementation found for URI " + uri);
+            throw new SMLException("No executable process implementation found for URI " + uri);
         }
         
         // try to create process
@@ -93,19 +93,19 @@ public class ProcessLoader
         }
         catch (ClassNotFoundException e)
         {
-            throw new SMLProcessException("Class '" + className + "' implementing process '" + uri  + "' was not found");
+            throw new SMLException("Class '" + className + "' implementing process '" + uri  + "' was not found");
         }
         catch (NoSuchMethodException e)
         {
-            throw new SMLProcessException("Invalid DataProcess", e);
+            throw new SMLException("Invalid DataProcess", e);
         }
         catch (IllegalAccessException e)
         {
-            throw new SMLProcessException("Invalid DataProcess", e);
+            throw new SMLException("Invalid DataProcess", e);
         }
         catch (InstantiationException e)
         {
-            throw new SMLProcessException("Invalid DataProcess", e);
+            throw new SMLException("Invalid DataProcess", e);
         }
         catch (InvocationTargetException e)
         {
@@ -127,9 +127,9 @@ public class ProcessLoader
      * Reloads the URI to Process Class map using the provided XML file
      * completely erases previous table.
      * @param libFileUrl Url to the file containing the mapping definitions
-     * @throws SMLProcessException
+     * @throws SMLException
      */
-    public static synchronized void reloadMaps(String libFileUrl) throws SMLProcessException
+    public static synchronized void reloadMaps(String libFileUrl) throws SMLException
     {
         // first clear old mappings
         if (processMap != null)
@@ -144,9 +144,9 @@ public class ProcessLoader
      * Existing entries are replaced only if the replace argument is true.
      * @param libFileUrl Url to the file containing the mapping definitions
      * @param replace If true, existing entries are replaced
-     * @throws SMLProcessException
+     * @throws SMLException
      */
-    public static synchronized void loadMaps(String libFileUrl, boolean replace) throws SMLProcessException
+    public static synchronized void loadMaps(String libFileUrl, boolean replace) throws SMLException
     {
         try
         {
@@ -175,7 +175,7 @@ public class ProcessLoader
         }
         catch (DOMHelperException e)
         {
-            throw new SMLProcessException("Error while reading Process Map File", e);
+            throw new SMLException("Error while reading Process Map File", e);
         }
     }
 }

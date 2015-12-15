@@ -20,7 +20,7 @@ import org.vast.data.AbstractDataComponentImpl;
 import org.vast.process.DataConnectionList;
 import org.vast.process.DataConnection;
 import org.vast.process.IProcessExec;
-import org.vast.process.SMLProcessException;
+import org.vast.process.SMLException;
 import net.opengis.OgcPropertyList;
 import net.opengis.gml.v32.Reference;
 import net.opengis.sensorml.v20.AbstractModes;
@@ -67,7 +67,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     }
     
     
-    public void setExecutableImpl(ExecutableProcessImpl processExec) throws SMLProcessException
+    public void setExecutableImpl(ExecutableProcessImpl processExec) throws SMLException
     {
         this.executableProcess = processExec;
         processExec.assignWrapperProcess(this);
@@ -80,15 +80,15 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     }
     
     
-    protected final void checkExecutable() throws SMLProcessException
+    protected final void checkExecutable() throws SMLException
     {
         if (executableProcess == null)
-            throw new SMLProcessException("This process is not executable");
+            throw new SMLException("This process is not executable");
     }
 
 
     @Override
-    public void init() throws SMLProcessException
+    public void init() throws SMLException
     {
         checkExecutable();
         executableProcess.init();
@@ -96,7 +96,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
 
 
     @Override
-    public void reset() throws SMLProcessException
+    public void reset() throws SMLException
     {
         checkExecutable();
         executableProcess.reset();
@@ -104,7 +104,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
 
 
     @Override
-    public void execute() throws SMLProcessException
+    public void execute() throws SMLException
     {
         checkExecutable();
         executableProcess.execute();
@@ -154,7 +154,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
 
 
     @Override
-    public synchronized void start() throws SMLProcessException
+    public synchronized void start() throws SMLException
     {
         checkExecutable();
         executableProcess.start();
@@ -207,7 +207,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
 
 
     @Override
-    public void connectInput(String inputName, String dataPath, DataConnection connection) throws SMLProcessException
+    public void connectInput(String inputName, String dataPath, DataConnection connection) throws SMLException
     {
         checkExecutable();
         executableProcess.connectInput(inputName, dataPath, connection);
@@ -215,7 +215,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
 
 
     @Override
-    public void connectOutput(String outputName, String dataPath, DataConnection connection) throws SMLProcessException
+    public void connectOutput(String outputName, String dataPath, DataConnection connection) throws SMLException
     {
         checkExecutable();
         executableProcess.connectOutput(outputName, dataPath, connection);
@@ -223,7 +223,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
 
 
     @Override
-    public void connectParameter(String paramName, String dataPath, DataConnection connection) throws SMLProcessException
+    public void connectParameter(String paramName, String dataPath, DataConnection connection) throws SMLException
     {
         checkExecutable();
         executableProcess.connectParameter(paramName, dataPath, connection);
