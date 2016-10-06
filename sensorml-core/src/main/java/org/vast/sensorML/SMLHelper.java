@@ -177,16 +177,29 @@ public class SMLHelper extends SMLFactory
         }
         else if (process instanceof SimpleProcess)
         {
-            String methodUri = ((SimpleProcess) process).getMethodProperty().getHref();
+            String processUID = ((SimpleProcess) process).getMethodProperty().getHref();
             
             // if method is not set, try typeOf property
-            if (methodUri == null)
-                methodUri = ((SimpleProcess) process).getTypeOf().getHref();
+            if (processUID == null)
+                processUID = ((SimpleProcess) process).getTypeOf().getHref();
             
-            if (methodUri == null)
+            if (processUID == null)
                 throw new SMLException("No executable method specified for process " + process.getId());
+            
+            /*String processUID = null;
+            
+            // try to read typeOf property
+            if (process.isSetTypeOf())
+                processUID = process.getTypeOf().getTitle();
+            
+            // otherwise use local identifier
+            if (processUID == null)
+                processUID = process.getUniqueIdentifier();
                 
-            ExecutableProcessImpl processExec = (ExecutableProcessImpl)processLoader.loadProcess(methodUri);
+            if (processUID == null)
+                throw new SMLException("No algorithm method found for process " + process.getId());*/
+                
+            ExecutableProcessImpl processExec = (ExecutableProcessImpl)processLoader.loadProcess(processUID);
             process.setExecutableImpl(processExec);
         }
     }
