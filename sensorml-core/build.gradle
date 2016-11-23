@@ -1,0 +1,19 @@
+group = 'org.vast.opengis'
+description = 'SensorML Core'
+
+dependencies {
+  compile project(':swe-common-om')
+}
+
+task packageTests(type: Jar) {
+  from sourceSets.test.output
+  classifier = 'tests'
+}
+
+configurations {
+  testArtifacts
+}
+
+artifacts {
+   testArtifacts packageTests
+}
