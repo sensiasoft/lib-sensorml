@@ -1,8 +1,27 @@
 group = 'org.vast.opengis'
-description = 'SensorML Core'
+description = 'SensorML Models'
 
 dependencies {
   compile project(':swe-common-om')
+}
+
+// add info to OSGI manifest
+jar {
+  manifest {
+    instruction 'Bundle-Vendor', 'Sensia Software LLC'
+  }
+}
+
+// add info to maven pom
+ext.pom >>= {
+  developers {
+    developer {
+      id 'alexrobin'
+      name 'Alex Robin'
+      organization 'Sensia Software LLC'
+      organizationUrl 'http://www.sensiasoftware.com' 
+    }
+  } 
 }
 
 task packageTests(type: Jar) {
