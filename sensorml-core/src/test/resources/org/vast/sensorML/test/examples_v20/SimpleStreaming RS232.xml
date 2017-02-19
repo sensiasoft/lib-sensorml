@@ -26,20 +26,20 @@ xmlns:sml="http://www.opengis.net/sensorml/2.0"
                <sml:data>
                   <swe:DataStream>
                      <swe:elementType name="gamaRadiation">
-						<swe:DataRecord>
-							<swe:field name="averageDose">
-								<swe:Quantity definition="http://sensorml.com/ont/swe/property/DoseRate.html">
-									<swe:label>Average Dose of Gamma Radiation</swe:label>
-									<swe:uom code="uR/min"/>
-								</swe:Quantity>
-							</swe:field>
-							<swe:field name="InstantaneousDose">
-								<swe:Quantity definition="http://sensorml.com/ont/swe/property/RadiationDose">
-									<swe:label>Instantaneous Dose of Gamma Radiation</swe:label>
-									<swe:uom code="uR"/>
-								</swe:Quantity>
-							</swe:field>
-						</swe:DataRecord>
+            						<swe:DataRecord>
+            							<swe:field name="averageDose">
+            								<swe:Quantity definition="http://sensorml.com/ont/swe/property/DoseRate.html">
+            									<swe:label>Average Dose of Gamma Radiation</swe:label>
+            									<swe:uom code="uR/min"/>
+            								</swe:Quantity>
+            							</swe:field>
+            							<swe:field name="InstantaneousDose">
+            								<swe:Quantity definition="http://sensorml.com/ont/swe/property/RadiationDose">
+            									<swe:label>Instantaneous Dose of Gamma Radiation</swe:label>
+            									<swe:uom code="uR"/>
+            								</swe:Quantity>
+            							</swe:field>
+            						</swe:DataRecord>
                      </swe:elementType>
 
                      <!-- encoding description -->

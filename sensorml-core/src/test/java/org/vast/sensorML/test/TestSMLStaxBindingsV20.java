@@ -56,7 +56,7 @@ import org.vast.swe.SWEHelper;
 import org.xml.sax.InputSource;
 
 
-public class TestSMLBindingsV20 extends XMLTestCase
+public class TestSMLStaxBindingsV20 extends XMLTestCase
 {
     
     
