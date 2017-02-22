@@ -20,12 +20,16 @@ import org.isotc211.v2005.gmd.impl.CIResponsiblePartyImpl;
 import org.vast.cdm.common.CDMException;
 import org.vast.process.SMLException;
 import org.vast.swe.SWEHelper;
+import org.vast.util.Asserts;
+import net.opengis.OgcPropertyList;
 import net.opengis.sensorml.v20.AbstractProcess;
 import net.opengis.sensorml.v20.AggregateProcess;
 import net.opengis.sensorml.v20.ConstraintSetting;
 import net.opengis.sensorml.v20.DataInterface;
+import net.opengis.sensorml.v20.IdentifierList;
 import net.opengis.sensorml.v20.Settings;
 import net.opengis.sensorml.v20.SimpleProcess;
+import net.opengis.sensorml.v20.Term;
 import net.opengis.sensorml.v20.ValueSetting;
 import net.opengis.swe.v20.AbstractSWEIdentifiable;
 import net.opengis.swe.v20.DataComponent;
@@ -39,6 +43,53 @@ import net.opengis.swe.v20.ScalarComponent;
 
 public class SMLHelper extends SMLFactory
 {
+    public final static String SERIAL_NUMBER_DEF = "http://sensorml.com/ont/swe/property/SerialNumber";
+    public final static String SERIAL_NUMBER_LABEL = "Serial Number";
+    
+    AbstractProcess process;
+    
+    
+    public SMLHelper()
+    {        
+    }
+    
+    
+    public SMLHelper(AbstractProcess process)
+    {
+        this.process = process;
+    }
+    
+    
+    public void addIdentifier(String label, String def, String value)
+    {
+        Asserts.checkNotNull(process);
+        
+        // ensure we have an identification section
+        OgcPropertyList<IdentifierList> sectionList = process.getIdentificationList();
+        IdentifierList idList;
+        if (sectionList.isEmpty())
+        {
+            idList = newIdentifierList();
+            sectionList.add(idList);
+        }
+        else
+            idList = sectionList.get(0);
+        
+        Term term = newTerm();
+        term.setDefinition(def);
+        term.setLabel(label);
+        term.setValue(value);
+        idList.addIdentifier2(term);
+    }    
+    
+    public void addSerialNumber(String value)
+    {
+        addIdentifier(SERIAL_NUMBER_LABEL, SERIAL_NUMBER_DEF, value);
+    }
+    
+    
+    
+    // STATIC METHODS
     
     public CIResponsibleParty newResponsibleParty()
     {
