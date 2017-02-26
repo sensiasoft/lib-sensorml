@@ -720,7 +720,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         // inline value
         val = reader.getElementText();
         if (val != null)
-            bean.setValue(val);
+            bean.setValue(trimStringValue(val));
         
         return bean;
     }
@@ -756,7 +756,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         // inline value
         val = reader.getElementText();
         if (val != null)
-            bean.setValue(val);
+            bean.setValue(trimStringValue(val));
         
         return bean;
     }
@@ -1344,7 +1344,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         {
             val = reader.getElementText();
             if (val != null)
-                bean.setOrigin(val);
+                bean.setOrigin(trimStringValue(val));
             reader.nextTag();
         }
     }
@@ -1426,7 +1426,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         {
             val = reader.getElementText();
             if (val != null)
-                bean.setOrigin(val);
+                bean.setOrigin(trimStringValue(val));
             reader.nextTag();
         }
         
@@ -3879,7 +3879,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
             {
                 val = reader.getElementText();
                 if (val != null)
-                    bean.addKeyword(val);
+                    bean.addKeyword(trimStringValue(val));
                 reader.nextTag();
             }
         }
@@ -3983,7 +3983,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         {
             val = reader.getElementText();
             if (val != null)
-                bean.setLabel(val);
+                bean.setLabel(trimStringValue(val));
             reader.nextTag();
         }
         
@@ -5211,7 +5211,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     
     public String readAxis(XMLStreamReader reader) throws XMLStreamException
     {
-        return reader.getElementText().trim();
+        return trimStringValue(reader.getElementText());
     }
     
     

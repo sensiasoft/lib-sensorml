@@ -494,7 +494,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         
         String val = reader.getElementText();
         if (val != null)
-            bean.setValue(val);
+            bean.setValue(trimStringValue(val));
         
         return bean;
     }
@@ -542,7 +542,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         
         String val = reader.getElementText();
         if (val != null)
-            bean.setValue(val);
+            bean.setValue(trimStringValue(val));
         
         return bean;
     }
@@ -632,7 +632,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         
         String val = reader.getElementText();
         if (val != null)
-            bean.setValue(val);
+            bean.setValue(trimStringValue(val));
         
         return bean;
     }
@@ -800,7 +800,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         if (!found)
             throw new XMLStreamException(ERROR_INVALID_ELT + reader.getName() + errorLocationString(reader));
         
-        String val = reader.getElementText();
+        String val = trimStringValue(reader.getElementText());
         return val;
     }
     
