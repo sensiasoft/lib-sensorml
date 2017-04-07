@@ -69,7 +69,7 @@ public class SMLUtils extends XMLBindingsUtils
     
     enum ObjectType
     {
-        Process { public String toString() { return "SML Process"; } }
+        Process { @Override public String toString() { return "SML Process"; } }
     }
     
     
@@ -158,6 +158,7 @@ public class SMLUtils extends XMLBindingsUtils
     }
     
     
+    @Override
     protected Object readFromXmlStream(XMLStreamReader reader, Enum<?> eltType) throws XMLStreamException
     {
         reader.nextTag();
@@ -173,6 +174,7 @@ public class SMLUtils extends XMLBindingsUtils
     }
     
     
+    @Override
     protected void writeToXmlStream(XMLStreamWriter writer, Object sweObj, Enum<?> eltType) throws XMLStreamException
     {
         SMLStaxBindings smlBindings = (SMLStaxBindings)staxBindings;

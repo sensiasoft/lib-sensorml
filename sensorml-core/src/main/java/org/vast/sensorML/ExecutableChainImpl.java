@@ -183,7 +183,7 @@ public class ExecutableChainImpl extends ExecutableProcessImpl implements IProce
         String part2 = linkString.substring(sep1, sep2++);
         
         // if we're linking to a component IO
-        if (part1.equals("components")) // support only links to components for now 
+        if ("components".equals(part1)) // support only links to components for now 
         {
             processName = part2;
             selectedProcess = processTable.get(processName);
@@ -211,7 +211,7 @@ public class ExecutableChainImpl extends ExecutableProcessImpl implements IProce
         }        
         
         // connect connection to input, output or parameter port
-        if (portType.equals("inputs"))
+        if ("inputs".equals(portType))
         {
             try
             {
@@ -225,7 +225,7 @@ public class ExecutableChainImpl extends ExecutableProcessImpl implements IProce
                 throw new SMLException("Cannot connect input of process " + processName, e);
             }
         }
-        else if (portType.equals("outputs"))
+        else if ("outputs".equals(portType))
         {
             try
             {
@@ -239,7 +239,7 @@ public class ExecutableChainImpl extends ExecutableProcessImpl implements IProce
                 throw new SMLException("Cannot connect output of process " + processName, e);
             }
         }
-        else if (portType.equals("parameters"))
+        else if ("parameters".equals(portType))
         {
             try
             {

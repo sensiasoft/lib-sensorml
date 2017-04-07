@@ -25,72 +25,84 @@ public class GMDFactory implements Factory
     }
     
     
+    @Override
     public CIResponsibleParty newCIResponsibleParty()
     {
         return new CIResponsiblePartyImpl();
     }
     
     
+    @Override
     public CICitation newCICitation()
     {
         return new CICitationImpl();
     }
     
     
+    @Override
     public CIAddress newCIAddress()
     {
         return new CIAddressImpl();
     }
     
     
+    @Override
     public CIOnlineResource newCIOnlineResource()
     {
         return new CIOnlineResourceImpl();
     }
     
     
+    @Override
     public CIContact newCIContact()
     {
         return new CIContactImpl();
     }
     
     
+    @Override
     public CITelephone newCITelephone()
     {
         return new CITelephoneImpl();
     }
     
     
+    @Override
     public CIDate newCIDate()
     {
         return new CIDateImpl();
     }
     
     
+    @Override
     public CISeries newCISeries()
     {
         return new CISeriesImpl();
     }
     
     
+    @Override
     public MDKeywords newMDKeywords()
     {
         return new MDKeywordsImpl();
     }
     
     
+    @Override
     public MDIdentifier newMDIdentifier()
     {
         return new MDIdentifierImpl();
     }
     
     
+    @Override
     public MDConstraints newMDConstraints()
     {
         return new MDConstraintsImpl();
     }
     
     
+    @Override
     public MDLegalConstraints newMDLegalConstraints()
     {
         return new MDLegalConstraintsImpl();

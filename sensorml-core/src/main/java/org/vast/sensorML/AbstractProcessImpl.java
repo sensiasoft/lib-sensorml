@@ -15,6 +15,7 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 package org.vast.sensorML;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.vast.data.AbstractDataComponentImpl;
 import org.vast.process.DataConnectionList;
@@ -74,6 +75,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     }
     
     
+    @Override
     public boolean isExecutable()
     {
         return (executableProcess != null);
@@ -172,6 +174,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     /**
      * Print process name and I/O info
      */
+    @Override
     public String toString()
     {
         StringBuffer text = new StringBuffer();
@@ -266,7 +269,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
         if (executableProcess != null)
             return executableProcess.getInputConnections();
         else
-            return null;
+            return Collections.EMPTY_LIST;
     }
 
 
@@ -276,7 +279,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
         if (executableProcess != null)
             return executableProcess.getParamConnections();
         else
-            return null;
+            return Collections.EMPTY_LIST;
     }
 
 
@@ -286,7 +289,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
         if (executableProcess != null)
             return executableProcess.getOutputConnections();
         else
-            return null;
+            return Collections.EMPTY_LIST;
     }
     
     

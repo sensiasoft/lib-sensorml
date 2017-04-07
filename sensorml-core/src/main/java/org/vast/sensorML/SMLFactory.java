@@ -27,36 +27,42 @@ public class SMLFactory implements Factory
     }
     
     
+    @Override
     public SimpleProcess newSimpleProcess()
     {
         return new SimpleProcessImpl();
     }
     
     
+    @Override
     public ProcessMethod newProcessMethod()
     {
         return new ProcessMethodImpl();
     }
     
     
+    @Override
     public Mode newMode()
     {
         return new ModeImpl();
     }
     
     
+    @Override
     public ModeChoice newModeChoice()
     {
         return new ModeChoiceImpl();
     }
     
     
+    @Override
     public Settings newSettings()
     {
         return new SettingsImpl();
     }
     
     
+    @Override
     public ModeSetting newModeSetting()
     {
         return new ModeSettingImpl();
@@ -69,6 +75,7 @@ public class SMLFactory implements Factory
     }
     
     
+    @Override
     public StatusSetting newStatusSetting()
     {
         return new StatusSettingImpl();
@@ -81,6 +88,7 @@ public class SMLFactory implements Factory
     }
     
     
+    @Override
     public ValueSetting newValueSetting()
     {
         return new ValueSettingImpl();
@@ -93,6 +101,7 @@ public class SMLFactory implements Factory
     }
     
     
+    @Override
     public ConstraintSetting newConstraintSetting()
     {
         return new ConstraintSettingImpl();
@@ -105,138 +114,161 @@ public class SMLFactory implements Factory
     }
     
     
+    @Override
     public ArraySetting newArraySetting()
     {
         return new ArraySettingImpl();
     }
     
     
+    @Override
     public PhysicalSystem newPhysicalSystem()
     {
         return new org.vast.sensorML.PhysicalSystemImpl();
     }
     
     
+    @Override
     public PhysicalComponent newPhysicalComponent()
     {
         return new org.vast.sensorML.PhysicalComponentImpl();
     }
     
     
+    @Override
     public TemporalFrame newTemporalFrame()
     {
         return new TemporalFrameImpl();
     }
     
     
+    @Override
     public SpatialFrame newSpatialFrame()
     {
         return new SpatialFrameImpl();
     }
     
     
+    @Override
     public AggregateProcess newAggregateProcess()
     {
         return new org.vast.sensorML.AggregateProcessImpl();
     }
     
     
+    @Override
     public Link newLink()
     {
         return new org.vast.sensorML.LinkImpl();
     }
     
     
+    @Override
     public AbstractSettings newAbstractSettings()
     {
         return new AbstractSettingsImpl();
     }
     
     
+    @Override
     public IdentifierList newIdentifierList()
     {
         return new IdentifierListImpl();
     }
     
     
+    @Override
     public DocumentList newDocumentList()
     {
         return new DocumentListImpl();
     }
     
     
+    @Override
     public CharacteristicList newCharacteristicList()
     {
         return new CharacteristicListImpl();
     }
     
     
+    @Override
     public FeatureList newFeatureList()
     {
         return new FeatureListImpl();
     }
     
     
+    @Override
     public Event newEvent()
     {
         return new EventImpl();
     }
     
     
+    @Override
     public CapabilityList newCapabilityList()
     {
         return new CapabilityListImpl();
     }
     
     
+    @Override
     public EventList newEventList()
     {
         return new EventListImpl();
     }
     
     
+    @Override
     public AbstractMetadataList newAbstractMetadataList()
     {
         return new AbstractMetadataListImpl();
     }
     
     
+    @Override
     public ContactList newContactList()
     {
         return new ContactListImpl();
     }
     
     
+    @Override
     public KeywordList newKeywordList()
     {
         return new KeywordListImpl();
     }
     
     
+    @Override
     public Term newTerm()
     {
         return new TermImpl();
     }
     
     
+    @Override
     public ClassifierList newClassifierList()
     {
         return new ClassifierListImpl();
     }
     
     
+    @Override
     public AbstractModes newAbstractModes()
     {
         return new AbstractModesImpl();
     }
     
     
+    @Override
     public DataInterface newDataInterface()
     {
         return new DataInterfaceImpl();
     }
     
     
+    @Override
     public ObservableProperty newObservableProperty()
     {
         return new ObservablePropertyImpl();

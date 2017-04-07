@@ -793,17 +793,17 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         reader.nextTag();
         String localName = reader.getName().getLocalPart();
         
-        if (localName.equals("AllowedTimes"))
+        if ("AllowedTimes".equals(localName))
         {
             AllowedTimes constraint = ns1Bindings.readAllowedTimes(reader);
             bean.setValueAsAllowedTimes(constraint);
         }
-        else if (localName.equals("AllowedTokens"))
+        else if ("AllowedTokens".equals(localName))
         {
             AllowedTokens constraint = ns1Bindings.readAllowedTokens(reader);
             bean.setValueAsAllowedTokens(constraint);
         }
-        else if (localName.equals("AllowedValues"))
+        else if ("AllowedValues".equals(localName))
         {
             AllowedValues constraint = ns1Bindings.readAllowedValues(reader);
             bean.setValueAsAllowedValues(constraint);
@@ -1149,32 +1149,32 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
                 {
                     String localName = reader.getName().getLocalPart();
                     
-                    if (localName.equals("Text"))
+                    if ("Text".equals(localName))
                     {
                       Text position = ns1Bindings.readText(reader);
                       positionProp.setValue(position);
                     }
-                    else if (localName.equals("Point"))
+                    else if ("Point".equals(localName))
                     {
                       Point position = ns2Bindings.readPoint(reader);
                       positionProp.setValue(position);
                     }
-                    else if (localName.equals("Vector"))
+                    else if ("Vector".equals(localName))
                     {
                       Vector position = ns1Bindings.readVector(reader);
                       positionProp.setValue(position);
                     }
-                    else if (localName.equals("DataRecord"))
+                    else if ("DataRecord".equals(localName))
                     {
                       DataRecord position = ns1Bindings.readDataRecord(reader);
                       positionProp.setValue(position);
                     }
-                    else if (localName.equals("DataArray"))
+                    else if ("DataArray".equals(localName))
                     {
                       DataArray position = ns1Bindings.readDataArray(reader);
                       positionProp.setValue(position);
                     }
-                    else if (localName.equals("AbstractProcess"))
+                    else if ("AbstractProcess".equals(localName))
                     {
                       AbstractProcess position = this.readAbstractProcess(reader);
                       positionProp.setValue(position);
@@ -1899,12 +1899,12 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
                 {
                     String localName = reader.getName().getLocalPart();
                     
-                    if (localName.equals("TimePeriod"))
+                    if ("TimePeriod".equals(localName))
                     {
                       TimePeriod validTime = ns2Bindings.readTimePeriod(reader);
                       bean.addValidTimeAsTimePeriod(validTime);
                     }
-                    else if (localName.equals("TimeInstant"))
+                    else if ("TimeInstant".equals(localName))
                     {
                       TimeInstant validTime = ns2Bindings.readTimeInstant(reader);
                       bean.addValidTimeAsTimeInstant(validTime);
@@ -2331,6 +2331,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
                         else if (inputProp.hasHref())
                         {
                             inputProp.setHrefResolver(new HrefResolverXML() {
+                                @Override
                                 public void parseContent(XMLStreamReader reader) throws XMLStreamException
                                 {
                                     readIOChoice(reader, inputProp);
@@ -2376,6 +2377,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
                         else if (outputProp.hasHref())
                         {
                             outputProp.setHrefResolver(new HrefResolverXML() {
+                                @Override
                                 public void parseContent(XMLStreamReader reader) throws XMLStreamException
                                 {
                                     readIOChoice(reader, outputProp);
@@ -2779,17 +2781,17 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     {
         String localName = reader.getName().getLocalPart();
         
-        if (localName.equals("ObservableProperty"))
+        if ("ObservableProperty".equals(localName))
         {
             ObservableProperty signal = this.readObservableProperty(reader);
             prop.setValue(signal);
         }
-        else if (localName.equals("DataStream"))
+        else if ("DataStream".equals(localName))
         {
             DataStream signal = ns1Bindings.readDataStream(reader);
             prop.setValue(signal);
         }
-        else if (localName.equals("DataInterface"))
+        else if ("DataInterface".equals(localName))
         {
             DataInterface signal = this.readDataInterface(reader);
             prop.setValue(signal);
@@ -3266,12 +3268,12 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
             {
                 String localName = reader.getName().getLocalPart();
                 
-                if (localName.equals("TimePeriod"))
+                if ("TimePeriod".equals(localName))
                 {
                     TimePeriod time = ns2Bindings.readTimePeriod(reader);
                     bean.setTimeAsTimePeriod(time);
                 }
-                else if (localName.equals("TimeInstant"))
+                else if ("TimeInstant".equals(localName))
                 {
                     TimeInstant time = ns2Bindings.readTimeInstant(reader);
                     bean.setTimeAsTimeInstant(time);
@@ -4611,9 +4613,9 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     {
         String localName = reader.getName().getLocalPart();
         
-        if (localName.equals("PhysicalSystem"))
+        if ("PhysicalSystem".equals(localName))
             return readPhysicalSystem(reader);
-        else if (localName.equals("PhysicalComponent"))
+        else if ("PhysicalComponent".equals(localName))
             return readPhysicalComponent(reader);
         
         throw new XMLStreamException(ERROR_INVALID_ELT + reader.getName() + errorLocationString(reader));
@@ -4739,15 +4741,15 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     {
         String localName = reader.getName().getLocalPart();
         
-        if (localName.equals("SimpleProcess"))
+        if ("SimpleProcess".equals(localName))
             return readSimpleProcess(reader);
-        else if (localName.equals("Mode"))
+        else if ("Mode".equals(localName))
             return readMode(reader);
-        else if (localName.equals("PhysicalSystem"))
+        else if ("PhysicalSystem".equals(localName))
             return readPhysicalSystem(reader);
-        else if (localName.equals("PhysicalComponent"))
+        else if ("PhysicalComponent".equals(localName))
             return readPhysicalComponent(reader);
-        else if (localName.equals("AggregateProcess"))
+        else if ("AggregateProcess".equals(localName))
             return readAggregateProcess(reader);
         
         throw new XMLStreamException(ERROR_INVALID_ELT + reader.getName() + errorLocationString(reader));
@@ -4779,13 +4781,13 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     {
         String localName = reader.getName().getLocalPart();
         
-        if (localName.equals("SimpleProcess"))
+        if ("SimpleProcess".equals(localName))
             return readSimpleProcess(reader);
-        else if (localName.equals("PhysicalSystem"))
+        else if ("PhysicalSystem".equals(localName))
             return readPhysicalSystem(reader);
-        else if (localName.equals("PhysicalComponent"))
+        else if ("PhysicalComponent".equals(localName))
             return readPhysicalComponent(reader);
-        else if (localName.equals("AggregateProcess"))
+        else if ("AggregateProcess".equals(localName))
             return readAggregateProcess(reader);
         
         throw new XMLStreamException(ERROR_INVALID_ELT + reader.getName() + errorLocationString(reader));
@@ -4815,7 +4817,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     {
         String localName = reader.getName().getLocalPart();
         
-        if (localName.equals("Settings"))
+        if ("Settings".equals(localName))
             return readSettings(reader);
         
         throw new XMLStreamException(ERROR_INVALID_ELT + reader.getName() + errorLocationString(reader));
@@ -5139,7 +5141,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     {
         String localName = reader.getName().getLocalPart();
         
-        if (localName.equals("ModeChoice"))
+        if ("ModeChoice".equals(localName))
             return readModeChoice(reader);
         
         throw new XMLStreamException(ERROR_INVALID_ELT + reader.getName() + errorLocationString(reader));

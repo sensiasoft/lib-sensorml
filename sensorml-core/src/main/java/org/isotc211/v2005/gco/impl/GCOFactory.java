@@ -33,48 +33,56 @@ public class GCOFactory implements Factory
     }
     
     
+    @Override
     public TypeName newTypeName()
     {
         return new TypeNameImpl();
     }
     
     
+    @Override
     public MemberName newMemberName()
     {
         return new MemberNameImpl();
     }
     
     
+    @Override
     public Multiplicity newMultiplicity()
     {
         return new MultiplicityImpl();
     }
     
     
+    @Override
     public MultiplicityRange newMultiplicityRange()
     {
         return new MultiplicityRangeImpl();
     }
     
     
+    @Override
     public UnlimitedInteger newUnlimitedInteger()
     {
         return new UnlimitedIntegerImpl();
     }
     
     
+    @Override
     public RecordType newRecordType()
     {
         return new RecordTypeImpl();
     }
     
     
+    @Override
     public Binary newBinary()
     {
         return new BinaryImpl();
     }
     
     
+    @Override
     public CodeListValue newCodeListValue()
     {
         return new CodeListValueImpl();

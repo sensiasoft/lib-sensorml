@@ -15,6 +15,7 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 package org.vast.sensorML;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.vast.process.DataConnection;
 import org.vast.process.IProcessChainExec;
@@ -66,6 +67,7 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     }
 
 
+    @Override
     public String toString()
     {
         StringBuffer text = new StringBuffer(super.toString());
@@ -104,10 +106,11 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
         if (executableProcess != null)
             return ((IProcessChainExec)executableProcess).getInternalConnections();
         else
-            return null;
+            return Collections.EMPTY_LIST;
     }
     
     
+    @Override
     public void setOutputNeeded(int outputIndex, boolean needed)
     {
         if (executableProcess != null)
@@ -122,6 +125,7 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     /**
      * Gets the list of components
      */
+    @Override
     public OgcPropertyList<AbstractProcess> getComponentList()
     {
         return components;
@@ -131,6 +135,7 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     /**
      * Returns number of components
      */
+    @Override
     public int getNumComponents()
     {
         return components.size();
@@ -140,6 +145,7 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     /**
      * Gets the component with the given name
      */
+    @Override
     public AbstractProcess getComponent(String name)
     {
         return components.get(name);
@@ -149,6 +155,7 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     /**
      * Adds a new component
      */
+    @Override
     public void addComponent(String name, AbstractProcess component)
     {
         components.add(name, component);
@@ -158,6 +165,7 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     /**
      * Gets the list of connections
      */
+    @Override
     public List<Link> getConnectionList()
     {
         return connections;
@@ -167,6 +175,7 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     /**
      * Returns number of connections
      */
+    @Override
     public int getNumConnections()
     {
         return connections.size();
@@ -176,6 +185,7 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     /**
      * Adds a new connection
      */
+    @Override
     public void addConnection(Link connection)
     {
         connections.add(connection);
