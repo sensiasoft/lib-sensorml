@@ -158,7 +158,7 @@ public class ExecutableChainImpl extends ExecutableProcessImpl implements IProce
         }
         catch (Exception e)
         {
-            String errMsg = initError + currentProcess.getName() + " (" + currentProcess.getClass().getCanonicalName() + ")";
+            String errMsg = INIT_ERROR_MSG + currentProcess.getName() + " (" + currentProcess.getClass().getCanonicalName() + ")";
             LOG.debug(errMsg, e);
             throw new SMLException(errMsg, e);
         }
@@ -222,7 +222,7 @@ public class ExecutableChainImpl extends ExecutableProcessImpl implements IProce
             }
             catch (SMLException e)
             {
-                throw new SMLException("No input named " + portName + " in process " + processName);
+                throw new SMLException("Cannot connect input of process " + processName, e);
             }
         }
         else if (portType.equals("outputs"))
@@ -236,7 +236,7 @@ public class ExecutableChainImpl extends ExecutableProcessImpl implements IProce
             }
             catch (SMLException e)
             {
-                throw new SMLException("No output named " + portName + " in process " + processName);
+                throw new SMLException("Cannot connect output of process " + processName, e);
             }
         }
         else if (portType.equals("parameters"))
@@ -250,7 +250,7 @@ public class ExecutableChainImpl extends ExecutableProcessImpl implements IProce
             }
             catch (SMLException e)
             {
-                throw new SMLException("No parameter named " + portName + " in process " + processName);
+                throw new SMLException("Cannot connect parameter of process " + processName, e);
             }
         }
         
@@ -263,7 +263,7 @@ public class ExecutableChainImpl extends ExecutableProcessImpl implements IProce
         {
             String srcName = dataQueue.getSourceProcess().getName();
             String destName = dataQueue.getDestinationProcess().getName();
-            throw new SMLException("Connection on " + linkString + " cannot be made between " + srcName + " and " + destName, e);
+            throw new SMLException("Connection " + linkString + " cannot be made between " + srcName + " and " + destName, e);
         }
     }  
     
@@ -452,15 +452,10 @@ public class ExecutableChainImpl extends ExecutableProcessImpl implements IProce
                 //super.fetchInputData(this.internalOutputConnections);
             }           
         }       
-        catch (SMLException e)
-        {
-            String errMsg = execError + currentProcess.getName() + " (" + currentProcess.getClass().getCanonicalName() + ")";
-            LOG.debug(errMsg, e);
-            throw new SMLException(errMsg, e);
-        }
         catch (Exception e)
         {
-            throw new RuntimeException(execError + getName(), e);
+            String errMsg = EXEC_ERROR_MSG + currentProcess.getName() + " (" + currentProcess.getClass().getCanonicalName() + ")";
+            throw new SMLException(errMsg, e);
         }
     }
     
@@ -620,6 +615,7 @@ public class ExecutableChainImpl extends ExecutableProcessImpl implements IProce
     }
     
     
+    @Override
     public void setOutputNeeded(int outputIndex, boolean needed)
     {
         internalOutputConnections.get(outputIndex).setNeeded(needed);

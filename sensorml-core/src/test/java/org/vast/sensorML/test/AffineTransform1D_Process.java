@@ -60,7 +60,7 @@ public class AffineTransform1D_Process extends ExecutableProcessImpl
         }
         catch (Exception e)
         {
-            throw new SMLException(ioError, e);
+            throw new SMLException(IO_ERROR_MSG, e);
         }
     }
 

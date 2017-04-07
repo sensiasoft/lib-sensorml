@@ -329,11 +329,11 @@ public class SMLHelper extends SMLFactory
                 }
                 catch (Exception e)
                 {
-                    throw new SMLException("Invalid constraint for component " + refPath);
+                    throw new SMLException("Invalid constraint for component " + refPath, e);
                 }
             }
             else
-                throw new SMLException("A constraint setting can only target a simple component with constraint");
+                throw new SMLException("A constraint setting can only target a non-boolean simple component");
         }
     }
 }

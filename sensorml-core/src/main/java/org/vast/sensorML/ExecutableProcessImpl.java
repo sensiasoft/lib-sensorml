@@ -26,7 +26,6 @@ import org.vast.process.DataQueue;
 import org.vast.process.IProcessExec;
 import org.vast.process.SMLException;
 import org.vast.swe.SWEHelper;
-import org.vast.util.ExceptionSystem;
 import net.opengis.OgcPropertyList;
 import net.opengis.sensorml.v20.AbstractProcess;
 import net.opengis.sensorml.v20.IOPropertyList;
@@ -47,11 +46,11 @@ import net.opengis.swe.v20.DataComponent;
 public abstract class ExecutableProcessImpl implements IProcessExec, Runnable
 {
     static final long serialVersionUID = 1L;
-    private final static Logger LOGGER = LoggerFactory.getLogger(ExecutableProcessImpl.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExecutableProcessImpl.class.getName());
 
-    protected static final String ioError = "Invalid I/O Structure";
-    protected static final String initError = "Error while initializing process ";
-    protected static final String execError = "Error while executing process ";
+    protected static final String IO_ERROR_MSG = "Invalid I/O Structure";
+    protected static final String INIT_ERROR_MSG = "Error while initializing process ";
+    protected static final String EXEC_ERROR_MSG = "Error while executing process ";
 
     protected AbstractProcess wrapperProcess;
     protected IOPropertyList inputData = new IOPropertyList();
@@ -360,7 +359,7 @@ public abstract class ExecutableProcessImpl implements IProcessExec, Runnable
             }
             catch (SMLException e)
             {
-                ExceptionSystem.display(e);
+                LOGGER.error("Error during execution of process " + getName(), e);
             }
             catch (InterruptedException e)
             {
@@ -619,7 +618,7 @@ public abstract class ExecutableProcessImpl implements IProcessExec, Runnable
     @Override
     protected void finalize() throws Throwable
     {
-        super.finalize();
         this.dispose();
+        super.finalize();
     }
 }
