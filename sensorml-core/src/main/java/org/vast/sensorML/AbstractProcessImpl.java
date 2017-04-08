@@ -46,7 +46,7 @@ import net.opengis.swe.v20.DataComponent;
  * implementation of IProcessExec corresponding to a particular algorithm.
  * </p>
  *
- * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @author Alex Robin
  * @since Feb 28, 2015
  */
 public abstract class AbstractProcessImpl extends DescribedObjectImpl implements AbstractProcess, IProcessExec, Runnable

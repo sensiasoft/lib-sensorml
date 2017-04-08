@@ -49,7 +49,7 @@ import org.vast.ogc.gml.IFeatureStaxBindings;
  * Helper wrapping the auto-generated XML stream bindings
  * </p>
  *
- * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @author Alex Robin
  * @since Sep 25, 2014
  */
 public class SMLStaxBindings extends XMLStreamBindings implements IFeatureStaxBindings

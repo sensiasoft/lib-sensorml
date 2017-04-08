@@ -22,7 +22,7 @@ import net.opengis.OgcPropertyList;
  * Specialized property list with an ID as used in SensorML.
  * </p>
  *
- * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @author Alex Robin
  * @param <ValueType> 
  * @since Nov 9, 2014
  */

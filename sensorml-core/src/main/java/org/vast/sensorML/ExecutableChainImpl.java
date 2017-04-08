@@ -46,7 +46,7 @@ import net.opengis.swe.v20.DataComponent;
  * to them.
  * </p>
  *
- * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @author Alex Robin
  * @since Feb 28, 2015
  */
 public class ExecutableChainImpl extends ExecutableProcessImpl implements IProcessChainExec

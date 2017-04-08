@@ -33,7 +33,7 @@ import net.opengis.swe.v20.DataBlock;
  * The queue can also send status values and events.
  * </p>
  * 
- * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @author Alex Robin
  * TODO add support for unit conversion in queues
  * */
 public class DataQueue extends DataConnection

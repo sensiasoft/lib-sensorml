@@ -24,7 +24,7 @@ import net.opengis.swe.v20.DataComponent;
  * Specialized list for holding input/output/parameter properties in SensorML.
  * </p>
  *
- * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @author Alex Robin
  * @since Nov 9, 2014
  */
 public class IOPropertyList extends SMLPropertyList<AbstractSWEIdentifiable>

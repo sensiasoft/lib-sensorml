@@ -20,7 +20,7 @@ package net.opengis.sensorml.v20;
  * Base interface for all types of configuration settings
  * </p>
  *
- * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @author Alex Robin
  * @param <RefType> Type of referenced object
  * @since Feb 28, 2015
  */

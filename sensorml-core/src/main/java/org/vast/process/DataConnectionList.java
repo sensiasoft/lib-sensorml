@@ -32,7 +32,7 @@ import java.util.ArrayList;
  * to execute.
  * </p>
  * 
- * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @author Alex Robin
  * */
 public class DataConnectionList extends ArrayList<DataConnection>
 {

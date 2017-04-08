@@ -26,7 +26,7 @@ package org.vast.process;
  * TODO ProcessException type description
  * </p>
  *
- * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @author Alex Robin
  * */
 public class SMLException extends Exception
 {

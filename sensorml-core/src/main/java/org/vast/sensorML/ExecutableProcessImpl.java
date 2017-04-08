@@ -40,7 +40,7 @@ import net.opengis.swe.v20.DataComponent;
  * {@link #execute()} or in its own thread using {@link #start()} and {@link #stop()}.
  * </p>
  *
- * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @author Alex Robin
  * @since Feb 28, 2015
  */
 public abstract class ExecutableProcessImpl implements IProcessExec, Runnable

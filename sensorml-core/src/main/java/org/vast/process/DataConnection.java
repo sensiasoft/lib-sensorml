@@ -43,7 +43,7 @@ import org.vast.unit.UnitConverter;
  * are not in the same unit (units have to be physically compatible)
  * </p>
  * 
- * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @author Alex Robin
  * */
 public class DataConnection
 {

@@ -42,7 +42,7 @@ import org.w3c.dom.Element;
  * readers/writers.
  * </p>
  *
- * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @author Alex Robin
  * @since Apr 10, 2007
  * */
 public class SMLUtils extends XMLBindingsUtils
