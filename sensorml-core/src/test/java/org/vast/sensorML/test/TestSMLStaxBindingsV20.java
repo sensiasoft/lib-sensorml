@@ -60,6 +60,7 @@ public class TestSMLStaxBindingsV20 extends XMLTestCase
 {
     
     
+    @Override
     public void setUp() throws Exception
     {
         XMLUnit.setIgnoreComments(true);

@@ -2422,6 +2422,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
                         else if (parameterProp.hasHref())
                         {
                             parameterProp.setHrefResolver(new HrefResolverXML() {
+                                @Override
                                 public void parseContent(XMLStreamReader reader) throws XMLStreamException
                                 {
                                     readIOChoice(reader, parameterProp);

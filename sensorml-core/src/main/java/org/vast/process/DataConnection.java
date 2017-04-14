@@ -115,8 +115,8 @@ public class DataConnection
     {
         if (src instanceof HasUom && dest instanceof HasUom)
         {
-            Unit srcUom = (Unit)((HasUom)src).getUom().getValue();
-            Unit destUom = (Unit)((HasUom)dest).getUom().getValue();
+            Unit srcUom = ((HasUom)src).getUom().getValue();
+            Unit destUom = ((HasUom)dest).getUom().getValue();
             
             if (srcUom == null || destUom == null || srcUom.isEquivalent(destUom))
                 return null;
@@ -188,8 +188,8 @@ public class DataConnection
             // check that scalars are compatible
             if (c1 instanceof HasUom && c2 instanceof HasUom)
             {
-                Unit uom1 = (Unit)((HasUom)c1).getUom().getValue();
-                Unit uom2 = (Unit)((HasUom)c2).getUom().getValue();
+                Unit uom1 = ((HasUom)c1).getUom().getValue();
+                Unit uom2 = ((HasUom)c2).getUom().getValue();
                 
                 if (uom1 != null && uom2 != null)
                 {
@@ -236,7 +236,7 @@ public class DataConnection
 
 	public void setDestinationProcess(IProcessExec destinationProcess)
 	{
-		this.destinationProcess = (IProcessExec)destinationProcess;
+		this.destinationProcess = destinationProcess;
 	}
 
 
@@ -261,7 +261,7 @@ public class DataConnection
 
 	public void setSourceProcess(IProcessExec sourceProcess)
 	{
-		this.sourceProcess = (IProcessExec)sourceProcess;
+		this.sourceProcess = sourceProcess;
 	}
 
 
