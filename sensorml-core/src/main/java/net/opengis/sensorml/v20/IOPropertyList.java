@@ -29,7 +29,9 @@ import net.opengis.swe.v20.DataComponent;
  */
 public class IOPropertyList extends SMLPropertyList<AbstractSWEIdentifiable>
 {
-    
+    private static final long serialVersionUID = 3858884993292819910L;
+
+
     public IOPropertyList()
     {
     }

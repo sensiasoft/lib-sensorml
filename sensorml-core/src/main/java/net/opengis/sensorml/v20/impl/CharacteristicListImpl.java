@@ -26,7 +26,7 @@ import net.opengis.swe.v20.DataComponent;
  */
 public class CharacteristicListImpl extends AbstractMetadataListImpl implements CharacteristicList
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 900221429219021927L;
     protected OgcPropertyList<DataComponent> characteristicList = new OgcPropertyList<DataComponent>();
     
     

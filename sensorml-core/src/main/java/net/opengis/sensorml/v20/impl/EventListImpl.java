@@ -26,7 +26,7 @@ import net.opengis.sensorml.v20.EventList;
  */
 public class EventListImpl extends AbstractMetadataListImpl implements EventList
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -7647103509371734513L;
     protected OgcPropertyList<Event> eventList = new OgcPropertyList<Event>();
     
     

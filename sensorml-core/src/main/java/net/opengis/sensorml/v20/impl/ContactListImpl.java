@@ -26,7 +26,7 @@ import org.isotc211.v2005.gmd.CIResponsibleParty;
  */
 public class ContactListImpl extends AbstractMetadataListImpl implements ContactList
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -811587242228194684L;
     protected OgcPropertyList<CIResponsibleParty> contactList = new OgcPropertyList<CIResponsibleParty>();
     
     

@@ -14,6 +14,7 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package net.opengis.sensorml.v20;
 
+import java.io.Serializable;
 
 /**
  * <p>
@@ -24,7 +25,7 @@ package net.opengis.sensorml.v20;
  * @param <RefType> Type of referenced object
  * @since Feb 28, 2015
  */
-public interface ConfigSetting<RefType>
+public interface ConfigSetting<RefType> extends Serializable
 {
 
     /**

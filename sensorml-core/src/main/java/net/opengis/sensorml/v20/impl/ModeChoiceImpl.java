@@ -26,7 +26,7 @@ import net.opengis.sensorml.v20.ModeChoice;
  */
 public class ModeChoiceImpl extends AbstractModesImpl implements ModeChoice
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3993897379800177350L;
     protected OgcPropertyList<Mode> modeList = new OgcPropertyList<Mode>();
     
     

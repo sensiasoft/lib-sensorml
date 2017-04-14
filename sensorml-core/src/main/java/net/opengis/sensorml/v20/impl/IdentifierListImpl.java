@@ -27,8 +27,8 @@ import net.opengis.sensorml.v20.Term;
  */
 public class IdentifierListImpl extends AbstractMetadataListImpl implements IdentifierList
 {
-    static final long serialVersionUID = 1L;
-    protected List<Term> identifier2List = new ArrayList<Term>();
+    private static final long serialVersionUID = -4763800903563662109L;
+    protected ArrayList<Term> identifier2List = new ArrayList<Term>();
     
     
     public IdentifierListImpl()

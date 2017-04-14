@@ -29,7 +29,7 @@ import net.opengis.swe.v20.DataStream;
  */
 public class DataInterfaceImpl extends AbstractSWEIdentifiableImpl implements DataInterface
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 7322034740312533028L;
     protected OgcProperty<DataStream> data = new OgcPropertyImpl<DataStream>();
     protected OgcProperty<DataRecord> interfaceParameters;
     

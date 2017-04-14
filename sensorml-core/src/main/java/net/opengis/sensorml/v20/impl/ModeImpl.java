@@ -27,7 +27,7 @@ import net.opengis.sensorml.v20.Settings;
  */
 public class ModeImpl extends DescribedObjectImpl implements Mode
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -2912501634984471050L;
     protected OgcProperty<Settings> configuration = new OgcPropertyImpl<Settings>();
     
     

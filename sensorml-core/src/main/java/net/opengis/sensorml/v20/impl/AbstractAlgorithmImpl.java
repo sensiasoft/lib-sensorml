@@ -24,7 +24,7 @@ import net.opengis.sensorml.v20.AbstractAlgorithm;
  */
 public abstract class AbstractAlgorithmImpl implements AbstractAlgorithm
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -3527550148916376048L;
     protected String id;
     
     

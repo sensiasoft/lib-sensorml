@@ -36,7 +36,7 @@ import org.vast.data.AbstractSWEIdentifiableImpl;
  */
 public class EventImpl extends AbstractSWEIdentifiableImpl implements Event
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1119218889164694333L;
     protected OgcPropertyList<MDKeywords> keywordsList = new OgcPropertyList<MDKeywords>();
     protected OgcPropertyList<IdentifierList> identificationList = new OgcPropertyList<IdentifierList>();
     protected OgcPropertyList<ClassifierList> classificationList = new OgcPropertyList<ClassifierList>();

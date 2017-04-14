@@ -31,12 +31,12 @@ import net.opengis.sensorml.v20.ValueSetting;
  */
 public class SettingsImpl extends AbstractSettingsImpl implements Settings
 {
-    static final long serialVersionUID = 1L;
-    protected List<ValueSetting> setValueList = new ArrayList<ValueSetting>();
-    protected List<ArraySetting> setArrayValuesList = new ArrayList<ArraySetting>();
-    protected List<ConstraintSetting> setConstraintList = new ArrayList<ConstraintSetting>();
-    protected List<ModeSetting> setModeList = new ArrayList<ModeSetting>();
-    protected List<StatusSetting> setStatusList = new ArrayList<StatusSetting>();
+    private static final long serialVersionUID = 6527575157568622311L;
+    protected ArrayList<ValueSetting> setValueList = new ArrayList<ValueSetting>();
+    protected ArrayList<ArraySetting> setArrayValuesList = new ArrayList<ArraySetting>();
+    protected ArrayList<ConstraintSetting> setConstraintList = new ArrayList<ConstraintSetting>();
+    protected ArrayList<ModeSetting> setModeList = new ArrayList<ModeSetting>();
+    protected ArrayList<StatusSetting> setStatusList = new ArrayList<StatusSetting>();
     
     
     public SettingsImpl()

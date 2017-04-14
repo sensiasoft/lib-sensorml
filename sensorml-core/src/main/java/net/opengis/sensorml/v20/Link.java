@@ -14,7 +14,7 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package net.opengis.sensorml.v20;
 
-
+import java.io.Serializable;
 
 /**
  * POJO class for XML type LinkType(@http://www.opengis.net/sensorml/2.0).
@@ -22,7 +22,7 @@ package net.opengis.sensorml.v20;
  * This is a complex type.
  */
 @SuppressWarnings("javadoc")
-public interface Link
+public interface Link extends Serializable
 {
     public final static String PATH_SEPARATOR = "/";
     

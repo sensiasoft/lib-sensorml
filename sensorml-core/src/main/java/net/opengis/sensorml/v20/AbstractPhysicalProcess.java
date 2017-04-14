@@ -14,6 +14,7 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package net.opengis.sensorml.v20;
 
+import java.io.Serializable;
 import java.util.List;
 import net.opengis.OgcPropertyList;
 import net.opengis.gml.v32.Point;
@@ -92,7 +93,7 @@ public interface AbstractPhysicalProcess extends AbstractProcess
     /**
      * Gets the list of position properties
      */
-    public OgcPropertyList<Object> getPositionList();
+    public OgcPropertyList<Serializable> getPositionList();
     
     
     /**

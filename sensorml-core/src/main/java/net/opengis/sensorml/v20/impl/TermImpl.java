@@ -25,7 +25,7 @@ import net.opengis.sensorml.v20.Term;
  */
 public class TermImpl extends AbstractSWEImpl implements Term
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -8693907940605648415L;
     protected String label = "";
     protected String codeSpace;
     protected String value = "";

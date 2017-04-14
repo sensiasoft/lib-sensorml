@@ -14,6 +14,7 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package net.opengis.sensorml.v20.bind;
 
+import java.io.Serializable;
 import java.util.Map;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -1141,7 +1142,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
             found = checkElementName(reader, "position");
             if (found)
             {
-                OgcProperty<Object> positionProp = new OgcPropertyImpl<Object>();
+                OgcProperty<Serializable> positionProp = new OgcPropertyImpl<Serializable>();
                 readPropertyAttributes(reader, positionProp);
                 
                 reader.nextTag();
@@ -1264,7 +1265,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         numItems = bean.getPositionList().size();
         for (int i = 0; i < numItems; i++)
         {
-            OgcProperty<Object> item = bean.getPositionList().getProperty(i);
+            OgcProperty<Serializable> item = bean.getPositionList().getProperty(i);
             writer.writeStartElement(NS_URI, "position");
             writePropertyAttributes(writer, item);
             

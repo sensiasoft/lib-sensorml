@@ -25,7 +25,7 @@ import net.opengis.swe.v20.DataComponent;
  */
 public class StatusSettingImpl implements StatusSetting
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -5991086493664866387L;
     protected String ref = "";
     protected Status value;
     protected transient DataComponent refComponent;

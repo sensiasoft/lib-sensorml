@@ -25,7 +25,7 @@ import net.opengis.sensorml.v20.TemporalFrame;
  */
 public class TemporalFrameImpl extends AbstractSWEIdentifiableImpl implements TemporalFrame
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3581971680494476218L;
     protected String origin = "";
     
     

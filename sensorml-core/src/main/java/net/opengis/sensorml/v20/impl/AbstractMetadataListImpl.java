@@ -25,7 +25,7 @@ import net.opengis.sensorml.v20.AbstractMetadataList;
  */
 public class AbstractMetadataListImpl extends AbstractSWEIdentifiableImpl implements AbstractMetadataList
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -7690755144431209738L;
     protected String definition;
     
     

@@ -26,7 +26,7 @@ import net.opengis.sensorml.v20.FeatureList;
  */
 public class FeatureListImpl extends AbstractMetadataListImpl implements FeatureList
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 559598216238665236L;
     protected OgcPropertyList<AbstractFeature> featureList = new OgcPropertyList<AbstractFeature>();
     
     

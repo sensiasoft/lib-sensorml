@@ -26,7 +26,7 @@ import org.isotc211.v2005.gmd.CIOnlineResource;
  */
 public class DocumentListImpl extends AbstractMetadataListImpl implements DocumentList
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -6480644982926069220L;
     protected OgcPropertyList<CIOnlineResource> documentList = new OgcPropertyList<CIOnlineResource>();
     
     

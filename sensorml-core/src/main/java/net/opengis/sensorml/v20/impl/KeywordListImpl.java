@@ -26,9 +26,9 @@ import net.opengis.sensorml.v20.KeywordList;
  */
 public class KeywordListImpl extends AbstractMetadataListImpl implements KeywordList
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -733089128014753013L;
     protected String codeSpace;
-    protected List<String> keywordList = new ArrayList<String>();
+    protected ArrayList<String> keywordList = new ArrayList<String>();
     
     
     public KeywordListImpl()

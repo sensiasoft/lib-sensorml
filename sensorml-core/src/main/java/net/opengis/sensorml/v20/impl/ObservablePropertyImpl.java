@@ -25,7 +25,7 @@ import net.opengis.sensorml.v20.ObservableProperty;
  */
 public class ObservablePropertyImpl extends AbstractSWEIdentifiableImpl implements ObservableProperty
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -1175251297426113987L;
     protected String definition = "";
     
     

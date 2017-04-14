@@ -28,7 +28,7 @@ import net.opengis.swe.v20.SimpleComponent;
  */
 public class ConstraintSettingImpl implements ConstraintSetting
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -2737873597162699720L;
     protected String ref = "";
     protected DataConstraint value;
     protected transient SimpleComponent refComponent;

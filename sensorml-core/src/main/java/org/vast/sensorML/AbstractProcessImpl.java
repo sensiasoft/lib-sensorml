@@ -51,13 +51,14 @@ import net.opengis.swe.v20.DataComponent;
  */
 public abstract class AbstractProcessImpl extends DescribedObjectImpl implements AbstractProcess, IProcessExec, Runnable
 {
+    private static final long serialVersionUID = -6639992874400892845L;
     protected Reference typeOf;
     protected AbstractSettings configuration;
     protected FeatureList featuresOfInterest;
     protected IOPropertyList inputData = new IOPropertyList();
     protected IOPropertyList outputData = new IOPropertyList();
     protected IOPropertyList paramData = new IOPropertyList();
-    protected List<AbstractModes> modesList = new ArrayList<AbstractModes>();
+    protected ArrayList<AbstractModes> modesList = new ArrayList<AbstractModes>();
     protected String definition;
     
     protected transient IProcessExec executableProcess;

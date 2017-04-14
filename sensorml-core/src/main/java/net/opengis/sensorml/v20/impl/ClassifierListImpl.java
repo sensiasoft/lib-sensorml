@@ -27,8 +27,8 @@ import net.opengis.sensorml.v20.Term;
  */
 public class ClassifierListImpl extends AbstractMetadataListImpl implements ClassifierList
 {
-    static final long serialVersionUID = 1L;
-    protected List<Term> classifierList = new ArrayList<Term>();
+    private static final long serialVersionUID = 1462708215269569157L;
+    protected ArrayList<Term> classifierList = new ArrayList<Term>();
     
     
     public ClassifierListImpl()

@@ -26,7 +26,7 @@ import org.isotc211.v2005.gco.MultiplicityRange;
  */
 public class MultiplicityImpl extends AbstractObjectImpl implements Multiplicity
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -6531215272881991153L;
     protected OgcPropertyList<MultiplicityRange> rangeList = new OgcPropertyList<MultiplicityRange>();
     
     

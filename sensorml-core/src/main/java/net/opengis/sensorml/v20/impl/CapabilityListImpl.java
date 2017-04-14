@@ -26,7 +26,7 @@ import net.opengis.swe.v20.DataComponent;
  */
 public class CapabilityListImpl extends AbstractMetadataListImpl implements CapabilityList
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1077880441572054254L;
     protected OgcPropertyList<DataComponent> capabilityList = new OgcPropertyList<DataComponent>();
     
     

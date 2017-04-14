@@ -28,8 +28,8 @@ import net.opengis.sensorml.v20.ProcessMethod;
  */
 public class ProcessMethodImpl extends AbstractSWEIdentifiableImpl implements ProcessMethod
 {
-    static final long serialVersionUID = 1L;
-    protected List<AbstractAlgorithm> algorithmList = new ArrayList<AbstractAlgorithm>();
+    private static final long serialVersionUID = 7677068874778573592L;
+    protected ArrayList<AbstractAlgorithm> algorithmList = new ArrayList<AbstractAlgorithm>();
     
     
     public ProcessMethodImpl()

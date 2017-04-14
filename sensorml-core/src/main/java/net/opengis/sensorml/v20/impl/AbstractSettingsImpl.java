@@ -25,8 +25,8 @@ import net.opengis.sensorml.v20.AbstractSettings;
  */
 public class AbstractSettingsImpl extends AbstractSWEImpl implements AbstractSettings
 {
-    static final long serialVersionUID = 1L;
-    
+    private static final long serialVersionUID = 7569733361847691450L;
+
     
     public AbstractSettingsImpl()
     {

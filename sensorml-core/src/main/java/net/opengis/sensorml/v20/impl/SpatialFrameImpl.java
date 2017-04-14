@@ -26,7 +26,7 @@ import net.opengis.sensorml.v20.SpatialFrame;
  */
 public class SpatialFrameImpl extends AbstractSWEIdentifiableImpl implements SpatialFrame
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -4393802247521858976L;
     protected String origin = "";
     protected OgcPropertyList<String> axisList = new OgcPropertyList<String>();
     

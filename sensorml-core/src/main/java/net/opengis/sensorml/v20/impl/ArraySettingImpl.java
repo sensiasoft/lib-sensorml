@@ -26,7 +26,7 @@ import net.opengis.swe.v20.EncodedValues;
  */
 public class ArraySettingImpl implements ArraySetting
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2565506524298543395L;
     protected String ref = "";
     protected DataEncoding encoding;
     protected EncodedValues value;

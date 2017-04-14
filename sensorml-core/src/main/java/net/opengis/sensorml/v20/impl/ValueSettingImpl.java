@@ -24,7 +24,7 @@ import net.opengis.swe.v20.SimpleComponent;
  */
 public class ValueSettingImpl implements ValueSetting
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2511592737466764476L;
     protected String ref = "";
     protected String value;
     protected transient SimpleComponent refComponent;

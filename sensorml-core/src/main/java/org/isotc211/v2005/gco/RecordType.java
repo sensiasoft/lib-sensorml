@@ -14,12 +14,12 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package org.isotc211.v2005.gco;
 
-
+import net.opengis.OgcProperty;
 
 /**
  * POJO class for XML type RecordType_Type(@http://www.isotc211.org/2005/gco).
  *
  */
-public interface RecordType extends net.opengis.OgcProperty<String>
+public interface RecordType extends OgcProperty<String>
 {
 }

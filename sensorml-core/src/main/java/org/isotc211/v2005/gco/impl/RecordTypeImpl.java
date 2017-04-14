@@ -15,13 +15,15 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 package org.isotc211.v2005.gco.impl;
 
 import org.isotc211.v2005.gco.RecordType;
+import net.opengis.OgcPropertyImpl;
 
 
 /**
  * POJO class for XML type RecordType_Type(@http://www.isotc211.org/2005/gco).
  *
  */
-public class RecordTypeImpl extends net.opengis.OgcPropertyImpl<String> implements RecordType
+public class RecordTypeImpl extends OgcPropertyImpl<String> implements RecordType
 {
+    private static final long serialVersionUID = 1432678008895476726L;
     
 }

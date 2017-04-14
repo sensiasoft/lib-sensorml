@@ -24,7 +24,7 @@ import net.opengis.sensorml.v20.ModeSetting;
  */
 public class ModeSettingImpl implements ModeSetting
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 5542806985588353890L;
     protected String ref = "";
     protected String value;
     protected transient ModeChoice refModes;

@@ -40,12 +40,13 @@ import org.isotc211.v2005.gmd.MDLegalConstraints;
  */
 public abstract class DescribedObjectImpl extends AbstractFeatureImpl implements DescribedObject
 {
-    protected List<Object> extensionList = new ArrayList<Object>();
+    private static final long serialVersionUID = 8176080766971346738L;
+    protected ArrayList<Object> extensionList = new ArrayList<Object>();
     protected OgcPropertyList<KeywordList> keywordsList = new OgcPropertyList<KeywordList>();
     protected OgcPropertyList<IdentifierList> identificationList = new OgcPropertyList<IdentifierList>();
     protected OgcPropertyList<ClassifierList> classificationList = new OgcPropertyList<ClassifierList>();
-    protected List<AbstractTimeGeometricPrimitive> validTimeList = new ArrayList<AbstractTimeGeometricPrimitive>();
-    protected List<Object> securityConstraintsList = new ArrayList<Object>();
+    protected ArrayList<AbstractTimeGeometricPrimitive> validTimeList = new ArrayList<AbstractTimeGeometricPrimitive>();
+    protected ArrayList<Object> securityConstraintsList = new ArrayList<Object>();
     protected OgcPropertyList<MDLegalConstraints> legalConstraintsList = new OgcPropertyList<MDLegalConstraints>();
     protected OgcPropertyList<CharacteristicList> characteristicsList = new OgcPropertyList<CharacteristicList>();
     protected OgcPropertyList<CapabilityList> capabilitiesList = new OgcPropertyList<CapabilityList>();

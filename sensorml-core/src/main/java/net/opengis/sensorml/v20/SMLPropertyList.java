@@ -15,6 +15,7 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 package net.opengis.sensorml.v20;
 
 import net.opengis.OgcPropertyList;
+import net.opengis.swe.v20.AbstractSWEIdentifiable;
 
 
 /**
@@ -26,8 +27,9 @@ import net.opengis.OgcPropertyList;
  * @param <ValueType> 
  * @since Nov 9, 2014
  */
-public class SMLPropertyList<ValueType> extends OgcPropertyList<ValueType>
+public class SMLPropertyList<ValueType extends AbstractSWEIdentifiable> extends OgcPropertyList<ValueType>
 {
+    private static final long serialVersionUID = 8779504965074930700L;
     protected String id;
     
     

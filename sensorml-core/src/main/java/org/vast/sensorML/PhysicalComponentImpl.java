@@ -14,6 +14,7 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package org.vast.sensorML;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import org.vast.process.SMLException;
@@ -41,10 +42,11 @@ import net.opengis.swe.v20.Vector;
  */
 public class PhysicalComponentImpl extends AbstractProcessImpl implements PhysicalComponent
 {
+    private static final long serialVersionUID = 1457700505867612234L;
     protected Reference attachedTo;
-    protected List<SpatialFrame> localReferenceFrameList = new ArrayList<SpatialFrame>();
-    protected List<TemporalFrame> localTimeFrameList = new ArrayList<TemporalFrame>();
-    protected OgcPropertyList<Object> positionList = new OgcPropertyList<Object>();
+    protected ArrayList<SpatialFrame> localReferenceFrameList = new ArrayList<SpatialFrame>();
+    protected ArrayList<TemporalFrame> localTimeFrameList = new ArrayList<TemporalFrame>();
+    protected OgcPropertyList<Serializable> positionList = new OgcPropertyList<Serializable>();
     protected OgcPropertyList<Time> timePositionList = new OgcPropertyList<Time>();
     protected OgcProperty<ProcessMethod> method;
     
@@ -153,7 +155,7 @@ public class PhysicalComponentImpl extends AbstractProcessImpl implements Physic
      * Gets the list of position properties
      */
     @Override
-    public OgcPropertyList<Object> getPositionList()
+    public OgcPropertyList<Serializable> getPositionList()
     {
         return positionList;
     }
