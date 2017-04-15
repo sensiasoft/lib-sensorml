@@ -15,7 +15,7 @@ Copyright (C) 2012-2017 Sensia Software LLC. All Rights Reserved.
 package org.vast.sensorML.json;
 
 import java.io.OutputStream;
-import javax.xml.stream.XMLStreamException;
+import org.vast.json.JsonStreamException;
 import org.vast.sensorML.SMLStaxBindings;
 import org.vast.swe.json.SWEJsonStreamWriter;
 
@@ -23,7 +23,7 @@ import org.vast.swe.json.SWEJsonStreamWriter;
 public class SMLJsonStreamWriter extends SWEJsonStreamWriter
 {
         
-    public SMLJsonStreamWriter(OutputStream os, String encoding) throws XMLStreamException
+    public SMLJsonStreamWriter(OutputStream os, String encoding) throws JsonStreamException
     {
         super(os, encoding);
         
@@ -43,7 +43,7 @@ public class SMLJsonStreamWriter extends SWEJsonStreamWriter
     
     
     @Override
-    public void writeAttribute(String localName, String value) throws XMLStreamException
+    public void writeAttribute(String localName, String value) throws JsonStreamException
     {
         if (localName.equals("codeSpace"))
             return;
