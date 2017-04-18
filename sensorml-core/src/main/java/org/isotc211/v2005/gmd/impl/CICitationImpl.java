@@ -36,15 +36,15 @@ import org.isotc211.v2005.gmd.MDIdentifier;
  */
 public class CICitationImpl extends AbstractObjectImpl implements CICitation
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 7608369373096811440L;
     protected String title = "";
-    protected List<String> alternateTitleList = new ArrayList<String>();
+    protected ArrayList<String> alternateTitleList = new ArrayList<String>();
     protected OgcPropertyList<CIDate> dateList = new OgcPropertyList<CIDate>();
     protected String edition;
     protected IDateTime editionDate;
     protected OgcPropertyList<MDIdentifier> identifierList = new OgcPropertyList<MDIdentifier>();
     protected OgcPropertyList<CIResponsibleParty> citedResponsiblePartyList = new OgcPropertyList<CIResponsibleParty>();
-    protected List<CodeListValue> presentationFormList = new ArrayList<CodeListValue>();
+    protected ArrayList<CodeListValue> presentationFormList = new ArrayList<CodeListValue>();
     protected OgcProperty<CISeries> series;
     protected String otherCitationDetails;
     protected String collectiveTitle;

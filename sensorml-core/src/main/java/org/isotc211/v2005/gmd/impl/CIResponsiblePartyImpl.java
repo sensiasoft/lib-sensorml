@@ -29,7 +29,7 @@ import org.isotc211.v2005.gmd.CIResponsibleParty;
  */
 public class CIResponsiblePartyImpl extends AbstractObjectImpl implements CIResponsibleParty
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -8875933513981991132L;
     protected String individualName;
     protected String organisationName;
     protected String positionName;

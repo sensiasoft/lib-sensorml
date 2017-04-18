@@ -25,7 +25,7 @@ import org.isotc211.v2005.gco.UnlimitedInteger;
  */
 public class MultiplicityRangeImpl extends AbstractObjectImpl implements MultiplicityRange
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -1203149370629963634L;
     protected int lower;
     protected UnlimitedInteger upper;
     

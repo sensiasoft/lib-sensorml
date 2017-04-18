@@ -23,7 +23,7 @@ import org.isotc211.v2005.gco.UnlimitedInteger;
  */
 public class UnlimitedIntegerImpl implements UnlimitedInteger
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -3216758152221505100L;
     protected Boolean isInfinite;
     protected int value;
     

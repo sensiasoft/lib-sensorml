@@ -24,7 +24,7 @@ import org.isotc211.v2005.gco.TypeName;
  */
 public class TypeNameImpl extends AbstractObjectImpl implements TypeName
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -3883723533125572446L;
     protected String aName = "";
     
     

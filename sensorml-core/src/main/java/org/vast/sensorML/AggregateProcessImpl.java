@@ -33,8 +33,9 @@ import net.opengis.sensorml.v20.Link;
  */
 public class AggregateProcessImpl extends AbstractProcessImpl implements AggregateProcess, IProcessChainExec
 {
+    private static final long serialVersionUID = -8513079782815270311L;
     protected OgcPropertyList<AbstractProcess> components = new OgcPropertyList<AbstractProcess>(5);
-    protected List<Link> connections = new ArrayList<Link>(5);
+    protected ArrayList<Link> connections = new ArrayList<Link>(5);
     
     
     public AggregateProcessImpl()

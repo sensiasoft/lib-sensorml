@@ -25,7 +25,7 @@ import org.isotc211.v2005.gmd.CISeries;
  */
 public class CISeriesImpl extends AbstractObjectImpl implements CISeries
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -8931924416657520442L;
     protected String name;
     protected String issueIdentification;
     protected String page;

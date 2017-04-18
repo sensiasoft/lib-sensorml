@@ -31,8 +31,8 @@ import org.isotc211.v2005.gmd.MDKeywords;
  */
 public class MDKeywordsImpl extends AbstractObjectImpl implements MDKeywords
 {
-    static final long serialVersionUID = 1L;
-    protected List<String> keywordList = new ArrayList<String>();
+    private static final long serialVersionUID = 6426971551279389708L;
+    protected ArrayList<String> keywordList = new ArrayList<String>();
     protected CodeListValue type;
     protected OgcProperty<CICitation> thesaurusName;
     

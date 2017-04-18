@@ -26,7 +26,7 @@ import org.isotc211.v2005.gmd.CIOnlineResource;
  */
 public class CIOnlineResourceImpl extends AbstractObjectImpl implements CIOnlineResource
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -8650671070261099207L;
     protected String linkage = "";
     protected String protocol;
     protected String applicationProfile;

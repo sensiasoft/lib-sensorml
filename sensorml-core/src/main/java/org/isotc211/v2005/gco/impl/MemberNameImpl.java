@@ -27,7 +27,7 @@ import org.isotc211.v2005.gco.TypeName;
  */
 public class MemberNameImpl extends AbstractObjectImpl implements MemberName
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 4272284789581033537L;
     protected String aName = "";
     protected OgcProperty<TypeName> attributeType = new OgcPropertyImpl<TypeName>();
     

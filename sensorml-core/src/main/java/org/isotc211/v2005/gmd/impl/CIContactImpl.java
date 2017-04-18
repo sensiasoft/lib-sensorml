@@ -30,7 +30,7 @@ import org.isotc211.v2005.gmd.CITelephone;
  */
 public class CIContactImpl extends AbstractObjectImpl implements CIContact
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 5712212318068712104L;
     protected OgcProperty<CITelephone> phone;
     protected OgcProperty<CIAddress> address;
     protected OgcProperty<CIOnlineResource> onlineResource;

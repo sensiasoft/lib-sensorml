@@ -27,13 +27,13 @@ import org.isotc211.v2005.gmd.CIAddress;
  */
 public class CIAddressImpl extends AbstractObjectImpl implements CIAddress
 {
-    static final long serialVersionUID = 1L;
-    protected List<String> deliveryPointList = new ArrayList<String>();
+    private static final long serialVersionUID = -4556347952298276291L;
+    protected ArrayList<String> deliveryPointList = new ArrayList<String>();
     protected String city;
     protected String administrativeArea;
     protected String postalCode;
     protected String country;
-    protected List<String> electronicMailAddressList = new ArrayList<String>();
+    protected ArrayList<String> electronicMailAddressList = new ArrayList<String>();
     
     
     public CIAddressImpl()

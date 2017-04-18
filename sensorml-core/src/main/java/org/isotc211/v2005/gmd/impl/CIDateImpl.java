@@ -27,8 +27,8 @@ import org.isotc211.v2005.gmd.CIDate;
  */
 public class CIDateImpl extends AbstractObjectImpl implements CIDate
 {
-    static final long serialVersionUID = 1L;
-    protected Object date;
+    private static final long serialVersionUID = 6850359308276013387L;
+    protected IDateTime date;
     protected CodeListValue dateType;
     
     
@@ -41,27 +41,17 @@ public class CIDateImpl extends AbstractObjectImpl implements CIDate
      * Gets the date property
      */
     @Override
-    public Object getDate()
+    public IDateTime getDate()
     {
         return date;
     }
     
     
     /**
-     * Sets the dateAsDate property
+     * Sets the date property
      */
     @Override
-    public void setDateAsDate(Object date)
-    {
-        this.date = date;
-    }
-    
-    
-    /**
-     * Sets the dateAsDateTime property
-     */
-    @Override
-    public void setDateAsDateTime(IDateTime date)
+    public void setDate(IDateTime date)
     {
         this.date = date;
     }

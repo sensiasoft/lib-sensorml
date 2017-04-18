@@ -27,9 +27,9 @@ import org.isotc211.v2005.gmd.CITelephone;
  */
 public class CITelephoneImpl extends AbstractObjectImpl implements CITelephone
 {
-    static final long serialVersionUID = 1L;
-    protected List<String> voiceList = new ArrayList<String>();
-    protected List<String> facsimileList = new ArrayList<String>();
+    private static final long serialVersionUID = -5758289910414075116L;
+    protected ArrayList<String> voiceList = new ArrayList<String>();
+    protected ArrayList<String> facsimileList = new ArrayList<String>();
     
     
     public CITelephoneImpl()

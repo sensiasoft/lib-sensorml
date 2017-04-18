@@ -24,7 +24,7 @@ import org.isotc211.v2005.gco.AbstractObject;
  */
 public abstract class AbstractObjectImpl implements AbstractObject
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -5445391513034725710L;
     protected String id;
     protected String uuid;
     

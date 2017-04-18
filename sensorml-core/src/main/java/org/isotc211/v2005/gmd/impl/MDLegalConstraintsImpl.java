@@ -27,10 +27,10 @@ import org.isotc211.v2005.gmd.MDLegalConstraints;
  */
 public class MDLegalConstraintsImpl extends MDConstraintsImpl implements MDLegalConstraints
 {
-    static final long serialVersionUID = 1L;
-    protected List<CodeListValue> accessConstraintsList = new ArrayList<CodeListValue>();
-    protected List<CodeListValue> useConstraintsList = new ArrayList<CodeListValue>();
-    protected List<String> otherConstraintsList = new ArrayList<String>();
+    private static final long serialVersionUID = 7206574193175714723L;
+    protected ArrayList<CodeListValue> accessConstraintsList = new ArrayList<CodeListValue>();
+    protected ArrayList<CodeListValue> useConstraintsList = new ArrayList<CodeListValue>();
+    protected ArrayList<String> otherConstraintsList = new ArrayList<String>();
     
     
     public MDLegalConstraintsImpl()

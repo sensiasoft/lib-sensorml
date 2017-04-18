@@ -14,13 +14,13 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package org.isotc211.v2005.gco;
 
-
+import java.io.Serializable;
 
 /**
  * POJO class for XML type UnlimitedInteger_Type(@http://www.isotc211.org/2005/gco).
  *
  */
-public interface UnlimitedInteger
+public interface UnlimitedInteger extends Serializable
 {
     
     

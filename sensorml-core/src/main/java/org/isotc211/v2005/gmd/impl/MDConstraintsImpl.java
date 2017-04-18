@@ -27,8 +27,8 @@ import org.isotc211.v2005.gmd.MDConstraints;
  */
 public class MDConstraintsImpl extends AbstractObjectImpl implements MDConstraints
 {
-    static final long serialVersionUID = 1L;
-    protected List<String> useLimitationList = new ArrayList<String>();
+    private static final long serialVersionUID = -7611282966228372597L;
+    protected ArrayList<String> useLimitationList = new ArrayList<String>();
     
     
     public MDConstraintsImpl()

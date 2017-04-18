@@ -31,19 +31,13 @@ public interface CIDate extends AbstractObject
     /**
      * Gets the date property
      */
-    public Object getDate();
+    public IDateTime getDate();
     
     
     /**
-     * Sets the dateAsDate property
+     * Sets the date property
      */
-    public void setDateAsDate(Object date);
-    
-    
-    /**
-     * Sets the dateAsDateTime property
-     */
-    public void setDateAsDateTime(IDateTime date);
+    public void setDate(IDateTime date);
     
     
     /**

@@ -28,7 +28,7 @@ import org.isotc211.v2005.gmd.MDIdentifier;
  */
 public class MDIdentifierImpl extends AbstractObjectImpl implements MDIdentifier
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -2545552291638995782L;
     protected OgcProperty<CICitation> authority;
     protected String code = "";
     

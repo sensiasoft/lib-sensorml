@@ -1353,7 +1353,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
             if (localName.equals("DateTime"))
             {
                 IDateTime date = ns1Bindings.readDateTime(reader);
-                bean.setDateAsDateTime(date);
+                bean.setDate(date);
             }
             else
                 throw new XMLStreamException(ERROR_INVALID_ELT + reader.getName() + errorLocationString(reader));
@@ -1404,7 +1404,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         
         // date
         writer.writeStartElement(NS_URI, "date");
-        ns1Bindings.writeDateTime(writer, (IDateTime)bean.getDate());
+        ns1Bindings.writeDateTime(writer, bean.getDate());
         writer.writeEndElement();
         
         // dateType

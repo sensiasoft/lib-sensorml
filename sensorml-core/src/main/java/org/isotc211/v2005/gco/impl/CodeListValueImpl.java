@@ -23,7 +23,7 @@ import org.isotc211.v2005.gco.CodeListValue;
  */
 public class CodeListValueImpl implements CodeListValue
 {
-    static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -3041902128756050666L;
     protected String codeList = "";
     protected String codeListValue = "";
     protected String codeSpace;
