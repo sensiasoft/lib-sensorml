@@ -3,6 +3,10 @@
    <Process>
       <uri>http://blah.blah/windchillMethod01v5.xml</uri>
       <class>org.vast.sensorML.test.WindChill_Process</class>
+   </Process>  
+   <Process>
+      <uri>urn:test:windchill</uri>
+      <class>org.vast.sensorML.test.WindChill2_Process_WithPorts</class>
    </Process>
    <Process>
       <uri>http://sensors.ws/process/affineTransform1D</uri>

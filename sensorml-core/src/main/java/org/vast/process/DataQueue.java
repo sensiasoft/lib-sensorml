@@ -20,7 +20,9 @@
 
 package org.vast.process;
 
-import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import org.vast.util.Asserts;
 import net.opengis.swe.v20.DataBlock;
 
 
@@ -34,112 +36,63 @@ import net.opengis.swe.v20.DataBlock;
  * </p>
  * 
  * @author Alex Robin
- * TODO add support for unit conversion in queues
  * */
 public class DataQueue extends DataConnection
 {
-	public int waitCount = 0;
-	public boolean repeat = false;
-	protected LinkedList<DataBlock> queue;
-	protected int counter = 0;
-    
-
-	public DataQueue()
-	{
-		queue = new LinkedList<DataBlock>();
-	}
-
-
-	/**
-	 * Adds DataBlock at the end of the list
-	 * @param data
-	 */
-	public synchronized void add(DataBlock data)
-	{
-		queue.addLast(data);
-		
-		// notify process waiting in get method
-		notifyAll();
-	}
-
-
-	/**
-	 * Gets the first DataBlock from the queue
-	 * @param timeout maximum time to wait until data is available, in ms
-	 * @return DataBlock or null if nothing is available after time out
-	 * @throws InterruptedException
-	 */
-	public synchronized DataBlock get(long timeout) throws InterruptedException
-	{
-		DataBlock dataBlock;
-		
-		if (counter == 0 && !repeat)
-		{
-			// wait until we have a dataBlock available
-			while (queue.size() == 0)
-				wait(timeout);
-
-			if (queue.size() == 0)
-				return null;
-
-			dataBlock = queue.getFirst();
-			queue.removeFirst();
-		}
-		else
-		{
-			// resend the same dataBlock
-			dataBlock = destinationComponent.getData();
-		}
-		
-		//System.err.println(counter + " " + dataBlock);
-		
-		// increment and reset wait loops counter
-		counter++;
-		if (counter > waitCount)
-			counter = 0;
-
-		return dataBlock;
-	}
-
-
-	/**
-	 * Default version of previous method with timeout set to 0
-	 * This will make us wait until a new value arrives on the queue
-	 * @return DataBlock or null if nothing is available
-	 * @throws InterruptedException
-	 */
-	public DataBlock get() throws InterruptedException
-	{
-		return this.get(0);
-	}
+	protected BlockingQueue<DataBlock> queue = new LinkedBlockingQueue<>();
 	
 	
 	@Override
-    public boolean isDataAvailable()
+    public void publishData() throws InterruptedException
     {
-        return (!queue.isEmpty());
+	    Asserts.checkState(sourceComponent.hasData(), "Source component has no data");
+	    DataBlock data = sourceComponent.getData();
+        queue.put(data);
     }
 
 
-    /**
-	 * Clear all data bocks in the queue
-	 */
-	public synchronized void clear()
-	{
-		this.queue.clear();
-	}
-
-
+    @Override
+	public void transferData() throws InterruptedException
+    {
+        DataBlock srcBlock = queue.take();
+        
+        // apply unit conversion if needed
+        // TODO add support for unit conversion in queues
+        /*if (!componentConverters.isEmpty())
+        {
+            if (destBlock == null)
+                destinationComponent.assignNewDataBlock();
+            
+            Iterator<ComponentConverter> it = componentConverters.iterator();
+            while (it.hasNext())
+                it.next().convert();
+        }*/
+        
+        destinationComponent.setData(srcBlock);
+    }
+    
+    
 	@Override
+    public synchronized void clear()
+    {
+        queue.clear();
+    }
+
+
+    @Override
+    public boolean isDataAvailable()
+    {
+        return !queue.isEmpty();
+    }
+    
+    
+    @Override
 	public String toString()
 	{
-		ListIterator<DataBlock> it = queue.listIterator();
-		StringBuffer text = new StringBuffer("Queue size: " + queue.size() + "\n");
+		StringBuilder text = new StringBuilder("Queue size: " + queue.size() + "\n");
 
-		while (it.hasNext())
+		for (DataBlock block: queue)
 		{
-			DataBlock block = it.next();
-			text.append("Block: ");
 			text.append(block.toString());
 			text.append("\n");
 		}

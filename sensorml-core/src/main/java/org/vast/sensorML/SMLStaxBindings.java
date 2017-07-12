@@ -31,8 +31,11 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import net.opengis.HrefResolverXML;
+import net.opengis.OgcProperty;
 import net.opengis.gml.v32.AbstractFeature;
 import net.opengis.gml.v32.impl.GMLFactory;
+import net.opengis.sensorml.v20.AbstractProcess;
 import net.opengis.sensorml.v20.AggregateProcess;
 import net.opengis.sensorml.v20.PhysicalComponent;
 import net.opengis.sensorml.v20.PhysicalSystem;
@@ -65,6 +68,32 @@ public class SMLStaxBindings extends XMLStreamBindings implements IFeatureStaxBi
         nsContext.registerNamespace("gml", net.opengis.gml.v32.bind.XMLStreamBindings.NS_URI);
         nsContext.registerNamespace("gco", org.isotc211.v2005.gco.bind.XMLStreamBindings.NS_URI);
         nsContext.registerNamespace("gmd", org.isotc211.v2005.gmd.bind.XMLStreamBindings.NS_URI);
+    }
+    
+    
+    @Override
+    protected void setupHrefResolver(XMLStreamReader reader, OgcProperty<?> prop)
+    {
+        QName propName = reader.getName();
+        
+        if ("typeOf".equals(propName.getLocalPart()) ||
+            "attachedTo".equals(propName.getLocalPart()) ||
+            "component".equals(propName.getLocalPart()))
+            setupProcessResolver(reader.getLocation().getPublicId(), prop);
+    }
+    
+    
+    @SuppressWarnings("rawtypes")
+    protected void setupProcessResolver(String baseURI, final OgcProperty prop)
+    {
+        prop.setHrefResolver(new HrefResolverXML(baseURI) {
+            @Override
+            public void parseContent(XMLStreamReader reader) throws XMLStreamException
+            {
+                AbstractProcess baseProcess = readAbstractProcess(reader);
+                prop.setValue(baseProcess);
+            }
+        });
     }
 
 

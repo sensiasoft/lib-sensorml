@@ -44,12 +44,6 @@ xsi:schemaLocation="http://www.opengis.net/sensorML/2.0 http://schemas.opengis.n
    <sml:classification>
       <sml:ClassifierList>
          <sml:classifier>
-            <sml:Term definition="http://sensorml.com/ont/swe/property/SensorType">
-               <sml:label>Sensor Type</sml:label>
-               <sml:value>Weather Station</sml:value>
-            </sml:Term>
-         </sml:classifier>
-         <sml:classifier>
             <sml:Term definition="http://onto.meteo.fr/def/property/NetworkType">
                <sml:label>Network</sml:label>
                <sml:codeSpace xlink:href="http://onto.meteo.fr/def/codespaces/Networks"/>
@@ -116,16 +110,16 @@ xsi:schemaLocation="http://www.opengis.net/sensorML/2.0 http://schemas.opengis.n
    <!-- ================================================= -->
    <!--                System Configuration               -->
    <!-- ================================================= -->
-   <sml:typeOf xlink:href="http://www.sensors.ws/examples/sensorML-2.0/xml/ManufacturerDescription.xml"/>
+   <sml:typeOf xlink:href="./ManufacturerDescription.xml"/>
    <sml:configuration>
       <sml:Settings>
-         <sml:setValue ref="base/components/raingauge/parameters/Averaging_Period">60.0</sml:setValue>
-         <sml:setConstraint ref="base/components/raingauge/parameters/Sampling_Period">
+         <sml:setValue ref="components/raingauge/parameters/Averaging_Period">60.0</sml:setValue>
+         <sml:setConstraint ref="components/raingauge/parameters/Sampling_Period">
             <swe:AllowedValues>
                <swe:interval>30.0 60.0</swe:interval>
             </swe:AllowedValues>            
          </sml:setConstraint>
-         <sml:setStatus ref="base/components/raingauge">enabled</sml:setStatus>
+         <sml:setStatus ref="components/raingauge">enabled</sml:setStatus>
       </sml:Settings>
    </sml:configuration>
 </sml:PhysicalComponent>

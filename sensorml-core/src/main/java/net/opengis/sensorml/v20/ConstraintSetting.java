@@ -14,9 +14,6 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package net.opengis.sensorml.v20;
 
-import net.opengis.swe.v20.AllowedTimes;
-import net.opengis.swe.v20.AllowedTokens;
-import net.opengis.swe.v20.AllowedValues;
 import net.opengis.swe.v20.DataConstraint;
 import net.opengis.swe.v20.SimpleComponent;
 
@@ -38,17 +35,5 @@ public interface ConstraintSetting extends ConfigSetting<SimpleComponent>
     /**
      * Sets value as AllowedTimes constraint
      */
-    public void setValueAsAllowedTimes(AllowedTimes constraint);
-    
-    
-    /**
-     * Sets value as AllowedToken constraint
-     */
-    public void setValueAsAllowedTokens(AllowedTokens constraint);
-    
-    
-    /**
-     * Sets value as AllowedValues constraint
-     */
-    public void setValueAsAllowedValues(AllowedValues constraint);
+    public void setValue(DataConstraint constraint);
 }

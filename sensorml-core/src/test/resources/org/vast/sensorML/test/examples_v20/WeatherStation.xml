@@ -125,7 +125,7 @@
          <sml:connection>
             <sml:Link>
                <sml:source ref="components/thermometer/outputs/windchill"/>
-               <sml:destination ref="outputs/weather/windchill"/>
+               <sml:destination ref="outputs/weather/wind_chill"/>
             </sml:Link>
          </sml:connection>
       </sml:ConnectionList>

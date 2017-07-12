@@ -20,8 +20,10 @@
 
 package org.vast.sensorML.test;
 
-import org.vast.data.*;
 import org.vast.process.*;
+import org.vast.swe.SWEHelper;
+import net.opengis.swe.v20.DataRecord;
+import net.opengis.swe.v20.Quantity;
 
 
 /**
@@ -35,46 +37,32 @@ import org.vast.process.*;
  * @author Alexandre Robin
  * @date Jan 20, 2006
  */
-public class WindChill_Process extends ExecutableProcessImpl
+public class WindChill2_Process_WithPorts extends ExecutableProcessImpl
 {
-    public static final ProcessInfo INFO = new ProcessInfo("http://blah.blah/windchillMethod01v5.xml", "Windchill", null, WindChill_Process.class);
-    DataValue inputTemp;
-    DataValue inputWindSpeed;
-    DataValue outputTemp;
+    public static final ProcessInfo INFO = new ProcessInfo("urn:test:windchill", "Windchill", null, WindChill2_Process_WithPorts.class);
+    Quantity inputTemp;
+    Quantity inputWindSpeed;
+    Quantity outputTemp;
 
 
-    public WindChill_Process()
+    public WindChill2_Process_WithPorts()
     {
         super(INFO);
-    }
-
-
-    /**
-     * Initializes the process
-     * Gets handles to input/output components
-     */
-    @Override
-    public void init() throws ProcessException
-    {
-        super.init();
+        SWEHelper fac = new SWEHelper();
         
-        try
-        {
-            // I/O mappings
-            inputTemp = (DataValue) inputData.getComponent("weather_inputs").getComponent("temperature");
-            inputWindSpeed = (DataValue) inputData.getComponent("weather_inputs").getComponent("windSpeed");
-            outputTemp = (DataValue) outputData.getComponent("windChill");
-        }
-        catch (Exception e)
-        {
-            throw new ProcessException(IO_ERROR_MSG, e);
-        }
+        // inputs
+        DataRecord weatherRec = fac.newDataRecord();
+        inputTemp = fac.newQuantity("http://sweet.jpl.nasa.gov/2.2/quanTemperature.owl#Temperature", "Air Temperature", null, "Cel");
+        weatherRec.addField("temperature", inputTemp);
+        inputWindSpeed = fac.newQuantity("http://sweet.jpl.nasa.gov/2.2/quanSpeed.owl#WindSpeed", "Wind Speed", null, "m/s");
+        weatherRec.addField("windSpeed", inputWindSpeed);
+        inputData.add("weather_inputs", weatherRec);
+        
+        // output
+        outputTemp = fac.newQuantity("http://sweet.jpl.nasa.gov/2.2/quanTemperature.owl#WindChill", "Windchill Temperature", null, "Cel");
     }
 
 
-    /**
-     * Executes process algorithm on inputs and set output data
-     */
     @Override
     public void execute() throws ProcessException
     {

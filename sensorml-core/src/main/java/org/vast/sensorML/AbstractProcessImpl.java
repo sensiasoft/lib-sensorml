@@ -15,26 +15,32 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 package org.vast.sensorML;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import org.vast.data.AbstractDataComponentImpl;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import org.slf4j.Logger;
+import org.vast.data.DataIterator;
 import org.vast.process.DataConnectionList;
-import org.vast.process.DataConnection;
+import org.vast.process.IDataConnection;
 import org.vast.process.IProcessExec;
-import org.vast.process.SMLException;
-import net.opengis.OgcPropertyList;
+import org.vast.process.ProcessException;
+import org.vast.process.ProcessInfo;
+import org.vast.unit.Unit;
+import org.vast.util.Asserts;
 import net.opengis.gml.v32.Reference;
 import net.opengis.sensorml.v20.AbstractModes;
 import net.opengis.sensorml.v20.AbstractProcess;
-import net.opengis.sensorml.v20.AbstractSettings;
 import net.opengis.sensorml.v20.DataInterface;
 import net.opengis.sensorml.v20.FeatureList;
 import net.opengis.sensorml.v20.IOPropertyList;
 import net.opengis.sensorml.v20.ObservableProperty;
+import net.opengis.sensorml.v20.Settings;
 import net.opengis.sensorml.v20.impl.DescribedObjectImpl;
 import net.opengis.sensorml.v20.impl.FeatureListImpl;
 import net.opengis.swe.v20.AbstractSWEIdentifiable;
 import net.opengis.swe.v20.DataComponent;
+import net.opengis.swe.v20.HasUom;
 
 
 /**
@@ -49,16 +55,16 @@ import net.opengis.swe.v20.DataComponent;
  * @author Alex Robin
  * @since Feb 28, 2015
  */
-public abstract class AbstractProcessImpl extends DescribedObjectImpl implements AbstractProcess, IProcessExec, Runnable
+public abstract class AbstractProcessImpl extends DescribedObjectImpl implements AbstractProcess, IProcessExec
 {
     private static final long serialVersionUID = -6639992874400892845L;
     protected Reference typeOf;
-    protected AbstractSettings configuration;
+    protected Settings configuration;
     protected FeatureList featuresOfInterest;
     protected IOPropertyList inputData = new IOPropertyList();
     protected IOPropertyList outputData = new IOPropertyList();
     protected IOPropertyList paramData = new IOPropertyList();
-    protected ArrayList<AbstractModes> modesList = new ArrayList<AbstractModes>();
+    protected ArrayList<AbstractModes> modesList = new ArrayList<>();
     protected String definition;
     
     protected transient IProcessExec executableProcess;
@@ -67,31 +73,143 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
     public AbstractProcessImpl()
     {
     }
-    
-    
-    public void setExecutableImpl(ExecutableProcessImpl processExec) throws SMLException
+
+
+    @Override
+    public String getName()
     {
-        this.executableProcess = processExec;
-        processExec.assignWrapperProcess(this);
+        if (getNumNames() == 0 && isExecutable())
+            return executableProcess.getProcessInfo().getName();
+        else
+            return super.getName();
     }
     
     
     @Override
+    public String getDescription()
+    {
+        if (!isSetDescription() && isExecutable())
+            return executableProcess.getProcessInfo().getDescription();
+        else
+            return super.getDescription();
+    }
+
+
+    public void setExecutableImpl(IProcessExec processExec) throws ProcessException
+    {
+        this.executableProcess = processExec;
+        
+        // merge input/output/parameter descriptions
+        // we share the actual port lists between the description and the exec implementation
+        inputData = mergePortDescriptors(inputData, processExec.getInputList());
+        outputData = mergePortDescriptors(outputData, processExec.getOutputList());
+        paramData = mergePortDescriptors(paramData, processExec.getParameterList());
+    }
+    
+    
+    protected IOPropertyList mergePortDescriptors(IOPropertyList smlPorts, IOPropertyList execPorts) throws ProcessException
+    {
+        // if no ports are defined in exec implementation, use ports defined in SML description
+        // otherwise merge SML ports descriptions with ones defined in exec implementation 
+        
+        if (!execPorts.isEmpty())
+        {
+            for (String portName: smlPorts.getPropertyNames())
+            {
+                try
+                {
+                    DataComponent smlPort = smlPorts.getComponent(portName);
+                    DataComponent execPort = execPorts.getComponent(portName);
+                    mergePort(smlPort, execPort);                    
+                }
+                catch (IllegalArgumentException e)
+                {
+                    throw new ProcessException("Port '" + portName + "' is not defined in executable implementation", e);
+                }
+                catch (ProcessException e)
+                {
+                    String processName = getInstanceName() != null ? getInstanceName() : getProcessInfo().getName();
+                    String msg = String.format("Description and executable implementation of process '%s'"
+                            + " have incompatible definitions of port '%s'", processName, portName);
+                    throw new ProcessException(msg, e);
+                }
+            }                
+        }
+        else
+            execPorts.addAll(smlPorts);
+        
+        return execPorts;
+    }
+    
+    
+    /*
+     * Merge port definitions from SML description and executable implementation, checking
+     * if they are equivalent in terms of structure (including component names) and units.
+     */
+    protected void mergePort(DataComponent smlPort, DataComponent execPort) throws ProcessException
+    {
+        Asserts.checkNotNull(smlPort, DataComponent.class);
+        Asserts.checkNotNull(execPort, DataComponent.class);
+        
+        DataIterator smlIt = new DataIterator(smlPort);
+        DataIterator execIt = new DataIterator(execPort);
+        while (smlIt.hasNext())
+        {
+            DataComponent smlComp = smlIt.next();
+            
+            if (!execIt.hasNext())
+                throw new ProcessException(String.format("Component '%s' is missing", smlComp.getName()));
+            
+            DataComponent execComp = execIt.next();
+            
+            // check that component names are the same
+            if (!Objects.equals(smlComp.getName(), execComp.getName()))
+                throw new ProcessException(String.format("Expected component with name '%s' instead of '%s'", execComp.getName(), smlComp.getName()));
+            
+            // check that component type and size are the same
+            if (smlComp.getClass() != execComp.getClass())
+                throw new ProcessException(String.format("Component '%s' should be of type '%s'", smlComp.getName(), execComp.getClass().getInterfaces()[0].getSimpleName()));
+            
+            if (smlComp.getComponentCount() != execComp.getComponentCount())
+                throw new ProcessException(String.format("Component '%s' should be of size '%d'", smlComp.getName(), execComp.getComponentCount()));
+            
+            // check that units are compatible
+            if (smlComp instanceof HasUom && execComp instanceof HasUom)
+            {
+                Unit smlUom = ((HasUom)smlComp).getUom().getValue();
+                Unit execUom = ((HasUom)execComp).getUom().getValue();
+                
+                if (execUom != null && (smlUom == null || !smlUom.isEquivalent(execUom)))
+                    throw new ProcessException(String.format("Component '%s' should have unit '%s'", smlComp.getName(), execUom.getUCUMExpression()));
+                                
+                // if exec implementation is unit agnostic, use unit specified in description
+                if (execUom == null && smlUom != null)
+                    ((HasUom)execComp).setUom(((HasUom)smlComp).getUom());
+            }
+            
+            // merge data
+            if (smlComp.hasData())
+                execComp.setData(smlComp.getData());
+        }
+    }
+    
+    
     public boolean isExecutable()
     {
         return (executableProcess != null);
     }
     
     
-    protected final void checkExecutable() throws SMLException
+    @Override
+    public ProcessInfo getProcessInfo()
     {
-        if (executableProcess == null)
-            throw new SMLException("This process is not executable");
+        checkExecutable();
+        return executableProcess.getProcessInfo();
     }
 
 
     @Override
-    public void init() throws SMLException
+    public void init() throws ProcessException
     {
         checkExecutable();
         executableProcess.init();
@@ -99,254 +217,187 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
 
 
     @Override
-    public void reset() throws SMLException
+    public boolean canRun()
     {
         checkExecutable();
-        executableProcess.reset();
+        return executableProcess.canRun();
     }
 
 
     @Override
-    public void execute() throws SMLException
+    public void run() throws ProcessException
+    {
+        checkExecutable();
+        executableProcess.run();
+    }
+
+
+    @Override
+    public void execute() throws ProcessException
     {
         checkExecutable();
         executableProcess.execute();
+    }
+    
+    
+    @Override
+    public void start() throws ProcessException
+    {
+        checkExecutable();
+        executableProcess.start();        
+    }
+
+
+    @Override
+    public void start(ExecutorService threadPool) throws ProcessException
+    {
+        checkExecutable();
+        executableProcess.start(threadPool);        
+    }
+
+
+    @Override
+    public void stop()
+    {
+        checkExecutable();
+        executableProcess.stop();        
+    }
+
+
+    @Override
+    public void notifyParamChange()
+    {
+        if (executableProcess != null)
+            executableProcess.notifyParamChange();
     }
 
 
     @Override
     public void dispose()
     {
-        if (executableProcess != null)
-            executableProcess.dispose();
+        checkExecutable();
+        executableProcess.dispose();
     }
 
 
     @Override
-    public boolean canRun()
-    {
-        if (executableProcess != null)
-            return executableProcess.canRun();
-        else
-            return false;
-    }
-
-
-    @Override
-    public void createNewOutputBlocks()
-    {
-        if (executableProcess != null)
-            executableProcess.createNewOutputBlocks();
-    }
-
-
-    @Override
-    public void createNewInputBlocks()
-    {
-        if (executableProcess != null)
-            executableProcess.createNewInputBlocks();
-    }
-
-
-    @Override
-    public void run()
-    {
-        if (executableProcess != null)
-            executableProcess.run();
-    }
-
-
-    @Override
-    public synchronized void start() throws SMLException
+    public Map<String, DataConnectionList> getInputConnections()
     {
         checkExecutable();
-        executableProcess.start();
+        return executableProcess.getInputConnections();
     }
 
 
     @Override
-    public synchronized void stop()
-    {
-        if (executableProcess != null)
-            executableProcess.stop();
-    }
-
-
-    /**
-     * Print process name and I/O info
-     */
-    @Override
-    public String toString()
-    {
-        StringBuffer text = new StringBuffer();
-        String indent = "    ";
-
-        text.append("Process: ");
-        text.append(id);
-        text.append(" (" + this.getClass().getName() + ")\n");
-
-        text.append("\n  Inputs:\n");
-        for (int i = 0; i < getNumInputs(); i++)
-        {
-            text.append(indent);
-            text.append(((AbstractDataComponentImpl)inputData.getComponent(i)).toString(indent));
-        }
-
-        text.append("\n  Outputs:\n");
-        for (int i = 0; i < getNumOutputs(); i++)
-        {
-            text.append(indent);
-            text.append(((AbstractDataComponentImpl)outputData.getComponent(i)).toString(indent));
-        }
-
-        text.append("\n  Parameters:\n");
-        for (int i = 0; i < getNumParameters(); i++)
-        {
-            text.append(indent);
-            text.append(((AbstractDataComponentImpl)paramData.getComponent(i)).toString(indent));
-        }
-
-        return text.toString();
-    }
-
-
-    @Override
-    public void connectInput(String inputName, String dataPath, DataConnection connection) throws SMLException
+    public Map<String, DataConnectionList> getParamConnections()
     {
         checkExecutable();
-        executableProcess.connectInput(inputName, dataPath, connection);
+        return executableProcess.getParamConnections();
     }
 
 
     @Override
-    public void connectOutput(String outputName, String dataPath, DataConnection connection) throws SMLException
+    public Map<String, DataConnectionList> getOutputConnections()
     {
         checkExecutable();
-        executableProcess.connectOutput(outputName, dataPath, connection);
-    }
-
-
-    @Override
-    public void connectParameter(String paramName, String dataPath, DataConnection connection) throws SMLException
-    {
-        checkExecutable();
-        executableProcess.connectParameter(paramName, dataPath, connection);
-    }
-
-
-    @Override
-    public boolean isInputConnected(String inputName)
-    {
-        if (executableProcess != null)
-            return executableProcess.isInputConnected(inputName);
-        else
-            return false;
-    }
-
-
-    @Override
-    public boolean isOutputConnected(String outputName)
-    {
-        if (executableProcess != null)
-            return executableProcess.isOutputConnected(outputName);
-        else
-            return false;
-    }
-
-
-    @Override
-    public boolean isParamConnected(String paramName)
-    {
-        if (executableProcess != null)
-            return executableProcess.isParamConnected(paramName);
-        else
-            return false;
-    }
-
-
-    @Override
-    public List<DataConnectionList> getInputConnections()
-    {
-        if (executableProcess != null)
-            return executableProcess.getInputConnections();
-        else
-            return Collections.EMPTY_LIST;
-    }
-
-
-    @Override
-    public List<DataConnectionList> getParamConnections()
-    {
-        if (executableProcess != null)
-            return executableProcess.getParamConnections();
-        else
-            return Collections.EMPTY_LIST;
-    }
-
-
-    @Override
-    public List<DataConnectionList> getOutputConnections()
-    {
-        if (executableProcess != null)
-            return executableProcess.getOutputConnections();
-        else
-            return Collections.EMPTY_LIST;
+        return executableProcess.getOutputConnections();
     }
     
     
     @Override
-    public boolean isUsingQueueBuffers()
+    public void connect(DataComponent component, IDataConnection connection) throws ProcessException
     {
-        if (executableProcess != null)
-            return executableProcess.isUsingQueueBuffers();
-        else
-            return false;
+        checkExecutable();
+        executableProcess.connect(component, connection);
     }
 
 
     @Override
-    public void setUsingQueueBuffers(boolean usingQueueBuffers)
+    public void setInstanceName(String name)
     {
-        if (executableProcess != null)
-            executableProcess.setUsingQueueBuffers(usingQueueBuffers);        
+        checkExecutable();
+        executableProcess.setInstanceName(name);
+    }
+
+
+    @Override
+    public String getInstanceName()
+    {
+        if (isExecutable())
+            return executableProcess.getInstanceName();
+        else
+            return null;
+    }
+
+
+    @Override
+    public void disconnect(IDataConnection connection)
+    {
+        checkExecutable();
+        executableProcess.disconnect(connection);
+    }
+
+
+    @Override
+    public void setParentLogger(Logger log)
+    {
+        checkExecutable();
+        executableProcess.setParentLogger(log);        
     }
 
 
     @Override
     public boolean needSync()
     {
-        if (executableProcess != null)
-            return executableProcess.needSync();
-        else
-            return false;
+        checkExecutable();
+        return executableProcess.needSync();
     }
-
+    
+    
+    protected void checkExecutable()
+    {
+        if (!isExecutable())
+            throw new IllegalStateException("Process '" + getName() + "' is not executable");
+    }
+    
 
     @Override
-    public void setAvailability(List<DataConnectionList> allConnections, boolean availability)
+    public String toString()
     {
-        if (executableProcess != null)
-            executableProcess.setAvailability(allConnections, availability);        
-    }
-
-
-    @Override
-    public void transferData(List<DataConnectionList> allConnections)
-    {
-        if (executableProcess != null)
-            executableProcess.transferData(allConnections);        
-    }
-
-
-    protected int getSignalIndex(OgcPropertyList<?> ioList, String signalName)
-    {
-        for (int i = 0; i < ioList.size(); i++)
+        StringBuilder text = new StringBuilder();
+        
+        text.append("SML Process ");
+        text.append('(').append(getName()).append(')');
+        text.append('\n');
+        
+        text.append("  Inputs: ");
+        for (int i = 0; i < inputData.size(); i++)
         {
-            if (signalName.equals(ioList.getProperty(i).getName()))
-                return i;
+            if (i > 0)
+                text.append(", ");
+            text.append(inputData.getProperty(i).getName());
         }
+        text.append('\n');
+        
+        text.append("  Outputs: ");
+        for (int i = 0; i < outputData.size(); i++)
+        {
+            if (i > 0)
+                text.append(", ");
+            text.append(outputData.getProperty(i).getName());
+        }
+        text.append('\n');
+        
+        text.append("  Parameters: ");
+        for (int i = 0; i < paramData.size(); i++)
+        {
+            if (i > 0)
+                text.append(", ");
+            text.append(paramData.getProperty(i).getName());
+        }
+        text.append('\n');
 
-        return -1;
+        return text.toString();
     }
 
 
@@ -388,7 +439,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
      * Gets the configuration property
      */
     @Override
-    public AbstractSettings getConfiguration()
+    public Settings getConfiguration()
     {
         return configuration;
     }
@@ -408,7 +459,7 @@ public abstract class AbstractProcessImpl extends DescribedObjectImpl implements
      * Sets the configuration property
      */
     @Override
-    public void setConfiguration(AbstractSettings configuration)
+    public void setConfiguration(Settings configuration)
     {
         this.configuration = configuration;
     }

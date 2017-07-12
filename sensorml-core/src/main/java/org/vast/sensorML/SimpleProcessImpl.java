@@ -14,8 +14,11 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package org.vast.sensorML;
 
+import org.vast.process.IProcessExec;
+import org.vast.process.ProcessException;
 import net.opengis.OgcProperty;
 import net.opengis.OgcPropertyImpl;
+import net.opengis.gml.v32.impl.ReferenceImpl;
 import net.opengis.sensorml.v20.ProcessMethod;
 import net.opengis.sensorml.v20.SimpleProcess;
 
@@ -27,6 +30,7 @@ import net.opengis.sensorml.v20.SimpleProcess;
  */
 public class SimpleProcessImpl extends AbstractProcessImpl implements SimpleProcess
 {
+    private static final long serialVersionUID = -8432209624947754205L;
     protected OgcProperty<ProcessMethod> method;
     
     
@@ -36,6 +40,16 @@ public class SimpleProcessImpl extends AbstractProcessImpl implements SimpleProc
     }
     
     
+    @Override
+    public void setExecutableImpl(IProcessExec processExec) throws ProcessException
+    {
+        super.setExecutableImpl(processExec);
+        
+        if (!isSetTypeOf() && !isSetMethod())
+            setTypeOf(new ReferenceImpl(processExec.getProcessInfo().getUri()));
+    }
+
+
     /**
      * Gets the method property
      */

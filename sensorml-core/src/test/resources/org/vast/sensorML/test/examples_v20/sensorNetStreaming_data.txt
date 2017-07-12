@@ -1,9 +1,0 @@
-2009-05-23T19:36:15Z,urn:meteofrance:stations:76455,25.4,100.3,7.31,270.8
-2009-05-23T19:36:15Z,urn:meteofrance:stations:55577,25.5,100.5,7.54,271.4
-2009-05-23T19:38:15Z,urn:meteofrance:stations:85643,25.7,100.1,7.44,260.2
-2009-05-23T19:40:15Z,urn:meteofrance:stations:76455,24.9,100.0,7.40,270.3
-2009-05-23T19:40:15Z,urn:meteofrance:stations:92675,25.2,100.6,7.54,269.8
-2009-05-23T19:42:15Z,urn:meteofrance:stations:22298,26.5,100.6,7.30,271.9
-2009-05-23T19:42:15Z,urn:meteofrance:stations:55577,25.4,100.3,7.00,270.8
-2009-05-23T19:43:15Z,urn:meteofrance:stations:76455,25.0,100.5,7.44,275.3
-2009-05-23T19:46:15Z,urn:meteofrance:stations:92675,25.5,100.2,7.54,271.0

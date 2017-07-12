@@ -15,8 +15,8 @@
    <sml:inputs>
       <sml:InputList>
          <sml:input name="valueIn">
-            <swe:Quantity definition="http://sensorml.com/ont/swe/property/SimpleDN">
-               <swe:uom code="any" />
+            <swe:Quantity definition="http://sensorml.com/ont/swe/property/DN">
+               <swe:uom xlink:href="http://sensorml.com/ont/swe/uom/Any" />
             </swe:Quantity>
          </sml:input>
       </sml:InputList>
@@ -28,7 +28,7 @@
       <sml:OutputList>
          <sml:output name="valueOut">
             <swe:Quantity definition="http://sensorml.com/ont/swe/property/DN">
-               <swe:uom code="any" />
+               <swe:uom xlink:href="http://sensorml.com/ont/swe/uom/Any" />
             </swe:Quantity>
          </sml:output>
       </sml:OutputList>
@@ -52,7 +52,7 @@
                   <sml:InputList>
                      <sml:input name="x">
                         <swe:Quantity definition="http://sensorml.com/ont/swe/property/DN">
-                           <swe:uom code="any" />
+                           <swe:uom xlink:href="http://sensorml.com/ont/swe/uom/Any" />
                         </swe:Quantity>
                      </sml:input>
                   </sml:InputList>
@@ -65,7 +65,7 @@
                      <!-- scaled output value -->
                      <sml:output name="y">
                         <swe:Quantity definition="http://sensorml.com/ont/swe/property/DN">
-                           <swe:uom code="any" />
+                           <swe:uom xlink:href="http://sensorml.com/ont/swe/uom/Any" />
                         </swe:Quantity>
                      </sml:output>
                   </sml:OutputList>
@@ -77,7 +77,7 @@
                   <sml:ParameterList>
                     <sml:parameter name="slope">
                         <swe:Quantity definition="http://sensorml.com/ont/swe/property/LinearSlope">
-                           <swe:uom code="any" />
+                           <swe:uom xlink:href="http://sensorml.com/ont/swe/uom/Any" />
                            <!-- slope value set inline -->
                            <swe:value>2.3</swe:value>
                         </swe:Quantity>
@@ -85,7 +85,7 @@
                      <sml:parameter name="intercept">
                         <swe:Quantity definition="http://sensorml.com/ont/swe/property/LinearAxisIntercept">
                            <!-- y-intercept value set inline -->
-                           <swe:uom code="any" />
+                           <swe:uom xlink:href="http://sensorml.com/ont/swe/uom/Any" />
                            <swe:value>1.76</swe:value>
                         </swe:Quantity>
                      </sml:parameter>
@@ -114,8 +114,8 @@
                <sml:inputs>
                   <sml:InputList>
                      <sml:input name="valueIn">
-                        <swe:Quantity definition="http://sensorml.com/ont/swe/property/SimpleDN">
-                           <swe:uom code="any" />
+                        <swe:Quantity definition="http://sensorml.com/ont/swe/property/DN">
+                           <swe:uom xlink:href="http://sensorml.com/ont/swe/uom/Any" />
                         </swe:Quantity>
                      </sml:input>
                   </sml:InputList>
@@ -128,13 +128,13 @@
                      <!-- output for values that pass -->
                      <sml:output name="passValue">
                         <swe:Quantity definition="http://sensorml.com/ont/swe/property/PassValue">
-                           <swe:uom code="any" />
+                           <swe:uom xlink:href="http://sensorml.com/ont/swe/uom/Any" />
                         </swe:Quantity>
                      </sml:output>
                      <!-- output for values that fail -->
                      <sml:output name="failValue">
                         <swe:Quantity definition="http://sensorml.com/ont/swe/property/FailValue">
-                           <swe:uom code="any" />
+                           <swe:uom xlink:href="http://sensorml.com/ont/swe/uom/Any" />
                         </swe:Quantity>
                      </sml:output>
                   </sml:OutputList>
@@ -146,7 +146,7 @@
                   <sml:ParameterList>
                      <sml:parameter name="threshold">
                         <swe:Quantity definition="http://sensorml.com/ont/swe/property/LowerThreshold">
-                           <swe:uom code="any" />
+                           <swe:uom xlink:href="http://sensorml.com/ont/swe/uom/Any" />
                            <!-- threshold value set inline -->
                            <swe:value>15.0</swe:value>
                         </swe:Quantity>

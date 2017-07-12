@@ -24,8 +24,6 @@ import java.io.Serializable;
 @SuppressWarnings("javadoc")
 public interface Link extends Serializable
 {
-    public final static String PATH_SEPARATOR = "/";
-    
     
     /**
      * Gets the source property

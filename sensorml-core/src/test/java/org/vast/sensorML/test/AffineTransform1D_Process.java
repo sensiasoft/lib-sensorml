@@ -20,9 +20,12 @@
 
 package org.vast.sensorML.test;
 
-import org.vast.data.*;
-import org.vast.process.*;
-import org.vast.sensorML.ExecutableProcessImpl;
+import org.vast.process.ExecutableProcessImpl;
+import org.vast.process.ProcessException;
+import org.vast.process.ProcessInfo;
+import org.vast.swe.SWEConstants;
+import org.vast.swe.SWEHelper;
+import net.opengis.swe.v20.Quantity;
 
 
 /**
@@ -35,34 +38,30 @@ import org.vast.sensorML.ExecutableProcessImpl;
  */
 public class AffineTransform1D_Process extends ExecutableProcessImpl
 {
-    DataValue xIn;
-    DataValue yOut;
-    DataValue aParam, bParam;
+    public static final ProcessInfo INFO = new ProcessInfo("http://sensors.ws/process/affineTransform1D", "Affine Transform", null, AffineTransform1D_Process.class);
+    Quantity xIn;
+    Quantity yOut;
+    Quantity aParam, bParam;
 
 
     public AffineTransform1D_Process()
     {
-    }
-
-
-    /**
-     * Initializes the process
-     * Gets handles to input/output components
-     */
-    @Override
-    public void init() throws SMLException
-    {
-        try
-        {
-            xIn = (DataValue) inputData.getComponent("x");
-            yOut = (DataValue) outputData.getComponent("y");
-            aParam = (DataValue) paramData.getComponent("slope");
-            bParam = (DataValue) paramData.getComponent("intercept");
-        }
-        catch (Exception e)
-        {
-            throw new SMLException(IO_ERROR_MSG, e);
-        }
+        super(INFO);        
+        SWEHelper sweHelper = new SWEHelper();
+        
+        // input
+        xIn = sweHelper.newQuantity(SWEConstants.DEF_DN, "Independent Variable", null, SWEConstants.UOM_ANY);
+        inputData.add("x", xIn);
+        
+        // parameters
+        aParam = sweHelper.newQuantity(SWEHelper.getPropertyUri("LinearSlope"), "Slope", null, SWEConstants.UOM_ANY);        
+        paramData.add("slope", aParam);
+        bParam = sweHelper.newQuantity(SWEHelper.getPropertyUri("LinearAxisIntercept"), "Intercept", null, SWEConstants.UOM_ANY);        
+        paramData.add("intercept", bParam);
+        
+        // output
+        yOut = sweHelper.newQuantity(SWEConstants.DEF_DN, "Dependent Variable", null, SWEConstants.UOM_ANY);
+        outputData.add("y", yOut);
     }
 
 
@@ -70,13 +69,14 @@ public class AffineTransform1D_Process extends ExecutableProcessImpl
      * Executes process algorithm on inputs and set output data
      */
     @Override
-    public void execute() throws SMLException
+    public void execute() throws ProcessException
     {
         double x = xIn.getData().getDoubleValue();
         double a = aParam.getData().getDoubleValue();
         double b = bParam.getData().getDoubleValue();
         
         double y = a*x + b;
+        getLogger().debug("Result = " + y);
 
         yOut.getData().setDoubleValue(y);
     }

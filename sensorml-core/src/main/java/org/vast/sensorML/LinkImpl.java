@@ -24,6 +24,7 @@ import net.opengis.sensorml.v20.Link;
  */
 public class LinkImpl implements Link
 {
+    private static final long serialVersionUID = 8285623472780171724L;
     protected String source;
     protected String destination;
     protected String id;
@@ -31,6 +32,13 @@ public class LinkImpl implements Link
     
     public LinkImpl()
     {
+    }
+    
+    
+    public LinkImpl(String source, String destination)
+    {
+        this.source = source;
+        this.destination = destination;
     }
     
     

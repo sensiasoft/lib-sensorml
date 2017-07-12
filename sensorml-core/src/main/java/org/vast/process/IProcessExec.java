@@ -10,83 +10,77 @@
 
 package org.vast.process;
 
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import org.slf4j.Logger;
 import net.opengis.sensorml.v20.IOPropertyList;
+import net.opengis.swe.v20.DataComponent;
 
 
 public interface IProcessExec
 {
 
     /**
-     * @return process name
+     * @return all process information (name, UID, etc.)
      */
-    public String getName();
+    public ProcessInfo getProcessInfo();
+    
+    
+    /**
+     * Sets the name of this process instance
+     * @param name
+     */
+    public void setInstanceName(String name);
+    
+    
+    /**
+     * @return name of this process instance
+     */
+    public String getInstanceName();
     
     
     /**
      * Initialize the process and its internal variables (fixed parameters).
      * This is called only once before the process is executed.
-     * @throws SMLException
+     * @throws ProcessException
      */
-    public void init() throws SMLException;
+    public void init() throws ProcessException;
 
 
     /**
-     * Execute is typically called several times on a process and should
-     * contain all the logic to transform input/parameter values to 
-     * output values. This method should be optimized as much as possible.
-     * @throws SMLException
-     */
-    public void execute() throws SMLException;
-
-    
-    /**
-     * Resets the process (especially asnchronous ones) before it can be run again.
-     * This method should properly initialize all process state variables
-     * @throws SMLException
-     */
-    public void reset() throws SMLException;
-    
-    
-    /**
-     * Override to dispose of all resources allocated
-     * for the process (stop threads, OS resources, etc...)
-     * Default method does nothing.
-     */
-    public void dispose();
-
-
-    /**
-     * Check that all needed connections are ready for the process
-     * to run in sync mode (not threaded).
+     * Check that all needed connections are ready for the process to run
      * @return true if so and false if at least one connection is not ready.
      */
     public boolean canRun();
 
-
+    
     /**
-     * Creates new DataBlock for each output signal
-     **/
-    public void createNewOutputBlocks();
-
-
-    /**
-     * Creates new DataBlock for each input signal
-     **/
-    public void createNewInputBlocks();
-
-
-    /**
-     * Process thread run method
+     * Runs the process which includes fetching input data, calling execute
+     * and producing output data
      */
-    public void run();
+    public void run() throws ProcessException;
 
 
     /**
-     * Start process thread
-     * @throws SMLException
+     * Execute contains the logic to transform input/parameter values into 
+     * output values. This method should be optimized as much as possible.
+     * @throws ProcessException
      */
-    public void start() throws SMLException;
+    public void execute() throws ProcessException;
+    
+    
+    /**
+     * Start process in its own thread
+     * @throws ProcessException
+     */
+    public void start() throws ProcessException;
+    
+    
+    /**
+     * Start process using the given thread pool
+     * @throws ProcessException
+     */
+    public void start(ExecutorService threadPool) throws ProcessException;
 
 
     /**
@@ -96,111 +90,90 @@ public interface IProcessExec
     
     
     /**
-     * @return list of inputs
+     * Override to dispose of all resources allocated
+     * for the process (stop threads, OS resources, etc...)
+     */
+    public void dispose();
+    
+    
+    /**
+     * @return List of inputs
      */
     public IOPropertyList getInputList();
     
     
     /**
-     * @return list of outputs
+     * @return List of outputs
      */
     public IOPropertyList getOutputList();
     
     
     /**
-     * @return list of parameters
+     * @return List of parameters
      */
     public IOPropertyList getParameterList();
     
     
     /**
-     * @return list of input connections to read data from
+     * @return Read-only list of connections input ports
      */
-    public List<DataConnectionList> getInputConnections();
+    public Map<String, DataConnectionList> getInputConnections();
     
     
     /**
-     * @return list of parameter connections to read data from
+     * @return Read-only list of connections output ports
      */
-    public List<DataConnectionList> getParamConnections();
+    public Map<String, DataConnectionList> getOutputConnections();
     
     
     /**
-     * @return list of output connections to write data to
+     * @return Read-only list of connections parameter ports
      */
-    public List<DataConnectionList> getOutputConnections();
+    public Map<String, DataConnectionList> getParamConnections();
+    
+    
+    /**
+     * Connects one of this process ports with the given connection 
+     * @param component input, parameter or output component to connect
+     * @param connection connection object to use
+     * @throws IllegalArgumentException if component is not part on this process ports
+     * @throws ProcessException if connection cannot be validated 
+     * (this usually happens because source and destination components are not compatible)
+     */
+    public void connect(DataComponent component, IDataConnection connection) throws ProcessException;
+    
+    
+    /**
+     * Detach connection from this process input, output or parameter
+     * @param connection
+     * @throws IllegalArgumentException if connection is not attached to any of this
+     * process ports
+     */
+    public void disconnect(IDataConnection connection);
 
 
     /**
-     * Connects one of this process inputs with the given connection 
-     * @param inputName name of input to connect
-     * @param dataPath path of component to connect
-     * @param connection connection object whose destination will be set to the specified component
-     * @throws SMLException
+     * @return True if this process is asynchronous (i.e. outputs are not generated
+     * everytime inputs are read) and thus need synchronization with other processes
+     * in the chain
      */
-    public void connectInput(String inputName, String dataPath, DataConnection connection) throws SMLException;
-
-
-    /**
-     * Connects one of this process outputs with the given connection 
-     * @param outputName name of output to connect
-     * @param dataPath path of component to connect
-     * @param connection connection object whose source will be set to the specified component
-     * @throws SMLException
-     */
-    public void connectOutput(String outputName, String dataPath, DataConnection connection) throws SMLException;
-
-
-    /**
-     * Connects one of this process parameters with the given connection 
-     * @param paramName name of parameter to connect
-     * @param dataPath path of component to connect
-     * @param connection connection object whose destination will be set to the specified component
-     * @throws SMLException
-     */
-    public void connectParameter(String paramName, String dataPath, DataConnection connection) throws SMLException;
-
-
-    /**
-     * Checks if the specified input has one or more connections
-     * @param inputName name of input
-     * @return true if at least one connection is made with the input
-     */
-    public boolean isInputConnected(String inputName);
-
-
-    /**
-     * Checks if the specified output has one or more connections
-     * @param outputName name of output
-     * @return true if at least one connection is made with the output
-     */
-    public boolean isOutputConnected(String outputName);
-
-
-    /**
-     * Checks if the specified parameter has one or more connections
-     * @param paramName name of parameter
-     * @return true if at least one connection is made with the parameter
-     */
-    public boolean isParamConnected(String paramName);
-
-
-    /**
-     * Checks if actual buffered queues are used to connect with this process
-     * @return tru if queues are used
-     */
-    public boolean isUsingQueueBuffers();
-
-
-    public void setUsingQueueBuffers(boolean usingQueueBuffers);
-
-
     public boolean needSync();
     
     
-    public void setAvailability(List<DataConnectionList> allConnections, boolean availability);
+    /**
+     * Notifies the process that one or more parameter values have changed before
+     * or during execution
+     */
+    public void notifyParamChange();
     
     
-    public void transferData(List<DataConnectionList> allConnections);
+    /**
+     * Set the parent logger for this process.<br/>
+     * The parent logger is used to group log events occuring in all processes that are
+     * part of the same processing component (e.g. a process chain for instance) while
+     * still allowing to differentiate the actual process instance that issued the log.
+     * @param log
+     */
+    public void setParentLogger(Logger log);
 
 }

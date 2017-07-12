@@ -34,7 +34,7 @@ import java.util.ArrayList;
  * 
  * @author Alex Robin
  * */
-public class DataConnectionList extends ArrayList<DataConnection>
+public class DataConnectionList extends ArrayList<IDataConnection>
 {
     private static final long serialVersionUID = 3109406489044628512L;
     protected boolean needed = true;

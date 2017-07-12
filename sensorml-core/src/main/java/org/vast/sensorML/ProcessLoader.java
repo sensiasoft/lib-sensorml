@@ -36,38 +36,26 @@ import java.util.Map;
 
 /**
  * <p>
- * This class loads the right process based on the method URI
- * provided in the SensorML description. If the URI is known locally,
- * the corresponding class is instantiated
+ * Implementation of process factory looking up mapping from URI to actual
+ * implementation class from an XML mapping file.
  * </p>
  *
  * @author Alexandre Robin
  * @since Feb 15, 2006
  */
-public class ProcessLoader
+public class ProcessLoader implements IProcessFactory
 {
     static Map<String,String> processMap = null;
     
     
-    public ProcessLoader()
-    {
-        
-    }    
-        
-
-    /**
-     * Loads the DataProcess implementation corresponding to the given URI.
-     * @param uri The URI of the method (i.e. the specific process to instantiate)
-     * @return the newly created process object
-     * @throws SMLException
-     */
-    public synchronized IProcessExec loadProcess(String uri) throws SMLException
+    @Override
+    public synchronized IProcessExec loadProcess(String uri) throws ProcessException
     {
         // TODO download new process implementation when not available locally.
         
         // process map should be loaded at this point
         if (processMap == null)
-            throw new SMLException("No process map file loaded");
+            throw new ProcessException("No process map file loaded");
               
         // map URN to class name (full name including package)
         String className = processMap.get(uri);
@@ -78,7 +66,7 @@ public class ProcessLoader
             // for now return a dummy process
             // TODO should actually resolve the URN and parse the ProcessMethod
             //return new Dummy_Process();
-            throw new SMLException("No process implementation found: " + uri);
+            throw new ProcessException("No process implementation found: " + uri);
         }
         
         // try to create process
@@ -95,7 +83,7 @@ public class ProcessLoader
         }
         catch (Exception e)
         {
-            throw new SMLException("Cannot instantiate process implementation: " + uri, e);
+            throw new ProcessException("Cannot instantiate process implementation: " + uri, e);
         }       
         
         return newProcess;

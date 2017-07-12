@@ -167,11 +167,11 @@ public class TestSMLStaxBindingsV20 extends XMLTestCase
     {
         SMLUtils smlUtils = new SMLUtils(SMLUtils.V2_0);
         
-        SMLHelper smlFac = new SMLHelper();
         SWEHelper sweFac = new SWEHelper();
         GMLFactory gmlFac = new GMLFactory();
         
-        PhysicalSystem system = smlFac.newPhysicalSystem();
+        SMLHelper smlFac = SMLHelper.createPhysicalSystem("urn:osh:uid");
+        PhysicalSystem system = (PhysicalSystem)smlFac.getDescription();
         system.setId("MY_SYSTEM");
         
         // characteristics
@@ -256,6 +256,7 @@ public class TestSMLStaxBindingsV20 extends XMLTestCase
         PhysicalComponent sensor = smlFac.newPhysicalComponent();
         sensor.setId("SENS01");
         sensor.setTypeOf(new ReferenceImpl("http://www.mymanufacturer.net/mysensor001.xml"));
+        sensor.addOutput("temp", sweFac.newQuantity());
         Settings config = smlFac.newSettings();
         config.addSetValue(smlFac.newValueSetting("parameters/samplingRate", "10.0"));
         config.addSetStatus(smlFac.newStatusSetting("parameters/active", Status.ENABLED));
@@ -271,7 +272,7 @@ public class TestSMLStaxBindingsV20 extends XMLTestCase
         
         // connections
         Link link = smlFac.newLink();
-        link.setSource("sensor1/outputs/temp");
+        link.setSource("components/sensor1/outputs/temp");
         link.setDestination("outputs/weather_data/temp");
         system.addConnection(link);
         

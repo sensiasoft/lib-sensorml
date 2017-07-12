@@ -21,42 +21,52 @@
 package org.vast.process;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
+import net.opengis.swe.v20.Boolean;
+import net.opengis.swe.v20.Count;
 import net.opengis.swe.v20.DataBlock;
 import net.opengis.swe.v20.DataComponent;
 import net.opengis.swe.v20.HasUom;
+import net.opengis.swe.v20.Quantity;
+import net.opengis.swe.v20.ScalarComponent;
+import net.opengis.swe.v20.Text;
+import net.opengis.swe.v20.Time;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vast.data.DataIterator;
 import org.vast.data.DataValue;
 import org.vast.data.ScalarIterator;
+import org.vast.swe.SWEHelper;
 import org.vast.unit.Unit;
 import org.vast.unit.UnitConversion;
 import org.vast.unit.UnitConverter;
+import org.vast.util.Asserts;
 
 
 /**
  * <p>
- * Implementation of data connection for the processing engine.
+ * Implementation of data connection for the processing engine.<br/>
  * This class is capable of automatically converting units if source and target
- * are not in the same unit (units have to be physically compatible)
+ * are not in the same unit (units have to be physically compatible)<br/>
+ * This class is used when running all processes of a processing chain
+ * synchronously in a single thread
  * </p>
  * 
  * @author Alex Robin
  * */
-public class DataConnection
+public class DataConnection implements IDataConnection
 {
-    private final static Logger LOGGER = Logger.getLogger(DataConnection.class.getName());
+    private final static Logger LOG = LoggerFactory.getLogger(DataConnection.class.getName());
     
     protected IProcessExec sourceProcess;
     protected IProcessExec destinationProcess;
     protected DataComponent sourceComponent;
     protected DataComponent destinationComponent;
-    protected transient boolean dataAvailable;
-    protected transient boolean needsUnitConversion;
-    protected transient List<ComponentConverter> componentConverters;
-    protected Hashtable<String, Object> properties = null;
+    protected boolean dataAvailable;
+    protected List<ComponentConverter> componentConverters;
+    protected HashMap<String, Object> properties = null;
     
     
     protected class ComponentConverter
@@ -83,16 +93,16 @@ public class DataConnection
     
     public DataConnection()
     {
-        componentConverters = new ArrayList<ComponentConverter>();
+        componentConverters = new ArrayList<>();
     }
     
     
-    protected void setupUnitConverters() throws SMLException
+    protected void setupUnitConverters()
     {
+        componentConverters.clear();
         if (sourceComponent == null || destinationComponent == null)
             return;
         
-        componentConverters.clear();
         ScalarIterator itSrc = new ScalarIterator(sourceComponent);
         ScalarIterator itDest = new ScalarIterator(destinationComponent);
         
@@ -105,13 +115,13 @@ public class DataConnection
             if (conv != null)
             {
                 componentConverters.add(new ComponentConverter(src, dest, conv));
-                LOGGER.finer("Unit conversion setup from " + src.getName() + " to " + dest.getName());
+                LOG.debug("Unit conversion setup from " + src.getName() + " to " + dest.getName());
             }
         }
     }
     
     
-    protected UnitConverter getUnitConverter(DataComponent src, DataComponent dest) throws SMLException
+    protected UnitConverter getUnitConverter(DataComponent src, DataComponent dest)
     {
         if (src instanceof HasUom && dest instanceof HasUom)
         {
@@ -127,13 +137,85 @@ public class DataConnection
         return null;
     }
     
-	
+    
     /**
-     * Makes sure source and destination datablocks are the same
-     * This is used in synchronous mode
+     * Checks that source and destination components can be connected.
+     * This validates compatibility of units and structure of aggregates.
+     * @param src 
+     * @param dest 
+     * @return Warning message or null if no warning
+     * @throws ProcessException 
      */
-    public void transferDataBlocks()
+    public static String validate(DataComponent src, DataComponent dest) throws ProcessException
     {
+        if (src == null || dest == null)
+            return null;
+        
+        DataIterator srcIt = new DataIterator(src);
+        DataIterator destIt = new DataIterator(dest);
+        StringBuilder msg = new StringBuilder();
+        
+        while (srcIt.hasNext())
+        {
+            DataComponent srcComp = srcIt.next();
+            
+            if (!destIt.hasNext())
+                throw new ProcessException(String.format("Component '%s' is missing in destination", srcComp.getName()));
+            
+            DataComponent destComp = destIt.next();
+            
+            // check that components are of same size
+            if (srcComp.getComponentCount() != destComp.getComponentCount())
+                throw new ProcessException(String.format("Components '%s' and '%s' are not of the same size", srcComp.getName(), destComp.getName()));
+            
+            // check that scalar components are of compatible types
+            if (srcComp instanceof ScalarComponent)
+                validateScalar(srcComp, destComp, msg);
+        }
+        
+        if (msg.length() == 0)
+            return null;
+        else
+            return msg.toString();
+    }
+    
+    
+    protected static void validateScalar(DataComponent srcComp, DataComponent destComp, StringBuilder msg) throws ProcessException
+    {
+        if ((srcComp instanceof Boolean && !(destComp instanceof Boolean)) ||
+            (srcComp instanceof Time && !(destComp instanceof Time || destComp instanceof Quantity)) ||
+            (srcComp instanceof Count && !(destComp instanceof Count || destComp instanceof Quantity)) ||
+            (srcComp instanceof Text && !(destComp instanceof Text)))
+            throw new ProcessException(String.format("Components '%s' and '%s' are not of the same type", srcComp.getName(), destComp.getName()));
+                
+        // warning message if loss of precision
+        if (((DataValue)srcComp).getDataType() != ((DataValue)destComp).getDataType())
+            msg.append(String.format("Data types of components '%s' and '%s' are different. Conversion may lead to loss of precision", srcComp.getName(), destComp.getName()));
+        
+        // check that units are compatible
+        if (srcComp instanceof HasUom && destComp instanceof HasUom)
+        {
+            Unit uom1 = ((HasUom)srcComp).getUom().getValue();
+            Unit uom2 = ((HasUom)destComp).getUom().getValue();
+            
+            if (uom1 != null && uom2 != null && !uom1.isCompatible(uom2))
+                throw new ProcessException(String.format("Units of components '%s' and '%s' are not compatible", srcComp.getName(), destComp.getName()));
+        }
+    }
+    
+    
+    @Override
+    public void publishData() throws InterruptedException
+    {
+        this.dataAvailable = true;
+    }
+    
+	
+    @Override
+    public void transferData() throws InterruptedException
+    {
+        Asserts.checkState(sourceComponent.hasData(), "Source component has no data");
+        
         DataBlock srcBlock = sourceComponent.getData();
         DataBlock destBlock = destinationComponent.hasData() ? destinationComponent.getData() : null;
         
@@ -151,129 +233,82 @@ public class DataConnection
         // else just assign data block if needed
         else if (destBlock != srcBlock)
             destinationComponent.setData(srcBlock);
+        
+        this.dataAvailable = false;
     }
-    
-    
-    /**
-     * Checks that source and destination components can be connected.
-     * This validates compatibility of units and structure of aggregates.
-     * @param src 
-     * @param dest 
-     * @return Warning message or null if no warning
-     * @throws SMLException 
-     */
-    public static String check(DataComponent src, DataComponent dest) throws SMLException
+
+
+    @Override
+    public void setSource(IProcessExec process, DataComponent component)
     {
-        if (src == null || dest == null)
-            return null;
-        
-        //System.out.println("Checking connection of " + src.getName() + " to " + dest.getName());
-        DataIterator it1 = new DataIterator(src);
-        DataIterator it2 = new DataIterator(dest);
-        StringBuffer msg = new StringBuffer();
-        
-        while (it1.hasNext())
-        {
-            if (!it2.hasNext())
-                throw new SMLException("Structures of source and destination are not compatible");
-            
-            DataComponent c1 = it1.next();
-            DataComponent c2 = it2.next();
-            //System.out.println("Checking sub component " + c1.getName());
-            
-            // test that aggregates are the same
-            if (!c1.getClass().isInstance(c2) || c1.getComponentCount() != c2.getComponentCount())
-                throw new SMLException("Components '" + c1.getName() + "' and '" + c2.getName() + "' are not compatible");
-            
-            // check that scalars are compatible
-            if (c1 instanceof HasUom && c2 instanceof HasUom)
-            {
-                Unit uom1 = ((HasUom)c1).getUom().getValue();
-                Unit uom2 = ((HasUom)c2).getUom().getValue();
-                
-                if (uom1 != null && uom2 != null)
-                {
-                    if (!uom1.isCompatible(uom2))
-                        throw new SMLException("Unit of component '" + c1.getName() + "' is not compatible with unit of '" + c2.getName() + "'");
-                }
-                
-                if (((DataValue)c1).getDataType() != ((DataValue)c2).getDataType())
-                    msg.append("Data types of source and destination component are different. Conversion may lead to loss of precision");
-            }
-        }
-        
-        if (msg.length() == 0)
-            return null;
-        else
-            return msg.toString();
+        this.sourceProcess = process;
+        this.sourceComponent = component;        
+        setupUnitConverters();
     }
-    
-    
-    public String check() throws SMLException
+
+
+    @Override
+    public IProcessExec getSourceProcess()
     {
-        return DataConnection.check(this.sourceComponent, this.destinationComponent);
+        return sourceProcess;
+    }
+    
+    
+    @Override
+    public DataComponent getSourcePort()
+    {
+        return SWEHelper.getRootComponent(sourceComponent);
     }
 
 
-	public DataComponent getDestinationComponent()
-	{
-		return destinationComponent;
-	}
+    @Override
+    public DataComponent getSourceComponent()
+    {
+        return sourceComponent;
+    }
 
 
-	public void setDestinationComponent(DataComponent destinationComponent) throws SMLException
-	{
-		this.destinationComponent = destinationComponent;
-		setupUnitConverters();
-	}
+    @Override
+    public void setDestination(IProcessExec process, DataComponent component)
+    {
+        this.destinationProcess = process;
+        this.destinationComponent = component;
+        setupUnitConverters();
+    }
 
 
-	public IProcessExec getDestinationProcess()
+	@Override
+    public IProcessExec getDestinationProcess()
 	{
 		return destinationProcess;
 	}
+    
+    
+    @Override
+    public DataComponent getDestinationPort()
+    {
+        return SWEHelper.getRootComponent(destinationComponent);
+    }
 
 
-	public void setDestinationProcess(IProcessExec destinationProcess)
-	{
-		this.destinationProcess = destinationProcess;
-	}
+    @Override
+    public DataComponent getDestinationComponent()
+    {
+        return destinationComponent;
+    }
 
 
-	public DataComponent getSourceComponent()
-	{
-		return sourceComponent;
-	}
-
-
-	public void setSourceComponent(DataComponent sourceComponent) throws SMLException
-	{
-		this.sourceComponent = sourceComponent;
-		setupUnitConverters();
-	}
-
-
-	public IProcessExec getSourceProcess()
-	{
-		return sourceProcess;
-	}
-
-
-	public void setSourceProcess(IProcessExec sourceProcess)
-	{
-		this.sourceProcess = sourceProcess;
-	}
-
-
+    @Override
     public boolean isDataAvailable()
     {
         return dataAvailable;
     }
 
 
-    public void setDataAvailable(boolean dataAvailable)
+    @Override
+    public void clear()
     {
-        this.dataAvailable = dataAvailable;
+        dataAvailable = false;        
     }
     
     
@@ -289,7 +324,7 @@ public class DataConnection
     public void setProperty(String propName, Object propValue)
     {
         if (properties == null)
-            properties = new Hashtable<String, Object>(1, 1.0f);
+            properties = new HashMap<>(1, 1.0f);
         
         properties.put(propName, propValue);
     }

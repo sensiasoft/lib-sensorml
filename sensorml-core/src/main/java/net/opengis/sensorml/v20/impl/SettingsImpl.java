@@ -20,8 +20,11 @@ import net.opengis.sensorml.v20.ArraySetting;
 import net.opengis.sensorml.v20.ConstraintSetting;
 import net.opengis.sensorml.v20.ModeSetting;
 import net.opengis.sensorml.v20.Settings;
+import net.opengis.sensorml.v20.Status;
 import net.opengis.sensorml.v20.StatusSetting;
 import net.opengis.sensorml.v20.ValueSetting;
+import net.opengis.swe.v20.DataConstraint;
+import net.opengis.swe.v20.EncodedValues;
 
 
 /**
@@ -32,11 +35,11 @@ import net.opengis.sensorml.v20.ValueSetting;
 public class SettingsImpl extends AbstractSettingsImpl implements Settings
 {
     private static final long serialVersionUID = 6527575157568622311L;
-    protected ArrayList<ValueSetting> setValueList = new ArrayList<ValueSetting>();
-    protected ArrayList<ArraySetting> setArrayValuesList = new ArrayList<ArraySetting>();
-    protected ArrayList<ConstraintSetting> setConstraintList = new ArrayList<ConstraintSetting>();
-    protected ArrayList<ModeSetting> setModeList = new ArrayList<ModeSetting>();
-    protected ArrayList<StatusSetting> setStatusList = new ArrayList<StatusSetting>();
+    protected ArrayList<ValueSetting> setValueList = new ArrayList<>();
+    protected ArrayList<ArraySetting> setArrayValuesList = new ArrayList<>();
+    protected ArrayList<ConstraintSetting> setConstraintList = new ArrayList<>();
+    protected ArrayList<ModeSetting> setModeList = new ArrayList<>();
+    protected ArrayList<StatusSetting> setStatusList = new ArrayList<>();
     
     
     public SettingsImpl()
@@ -76,6 +79,16 @@ public class SettingsImpl extends AbstractSettingsImpl implements Settings
     }
     
     
+    @Override
+    public void addSetValue(String ref, String value)
+    {
+        ValueSettingImpl setValue = new ValueSettingImpl();
+        setValue.setRef(ref);
+        setValue.setValue(value);
+        addSetValue(setValue);
+    }
+    
+    
     /**
      * Gets the list of setArrayValues properties
      */
@@ -105,6 +118,16 @@ public class SettingsImpl extends AbstractSettingsImpl implements Settings
     public void addSetArrayValues(ArraySetting setArrayValues)
     {
         this.setArrayValuesList.add(setArrayValues);
+    }
+    
+    
+    @Override
+    public void addSetArrayValues(String ref, EncodedValues values)
+    {
+        ArraySettingImpl setValue = new ArraySettingImpl();
+        setValue.setRef(ref);
+        setValue.setValue(values);
+        addSetArrayValues(setValue);
     }
     
     
@@ -140,6 +163,16 @@ public class SettingsImpl extends AbstractSettingsImpl implements Settings
     }
     
     
+    @Override
+    public void addSetConstraint(String ref, DataConstraint constraint)
+    {
+        ConstraintSettingImpl setting = new ConstraintSettingImpl();
+        setting.setRef(ref);
+        setting.setValue(constraint);
+        addSetConstraint(setting);
+    }
+    
+    
     /**
      * Gets the list of setMode properties
      */
@@ -172,6 +205,16 @@ public class SettingsImpl extends AbstractSettingsImpl implements Settings
     }
     
     
+    @Override
+    public void addSetMode(String ref, String modeName)
+    {
+        ModeSettingImpl setting = new ModeSettingImpl();
+        setting.setRef(ref);
+        setting.setValue(modeName);
+        addSetMode(setting);
+    }
+    
+    
     /**
      * Gets the list of setStatus properties
      */
@@ -201,5 +244,15 @@ public class SettingsImpl extends AbstractSettingsImpl implements Settings
     public void addSetStatus(StatusSetting setStatus)
     {
         this.setStatusList.add(setStatus);
+    }
+    
+    
+    @Override
+    public void addSetStatus(String ref, Status status)
+    {
+        StatusSettingImpl setting = new StatusSettingImpl();
+        setting.setRef(ref);
+        setting.setValue(status);
+        addSetStatus(setting);
     }
 }

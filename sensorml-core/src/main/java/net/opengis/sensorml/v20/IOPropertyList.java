@@ -15,6 +15,7 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 package net.opengis.sensorml.v20;
 
 import org.vast.sensorML.SMLHelper;
+import net.opengis.OgcProperty;
 import net.opengis.swe.v20.AbstractSWEIdentifiable;
 import net.opengis.swe.v20.DataComponent;
 
@@ -34,6 +35,24 @@ public class IOPropertyList extends SMLPropertyList<AbstractSWEIdentifiable>
 
     public IOPropertyList()
     {
+    }
+    
+
+    @Override
+    public OgcProperty<AbstractSWEIdentifiable> add(String name, AbstractSWEIdentifiable component)
+    {
+        if (component instanceof DataComponent)
+            ((DataComponent)component).setName(name);
+        return super.add(name, component);
+    }
+    
+    
+    @Override
+    public void add(OgcProperty<AbstractSWEIdentifiable> prop)
+    {
+        if (prop.hasValue() && prop.getValue() instanceof DataComponent)
+            ((DataComponent)prop.getValue()).setName(prop.getName());
+        super.add(prop);
     }
 
 

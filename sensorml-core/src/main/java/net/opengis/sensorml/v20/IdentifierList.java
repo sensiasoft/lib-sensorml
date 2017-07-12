@@ -28,19 +28,19 @@ public interface IdentifierList extends AbstractMetadataList
     
     
     /**
-     * Gets the list of identifier2 properties
+     * Gets the list of identifier properties
      */
-    public List<Term> getIdentifier2List();
+    public List<Term> getIdentifierList();
     
     
     /**
-     * Returns number of identifier2 properties
+     * Returns number of identifier properties
      */
-    public int getNumIdentifier2s();
+    public int getNumIdentifiers();
     
     
     /**
-     * Adds a new identifier2 property
+     * Adds a new identifier property
      */
-    public void addIdentifier2(Term identifier2);
+    public void addIdentifier(Term identifier2);
 }

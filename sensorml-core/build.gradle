@@ -3,6 +3,7 @@ description = 'SensorML Models'
 
 dependencies {
   compile project(':swe-common-om')
+  compile 'uk.com.robust-it:cloning:1.9.1'
 }
 
 // add info to OSGI manifest

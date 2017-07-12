@@ -15,9 +15,6 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 package net.opengis.sensorml.v20.impl;
 
 import net.opengis.sensorml.v20.ConstraintSetting;
-import net.opengis.swe.v20.AllowedTimes;
-import net.opengis.swe.v20.AllowedTokens;
-import net.opengis.swe.v20.AllowedValues;
 import net.opengis.swe.v20.DataConstraint;
 import net.opengis.swe.v20.SimpleComponent;
 
@@ -80,27 +77,7 @@ public class ConstraintSettingImpl implements ConstraintSetting
      * Adds a new setConstraintAsAllowedTimes property
      */
     @Override
-    public void setValueAsAllowedTimes(AllowedTimes constraint)
-    {
-        this.value = constraint;
-    }
-    
-    
-    /**
-     * Adds a new setConstraintAsAllowedTokens property
-     */
-    @Override
-    public void setValueAsAllowedTokens(AllowedTokens constraint)
-    {
-        this.value = constraint;
-    }
-    
-    
-    /**
-     * Adds a new setConstraintAsAllowedValues property
-     */
-    @Override
-    public void setValueAsAllowedValues(AllowedValues constraint)
+    public void setValue(DataConstraint constraint)
     {
         this.value = constraint;
     }

@@ -15,11 +15,16 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 package org.vast.sensorML;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import org.vast.process.DataConnection;
+import java.util.Map.Entry;
+import org.vast.process.IDataConnection;
 import org.vast.process.IProcessChainExec;
-import org.vast.process.SMLException;
+import org.vast.process.IProcessExec;
+import org.vast.process.ProcessException;
+import org.vast.sensorML.SMLHelper.LinkTarget;
+import org.vast.swe.SWEHelper;
+import org.vast.util.Asserts;
+import net.opengis.OgcProperty;
 import net.opengis.OgcPropertyList;
 import net.opengis.sensorml.v20.AbstractProcess;
 import net.opengis.sensorml.v20.AggregateProcess;
@@ -31,11 +36,12 @@ import net.opengis.sensorml.v20.Link;
  *
  * This is a complex type.
  */
-public class AggregateProcessImpl extends AbstractProcessImpl implements AggregateProcess, IProcessChainExec
+public class AggregateProcessImpl extends AbstractProcessImpl implements AggregateProcess
 {
     private static final long serialVersionUID = -8513079782815270311L;
-    protected OgcPropertyList<AbstractProcess> components = new OgcPropertyList<AbstractProcess>(5);
-    protected ArrayList<Link> connections = new ArrayList<Link>(5);
+    
+    protected OgcPropertyList<AbstractProcess> components = new OgcPropertyList<>(5);
+    protected ArrayList<Link> connections = new ArrayList<>(5);
     
     
     public AggregateProcessImpl()
@@ -43,79 +49,151 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
         this.qName = AggregateProcess.DEFAULT_QNAME;
     }
     
- 
+    
+    /**
+     * This method handles the case of making an already built SensorML aggregate process
+     * executable, hence it is not valid to provide an implementation of IProcessChainExec
+     * that already contains child processes and/or connections.
+     * @param processExec
+     */
     @Override
-    public void connectInternalInput(String inputName, String dataPath, DataConnection connection) throws SMLException
+    public void setExecutableImpl(IProcessExec processExec) throws ProcessException
+    {
+        Asserts.checkArgument(processExec instanceof IProcessChainExec,
+                "Executable implementation must be a process chain implementation");
+        
+        // assign exec implementation
+        IProcessChainExec processChain = (IProcessChainExec)processExec;
+        super.setExecutableImpl(processChain);
+        
+        // case where SML description contains child process definitions
+        // and chain exec implementation doesn't have any
+        if (processChain.getChildProcesses().isEmpty() && processChain.getInternalConnections().isEmpty())
+        {        
+            // add child processes to exec impl
+            for (OgcProperty<AbstractProcess> processProp: getComponentList().getProperties())
+                addProcessToExec(processProp.getName(), processProp.getValue());
+            
+            // add connections to exec impl
+            for (Link link: getConnectionList())
+                addConnectionToExec(link);
+        }
+        
+        // case where chain exec implementation contains executable child processes
+        // and SML aggregate description doesn't have any
+        else if (getNumComponents() == 0 && getNumConnections() == 0)
+        {
+            // wrap and add child processes to SML description
+            for (Entry<String, IProcessExec> entry: processChain.getChildProcesses().entrySet())
+            {
+                AbstractProcess smlProcess = SMLUtils.wrapWithProcessDescription(entry.getValue());
+                components.add(entry.getKey(), smlProcess);
+            }
+            
+            // add links to SML description
+            for (IDataConnection connection: processChain.getInternalConnections())
+                addConnection(processChain, connection);
+        }
+        else
+            throw new IllegalStateException("Executable implementation must be an empty process chain implementation");
+    }
+        
+    
+    protected void addConnection(IProcessChainExec parentChain, IDataConnection connection)
+    {
+        IProcessExec srcProcess = connection.getSourceProcess();
+        IProcessExec destProcess = connection.getDestinationProcess();
+                
+        Link link = new LinkImpl();
+        String srcPath = (srcProcess != parentChain) ? "components/" + srcProcess.getInstanceName() + SWEHelper.PATH_SEPARATOR : "";
+        String destPath = (destProcess != parentChain) ? "components/" + destProcess.getInstanceName() + SWEHelper.PATH_SEPARATOR : "";
+        link.setSource(srcPath + SMLHelper.getComponentPath(srcProcess, connection.getSourceComponent()));
+        link.setDestination(destPath + SMLHelper.getComponentPath(destProcess, connection.getDestinationComponent()));
+        connections.add(link);
+    }
+    
+    
+    /*@Override
+    public Map<String, IProcessExec> getChildProcesses()
     {
         checkExecutable();
-        ((IProcessChainExec)executableProcess).connectInternalInput(inputName, dataPath, connection);
+        return ((IProcessChainExec)executableProcess).getChildProcesses();
     }
     
     
     @Override
-    public void connectInternalOutput(String outputName, String dataPath, DataConnection connection) throws SMLException
+    public IProcessExec addProcess(String name, IProcessExec processExec)
     {
-        checkExecutable();
-        ((IProcessChainExec)executableProcess).connectInternalOutput(outputName, dataPath, connection);
+        AbstractProcessImpl smlProcess = SMLHelper.wrapWithProcessDescription(processExec);
+        addComponent(name, smlProcess);
+        return smlProcess;
     }
-    
-    
+
+
     @Override
-    public void connectInternalParam(String paramName, String dataPath, DataConnection connection) throws SMLException
+    public void removeProcess(String name)
+    {
+        getComponentList().remove(name);
+        if (isExecutable())
+            ((IProcessChainExec)executableProcess).removeProcess(name);        
+    }
+
+
+    @Override
+    public Collection<IDataConnection> getInternalConnections()
     {
         checkExecutable();
-        ((IProcessChainExec)executableProcess).connectInternalParam(paramName, dataPath, connection);
+        return ((IProcessChainExec)executableProcess).getInternalConnections();
     }
+
+
+    @Override
+    public IDataConnection connect(IProcessExec srcProcess, DataComponent srcComponent, IProcessExec destProcess, DataComponent destComponent) throws ProcessException
+    {
+        checkExecutable();
+        IDataConnection conn = ((IProcessChainExec)executableProcess).connect(srcProcess, srcComponent, destProcess, destComponent);
+        
+        // also add link object
+        Link link = new LinkImpl();
+        String srcPath = (srcProcess != this) ? "components/" + srcProcess.getInstanceName() + SWEHelper.PATH_SEPARATOR : "";
+        String destPath = (destProcess != this) ? "components/" + srcProcess.getInstanceName() + SWEHelper.PATH_SEPARATOR : "";
+        link.setSource(srcPath + SMLHelper.getComponentPath(srcProcess, srcComponent));
+        link.setDestination(destPath + SMLHelper.getComponentPath(destProcess, destComponent));
+        connections.add(link);
+        
+        return conn;
+    }
+
+
+    @Override
+    public void removeInternalConnection(IDataConnection connection)
+    {
+        checkExecutable();
+        ((IProcessChainExec)executableProcess).removeInternalConnection(connection);
+        
+        // also remove link object
+        
+    }
+
+
+    @Override
+    public void setOutputNeeded(String outputName, boolean needed)
+    {
+        checkExecutable();
+        ((IProcessChainExec)executableProcess).setOutputNeeded(outputName, needed);
+    }*/
 
 
     @Override
     public String toString()
     {
-        StringBuffer text = new StringBuffer(super.toString());
+        StringBuilder text = new StringBuilder(super.toString());
         
-        text.append("\n  Child Processes:\n");
-        for (int i=0; i<getNumComponents(); i++)
-        {
-            text.append("    " + getComponentList().getProperty(i).getName() + "\n");
-        }
-        
+        text.append("\n** Child Processes **\n\n");
+        for (AbstractProcess child: getComponentList())
+            text.append(child.toString()).append('\n');
+                
         return text.toString();
-    }
-
-
-    @Override
-    public boolean isChildrenThreadsOn()
-    {
-        if (executableProcess != null)
-            return ((IProcessChainExec)executableProcess).isChildrenThreadsOn();
-        else
-            return false;
-    }
-
-
-    @Override
-    public void setChildrenThreadsOn(boolean childrenThreadsOn)
-    {
-        if (executableProcess != null)
-            ((IProcessChainExec)executableProcess).setChildrenThreadsOn(childrenThreadsOn);
-    }
-
-
-    @Override
-    public List<DataConnection> getInternalConnections()
-    {
-        if (executableProcess != null)
-            return ((IProcessChainExec)executableProcess).getInternalConnections();
-        else
-            return Collections.EMPTY_LIST;
-    }
-    
-    
-    @Override
-    public void setOutputNeeded(int outputIndex, boolean needed)
-    {
-        if (executableProcess != null)
-            ((IProcessChainExec)executableProcess).setOutputNeeded(outputIndex, needed);
     }
     
     
@@ -160,6 +238,17 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
     public void addComponent(String name, AbstractProcess component)
     {
         components.add(name, component);
+        addProcessToExec(name, component);
+    }
+    
+    
+    protected void addProcessToExec(String name, AbstractProcess component)
+    {
+        if (isExecutable() && component instanceof AbstractProcessImpl)
+        {
+            IProcessExec process = ((AbstractProcessImpl)component).executableProcess;
+            ((IProcessChainExec)executableProcess).addProcess(name, process);
+        }
     }
     
     
@@ -187,9 +276,28 @@ public class AggregateProcessImpl extends AbstractProcessImpl implements Aggrega
      * Adds a new connection
      */
     @Override
-    public void addConnection(Link connection)
+    public void addConnection(Link link)
     {
-        connections.add(connection);
+        connections.add(link);
+        if (executableProcess != null)
+            addConnectionToExec(link);
     }
-
+    
+    
+    protected void addConnectionToExec(Link link)
+    {
+        try
+        {
+            LinkTarget source = SMLHelper.findComponentByPath(this, link.getSource());
+            LinkTarget dest = SMLHelper.findComponentByPath(this, link.getDestination());
+            IProcessExec srcProcess = (source.process != this) ? (IProcessExec)source.process : executableProcess;
+            IProcessExec destProcess = (dest.process != this) ? (IProcessExec)dest.process : executableProcess;
+            ((IProcessChainExec)executableProcess).connect(srcProcess, source.component, destProcess, dest.component);
+        }
+        catch (Exception e)
+        {
+            String msg = String.format("Invalid link (%s -> %s)", link.getSource(), link.getDestination());
+            throw new IllegalArgumentException(msg , e);
+        }
+    }
 }

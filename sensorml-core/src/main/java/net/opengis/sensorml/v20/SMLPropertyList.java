@@ -48,4 +48,11 @@ public class SMLPropertyList<ValueType extends AbstractSWEIdentifiable> extends 
     {
         this.id = id;
     }
+    
+    
+    @Override
+    public boolean add(AbstractSWEIdentifiable component)
+    {
+        throw new UnsupportedOperationException();
+    }
 }

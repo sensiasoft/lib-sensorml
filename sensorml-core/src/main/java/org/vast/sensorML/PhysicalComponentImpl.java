@@ -17,7 +17,7 @@ package org.vast.sensorML;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import org.vast.process.SMLException;
+import org.vast.process.ProcessException;
 import net.opengis.OgcProperty;
 import net.opengis.OgcPropertyImpl;
 import net.opengis.OgcPropertyList;
@@ -44,10 +44,10 @@ public class PhysicalComponentImpl extends AbstractProcessImpl implements Physic
 {
     private static final long serialVersionUID = 1457700505867612234L;
     protected Reference attachedTo;
-    protected ArrayList<SpatialFrame> localReferenceFrameList = new ArrayList<SpatialFrame>();
-    protected ArrayList<TemporalFrame> localTimeFrameList = new ArrayList<TemporalFrame>();
-    protected OgcPropertyList<Serializable> positionList = new OgcPropertyList<Serializable>();
-    protected OgcPropertyList<Time> timePositionList = new OgcPropertyList<Time>();
+    protected ArrayList<SpatialFrame> localReferenceFrameList = new ArrayList<>();
+    protected ArrayList<TemporalFrame> localTimeFrameList = new ArrayList<>();
+    protected OgcPropertyList<Serializable> positionList = new OgcPropertyList<>();
+    protected OgcPropertyList<Time> timePositionList = new OgcPropertyList<>();
     protected OgcProperty<ProcessMethod> method;
     
     
@@ -282,7 +282,7 @@ public class PhysicalComponentImpl extends AbstractProcessImpl implements Physic
     public OgcProperty<ProcessMethod> getMethodProperty()
     {
         if (method == null)
-            method = new OgcPropertyImpl<ProcessMethod>();
+            method = new OgcPropertyImpl<>();
         return method;
     }
     
@@ -304,19 +304,21 @@ public class PhysicalComponentImpl extends AbstractProcessImpl implements Physic
     public void setMethod(ProcessMethod method)
     {
         if (this.method == null)
-            this.method = new OgcPropertyImpl<ProcessMethod>();
+            this.method = new OgcPropertyImpl<>();
         this.method.setValue(method);
     }
 
 
     @Override
-    public void init() throws SMLException
-    {        
+    public void init() throws ProcessException
+    {
+        // no processing in default component
     }
 
 
     @Override
-    public void execute() throws SMLException
-    {       
+    public void execute() throws ProcessException
+    {   
+        // no processing in default component
     }
 }

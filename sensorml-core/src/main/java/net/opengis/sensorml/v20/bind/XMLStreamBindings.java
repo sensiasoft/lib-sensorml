@@ -21,7 +21,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import net.opengis.AbstractXMLStreamBindings;
-import net.opengis.HrefResolverXML;
 import net.opengis.OgcProperty;
 import net.opengis.OgcPropertyImpl;
 import net.opengis.gml.v32.AbstractFeature;
@@ -797,17 +796,17 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         if ("AllowedTimes".equals(localName))
         {
             AllowedTimes constraint = ns1Bindings.readAllowedTimes(reader, false);
-            bean.setValueAsAllowedTimes(constraint);
+            bean.setValue(constraint);
         }
         else if ("AllowedTokens".equals(localName))
         {
             AllowedTokens constraint = ns1Bindings.readAllowedTokens(reader);
-            bean.setValueAsAllowedTokens(constraint);
+            bean.setValue(constraint);
         }
         else if ("AllowedValues".equals(localName))
         {
             AllowedValues constraint = ns1Bindings.readAllowedValues(reader);
-            bean.setValueAsAllowedValues(constraint);
+            bean.setValue(constraint);
         }
         else
             throw new XMLStreamException(ERROR_INVALID_ELT + reader.getName() + errorLocationString(reader));
@@ -1661,7 +1660,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         }
 
         // connections
-        if (bean.getNumComponents() > 0)
+        if (bean.getNumConnections() > 0)
         {
             writer.writeStartElement(NS_URI, "connections");
             writer.writeStartElement(NS_URI, "ConnectionList");
@@ -2272,7 +2271,9 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         found = checkElementName(reader, "typeOf");
         if (found)
         {
-            bean.setTypeOf(ns2Bindings.readReferenceType(reader));
+            Reference typeOfProp = ns2Bindings.readReferenceType(reader);
+            setupHrefResolver(reader, typeOfProp);            
+            bean.setTypeOf(typeOfProp);
             reader.nextTag(); // end property tag
             reader.nextTag();
         }
@@ -2329,16 +2330,6 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
                             readIOChoice(reader, inputProp);
                             reader.nextTag(); // end property tag
                         }
-                        else if (inputProp.hasHref())
-                        {
-                            inputProp.setHrefResolver(new HrefResolverXML() {
-                                @Override
-                                public void parseContent(XMLStreamReader reader) throws XMLStreamException
-                                {
-                                    readIOChoice(reader, inputProp);
-                                }
-                            });
-                        }
                         
                         bean.getInputList().add(inputProp);
                         reader.nextTag();
@@ -2375,16 +2366,6 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
                             readIOChoice(reader, outputProp);
                             reader.nextTag(); // end property tag
                         }
-                        else if (outputProp.hasHref())
-                        {
-                            outputProp.setHrefResolver(new HrefResolverXML() {
-                                @Override
-                                public void parseContent(XMLStreamReader reader) throws XMLStreamException
-                                {
-                                    readIOChoice(reader, outputProp);
-                                }
-                            });
-                        }
                         
                         bean.getOutputList().add(outputProp);
                         reader.nextTag();
@@ -2419,16 +2400,6 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
                         {
                             readIOChoice(reader, parameterProp);
                             reader.nextTag(); // end property tag
-                        }
-                        else if (parameterProp.hasHref())
-                        {
-                            parameterProp.setHrefResolver(new HrefResolverXML() {
-                                @Override
-                                public void parseContent(XMLStreamReader reader) throws XMLStreamException
-                                {
-                                    readIOChoice(reader, parameterProp);
-                                }
-                            });
                         }
                         
                         bean.getParameterList().add(parameterProp);
@@ -2729,7 +2700,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
                 reader.nextTag();
                 if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
                 {
-                    bean.addIdentifier2(this.readTerm(reader));
+                    bean.addIdentifier(this.readTerm(reader));
                     reader.nextTag(); // end property tag
                 }
                 
@@ -2768,10 +2739,10 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         int numItems;
         
         // identifier
-        numItems = bean.getIdentifier2List().size();
+        numItems = bean.getIdentifierList().size();
         for (int i = 0; i < numItems; i++)
         {
-            Term item = bean.getIdentifier2List().get(i);
+            Term item = bean.getIdentifierList().get(i);
             writer.writeStartElement(NS_URI, "identifier");
             this.writeTerm(writer, item);
             writer.writeEndElement();
@@ -4815,7 +4786,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     /**
      * Read method for AbstractSettings elements
      */
-    public AbstractSettings readAbstractSettings(XMLStreamReader reader) throws XMLStreamException
+    public Settings readAbstractSettings(XMLStreamReader reader) throws XMLStreamException
     {
         String localName = reader.getName().getLocalPart();
         

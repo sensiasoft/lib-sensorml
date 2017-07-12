@@ -28,7 +28,7 @@ import net.opengis.sensorml.v20.Term;
 public class IdentifierListImpl extends AbstractMetadataListImpl implements IdentifierList
 {
     private static final long serialVersionUID = -4763800903563662109L;
-    protected ArrayList<Term> identifier2List = new ArrayList<Term>();
+    protected ArrayList<Term> identifierList = new ArrayList<Term>();
     
     
     public IdentifierListImpl()
@@ -40,9 +40,9 @@ public class IdentifierListImpl extends AbstractMetadataListImpl implements Iden
      * Gets the list of identifier2 properties
      */
     @Override
-    public List<Term> getIdentifier2List()
+    public List<Term> getIdentifierList()
     {
-        return identifier2List;
+        return identifierList;
     }
     
     
@@ -50,11 +50,11 @@ public class IdentifierListImpl extends AbstractMetadataListImpl implements Iden
      * Returns number of identifier2 properties
      */
     @Override
-    public int getNumIdentifier2s()
+    public int getNumIdentifiers()
     {
-        if (identifier2List == null)
+        if (identifierList == null)
             return 0;
-        return identifier2List.size();
+        return identifierList.size();
     }
     
     
@@ -62,8 +62,8 @@ public class IdentifierListImpl extends AbstractMetadataListImpl implements Iden
      * Adds a new identifier2 property
      */
     @Override
-    public void addIdentifier2(Term identifier2)
+    public void addIdentifier(Term identifier)
     {
-        this.identifier2List.add(identifier2);
+        this.identifierList.add(identifier);
     }
 }

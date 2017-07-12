@@ -13,7 +13,7 @@
       <sml:InputList>
          <sml:input name="x">
             <swe:Quantity definition="http://sensorml.com/ont/swe/property/XCoordinate">
-               <swe:uom code="any" />
+               <swe:uom xlink:href="http://sensorml.com/ont/swe/uom/Any" />
             </swe:Quantity>
          </sml:input>
       </sml:InputList>
@@ -25,7 +25,7 @@
       <sml:OutputList>
          <sml:output name="y">
             <swe:Quantity definition="http://sensorml.com/ont/swe/property/YCoordinate">
-               <swe:uom code="any" />
+               <swe:uom xlink:href="http://sensorml.com/ont/swe/uom/Any" />
             </swe:Quantity>
          </sml:output>
       </sml:OutputList>
@@ -37,13 +37,13 @@
       <sml:ParameterList>
          <sml:parameter name="slope">
             <swe:Quantity definition="http://sensorml.com/ont/swe/property/LinearSlope">
-               <swe:uom code="any" />
+               <swe:uom xlink:href="http://sensorml.com/ont/swe/uom/Any" />
                <swe:value>5.0</swe:value>
             </swe:Quantity>
          </sml:parameter>
          <sml:parameter name="intercept">
             <swe:Quantity definition="http://sensorml.com/ont/swe/property/LinearAxisIntercept">
-               <swe:uom code="any" />
+               <swe:uom xlink:href="http://sensorml.com/ont/swe/uom/Any" />
                <swe:value>2.0</swe:value>
             </swe:Quantity>
          </sml:parameter>

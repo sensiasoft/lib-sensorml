@@ -15,6 +15,8 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 package net.opengis.sensorml.v20;
 
 import java.util.List;
+import net.opengis.swe.v20.DataConstraint;
+import net.opengis.swe.v20.EncodedValues;
 
 
 /**
@@ -46,6 +48,12 @@ public interface Settings extends AbstractSettings
     
     
     /**
+     * Adds a new setValue property with given ref path and value
+     */
+    public void addSetValue(String ref, String value);
+    
+    
+    /**
      * Gets the list of setArrayValues properties
      */
     public List<ArraySetting> getSetArrayValuesList();
@@ -64,6 +72,12 @@ public interface Settings extends AbstractSettings
     
     
     /**
+     * Adds a new setArrayValues property with given ref path and values
+     */
+    public void addSetArrayValues(String ref, EncodedValues values);
+    
+    
+    /**
      * Gets the list of setConstraint properties
      */
     public List<ConstraintSetting> getSetConstraintList();
@@ -78,7 +92,13 @@ public interface Settings extends AbstractSettings
     /**
      * Adds a new setConstraint property
      */
-    public void addSetConstraint(ConstraintSetting setConstraint);    
+    public void addSetConstraint(ConstraintSetting setConstraint); 
+    
+    
+    /**
+     * Adds a new setConstraint property with given ref path and constraint
+     */
+    public void addSetConstraint(String ref, DataConstraint constraint);
     
     
     /**
@@ -100,6 +120,12 @@ public interface Settings extends AbstractSettings
     
     
     /**
+     * Adds a new setMode property with given ref path and mode name
+     */
+    public void addSetMode(String ref, String value);
+    
+    
+    /**
      * Gets the list of setStatus properties
      */
     public List<StatusSetting> getSetStatusList();
@@ -115,4 +141,10 @@ public interface Settings extends AbstractSettings
      * Adds a new setStatus property
      */
     public void addSetStatus(StatusSetting setStatus);
+    
+    
+    /**
+     * Adds a new setStatus property with given ref path and status code
+     */
+    public void addSetStatus(String ref, Status status);
 }

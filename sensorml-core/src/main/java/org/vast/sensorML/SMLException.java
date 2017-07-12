@@ -18,12 +18,12 @@
  
 ******************************* END LICENSE BLOCK ***************************/
 
-package org.vast.process;
+package org.vast.sensorML;
 
 
 /**
  * <p>
- * TODO ProcessException type description
+ * Exception thrown while manipulating SensorML data model
  * </p>
  *
  * @author Alex Robin

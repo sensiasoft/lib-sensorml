@@ -20,9 +20,10 @@
 
 package org.vast.sensorML.test;
 
-import org.vast.data.*;
 import org.vast.process.*;
-import org.vast.sensorML.ExecutableProcessImpl;
+import org.vast.swe.SWEConstants;
+import org.vast.swe.SWEHelper;
+import net.opengis.swe.v20.Quantity;
 
 
 /**
@@ -35,35 +36,31 @@ import org.vast.sensorML.ExecutableProcessImpl;
  */
 public class Clip_Process extends ExecutableProcessImpl
 {
-    DataValue valueIn;
-    DataValue passValueOut;
-    DataValue failValueOut;
-    DataValue threshParam;
+    public static final ProcessInfo INFO = new ProcessInfo("http://sensors.ws/process/clip", "Clip", null, Clip_Process.class);
+    Quantity valueIn;
+    Quantity passValueOut;
+    Quantity failValueOut;
+    Quantity threshParam;
 
 
     public Clip_Process()
     {
-    }
-
-
-    /**
-     * Initializes the process
-     * Gets handles to input/output components
-     */
-    @Override
-    public void init() throws SMLException
-    {
-        try
-        {
-            valueIn = (DataValue) inputData.getComponent("valueIn");
-            passValueOut = (DataValue) outputData.getComponent("passValue");
-            failValueOut = (DataValue) outputData.getComponent("failValue");
-            threshParam = (DataValue) paramData.getComponent("threshold");
-        }
-        catch (Exception e)
-        {
-            throw new SMLException(IO_ERROR_MSG, e);
-        }
+        super(INFO);        
+        SWEHelper sweHelper = new SWEHelper();
+        
+        // input
+        valueIn = sweHelper.newQuantity(SWEConstants.DEF_DN, "Input Value", null, SWEConstants.UOM_ANY);
+        inputData.add("valueIn", valueIn);
+        
+        // parameters
+        threshParam = sweHelper.newQuantity(SWEHelper.getPropertyUri("LowerThreshold"), "Threshold", null, SWEConstants.UOM_ANY);        
+        paramData.add("threshold", threshParam);
+        
+        // outputs
+        passValueOut = sweHelper.newQuantity(SWEHelper.getPropertyUri("PassValue"), "Pass Value", null, SWEConstants.UOM_ANY);
+        outputData.add("passValue", passValueOut);
+        failValueOut = sweHelper.newQuantity(SWEHelper.getPropertyUri("FailValue"), "Fail Value", null, SWEConstants.UOM_ANY);
+        outputData.add("failValue", failValueOut);
     }
 
 
@@ -71,7 +68,7 @@ public class Clip_Process extends ExecutableProcessImpl
      * Executes process algorithm on inputs and set output data
      */
     @Override
-    public void execute() throws SMLException
+    public void execute() throws ProcessException
     {
         double in = valueIn.getData().getDoubleValue();
         double thresh = threshParam.getData().getDoubleValue();

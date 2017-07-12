@@ -8,7 +8,7 @@ Software distributed under the License is distributed on an "AS IS" basis,
 WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
  
-Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
+Copyright (C) 2012-2017 Sensia Software LLC. All Rights Reserved.
  
 ******************************* END LICENSE BLOCK ***************************/
 
@@ -17,46 +17,110 @@ package org.vast.sensorML;
 import java.util.Arrays;
 import org.isotc211.v2005.gmd.CIResponsibleParty;
 import org.isotc211.v2005.gmd.impl.CIResponsiblePartyImpl;
-import org.vast.cdm.common.CDMException;
-import org.vast.process.SMLException;
+import org.vast.process.IProcessExec;
 import org.vast.swe.SWEHelper;
 import org.vast.util.Asserts;
 import net.opengis.OgcPropertyList;
 import net.opengis.sensorml.v20.AbstractProcess;
 import net.opengis.sensorml.v20.AggregateProcess;
-import net.opengis.sensorml.v20.ConstraintSetting;
 import net.opengis.sensorml.v20.DataInterface;
 import net.opengis.sensorml.v20.IdentifierList;
-import net.opengis.sensorml.v20.Settings;
-import net.opengis.sensorml.v20.SimpleProcess;
+import net.opengis.sensorml.v20.PhysicalComponent;
+import net.opengis.sensorml.v20.PhysicalSystem;
 import net.opengis.sensorml.v20.Term;
-import net.opengis.sensorml.v20.ValueSetting;
 import net.opengis.swe.v20.AbstractSWEIdentifiable;
 import net.opengis.swe.v20.DataComponent;
-import net.opengis.swe.v20.DataConstraint;
 import net.opengis.swe.v20.DataEncoding;
 import net.opengis.swe.v20.DataStream;
-import net.opengis.swe.v20.HasConstraints;
-import net.opengis.swe.v20.RangeComponent;
-import net.opengis.swe.v20.ScalarComponent;
 
 
+/**
+ * <p>
+ * Helper class to generate sensor and process descriptions using the SensorML
+ * model. It also defines standard properties that can easily be added to a
+ * SensorML instance programmatically.
+ * </p>
+ *
+ * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @since May 16, 2017
+ */
 public class SMLHelper extends SMLFactory
 {
-    public final static String SERIAL_NUMBER_DEF = "http://sensorml.com/ont/swe/property/SerialNumber";
-    public final static String SERIAL_NUMBER_LABEL = "Serial Number";
+    public static final String LONG_NAME_DEF = SWEHelper.getPropertyUri("LongName");
+    public static final String LONG_NAME_LABEL = "Long Name";
+    public static final String SHORT_NAME_DEF = SWEHelper.getPropertyUri("ShortName");
+    public static final String SHORT_NAME_LABEL = "Short Name";
+    public static final String SERIAL_NUMBER_DEF = SWEHelper.getPropertyUri("SerialNumber");
+    public static final String SERIAL_NUMBER_LABEL = "Serial Number";
+    public static final String MODEL_NUMBER_DEF = SWEHelper.getPropertyUri("ModelNumber");
+    public static final String MODEL_NUMBER_LABEL = "Model Number";
+    public static final String MANUFACTURER_DEF = SWEHelper.getPropertyUri("Manufacturer");
+    public static final String MANUFACTURER_LABEL = "Manufacturer Name";
+    
+    
+    static class LinkTarget
+    {
+        public AbstractProcess process;
+        public DataComponent component;
+        
+        public LinkTarget(AbstractProcess parent, DataComponent component)
+        {
+            this.process = parent;
+            this.component = component;
+        }
+    }
+    
     
     AbstractProcess process;
     
     
-    public SMLHelper()
-    {        
+    public static SMLHelper createSimpleProcess(String uniqueID)
+    {
+        AbstractProcess process = new SMLFactory().newSimpleProcess();
+        process.setUniqueIdentifier(uniqueID);
+        return new SMLHelper(process);
     }
     
     
-    public SMLHelper(AbstractProcess process)
+    public static SMLHelper createAggregateProcess(String uniqueID)
+    {
+        AggregateProcess process = new SMLFactory().newAggregateProcess();
+        process.setUniqueIdentifier(uniqueID);
+        return new SMLHelper(process);
+    }
+    
+    
+    public static SMLHelper createPhysicalComponent(String uniqueID)
+    {
+        PhysicalComponent process = new SMLFactory().newPhysicalComponent();
+        process.setUniqueIdentifier(uniqueID);
+        return new SMLHelper(process);
+    }
+    
+    
+    public static SMLHelper createPhysicalSystem(String uniqueID)
+    {
+        PhysicalSystem process = new SMLFactory().newPhysicalSystem();
+        process.setUniqueIdentifier(uniqueID);
+        return new SMLHelper(process);
+    }
+    
+    
+    public static SMLHelper edit(AbstractProcess process)
+    {
+        return new SMLHelper(process);
+    }
+    
+    
+    protected SMLHelper(AbstractProcess process)
     {
         this.process = process;
+    }
+    
+    
+    public AbstractProcess getDescription()
+    {
+        return this.process;
     }
     
     
@@ -79,8 +143,21 @@ public class SMLHelper extends SMLFactory
         term.setDefinition(def);
         term.setLabel(label);
         term.setValue(value);
-        idList.addIdentifier2(term);
-    }    
+        idList.addIdentifier(term);
+    }
+    
+    
+    public void addLongName(String value)
+    {
+        addIdentifier(LONG_NAME_LABEL, LONG_NAME_DEF, value);
+    }
+    
+    
+    public void addShortName(String value)
+    {
+        addIdentifier(SHORT_NAME_LABEL, SHORT_NAME_DEF, value);
+    }
+    
     
     public void addSerialNumber(String value)
     {
@@ -88,14 +165,27 @@ public class SMLHelper extends SMLFactory
     }
     
     
+    public void addModelNumber(String value)
+    {
+        addIdentifier(MODEL_NUMBER_LABEL, MODEL_NUMBER_DEF, value);
+    }
     
-    // STATIC METHODS
+    
+    public void addManufacturerName(String value)
+    {
+        addIdentifier(MANUFACTURER_LABEL, MANUFACTURER_DEF, value);
+    }
+        
     
     public CIResponsibleParty newResponsibleParty()
     {
         return new CIResponsiblePartyImpl();
     }
     
+    
+    /*
+      Static helper methods for finding data components within the process hierarchy
+    */    
     
     /**
      * Helper to get the input/output/parameter component description whether
@@ -134,206 +224,117 @@ public class SMLHelper extends SMLFactory
     
     
     /**
-     * Finds a component in the process/component tree using a path 
-     * @param parent process from which to start the search
-     * @param path desired path as a String composed of process names, process sections and component names separated by {@value SWEHelper#PATH_SEPARATOR} characters
-     * @return the component with the given path
-     * @throws SMLException if the specified path is incorrect
-     */
-    public static DataComponent findComponentByPath(AbstractProcess parent, String path) throws SMLException
-    {
-        return findComponentByPath(parent, path.split(SWEHelper.PATH_SEPARATOR));
-    }
-    
-    
-    /**
      * Finds a component in a process/component tree using a path.<br/>
      * Link path format is either '[components/{component_name}/...][inputs|outputs|parameters]/{name}/{name}/... 
      * @param parent process from which to start the search
-     * @param path desired path as a String array cotnaining a sequence of component names
-     * @return the component with the given path
+     * @param linkString desired path as a String composed of process name, port type and data component names separated by {@value SWEHelper#PATH_SEPARATOR} characters
+     * @return the process/component pair targeted by the given path or null if target process is not resolved
      * @throws SMLException if the specified path is incorrect
      */
-    public static DataComponent findComponentByPath(AbstractProcess parent, String[] path) throws SMLException
+    public static LinkTarget findComponentByPath(AbstractProcess parent, String linkString) throws SMLException
     {
-        int index = 0;
+        String processName = null;
+        String portType = null;
+        String portName = null;
+        String[] dataPath = null;
+        int portTypeIndex = 0;
         
-        // find sub-process
-        String nextPart = path[index];
-        while (nextPart.equals("components"))
+        // parse link path
+        String[] linkPath = linkString.split(SWEHelper.PATH_SEPARATOR);
+
+        // if we're linking to a component IO
+        // support only links to components for now 
+        if ("components".equals(linkPath[0]))
         {
             if (!(parent instanceof AggregateProcess))
-                throw new SMLException("Path " + Arrays.toString(path) + " references a sub-process from a non-aggregate process");
+                throw new SMLException("Cannot refer to sub-components in a non-aggregate process");
             
-            String processName = path[++index];
-            parent = ((AggregateProcess)parent).getComponent(processName);
-            nextPart = path[++index];
+            if (linkPath.length < 2)
+                throw new SMLException("The name of a sub-component must be specified");
+            
+            processName = linkPath[1];
+            portTypeIndex = 2;
         }
+
+        // now extract port type, name and component path
+        if (linkPath.length < portTypeIndex+1)
+            throw new SMLException("At least a port type and name must be specified");
+        portType = linkPath[portTypeIndex];
+            
+        if (linkPath.length > portTypeIndex+1)
+            portName = linkPath[portTypeIndex+1];
         
+        if (linkPath.length > portTypeIndex+2)
+            dataPath = Arrays.copyOfRange(linkPath, portTypeIndex+2, linkPath.length);
+        
+        // find process
+        AbstractProcess process;
+        if (processName != null)
+        {
+            if (!((AggregateProcess)parent).getComponentList().hasProperty(processName))
+                throw new SMLException(String.format("Cannot find process '%s'", processName));
+            
+            process = ((AggregateProcess)parent).getComponent(processName);
+            
+            // process can still be null if link to process was not resolved
+            if (process == null)
+                throw new SMLException(String.format("Process '%s' exists in the chain but hasn't been resolved yet", processName));
+        }
+        else
+            process = parent;
+        
+        // find port
+        DataComponent port;
+        if ("inputs".equals(portType))
+            port = process.getInputList().getComponent(portName);
+        else if ("outputs".equals(portType))
+            port = process.getOutputList().getComponent(portName);
+        else if ("parameters".equals(portType))
+            port = process.getParameterList().getComponent(portName);
+        else
+            throw new IllegalArgumentException(String.format("Invalid port type '%s'. Must be one of 'inputs', 'outputs' or 'parameters'", portType));
+
+        // find sub component in port structure
         try
         {
-            if (nextPart.equals("inputs"))
-            {
-                String name = path[++index];
-                path = Arrays.copyOfRange(path, ++index, path.length);
-                DataComponent input = parent.getInputComponent(name);
-                return SWEHelper.findComponentByPath(input, path);
-            }
-            else if (nextPart.equals("outputs"))
-            {
-                String name = path[++index];
-                path = Arrays.copyOfRange(path, ++index, path.length);
-                DataComponent output = parent.getOutputComponent(name);
-                return SWEHelper.findComponentByPath(output, path);
-            }
-            else if (nextPart.equals("parameters"))
-            {
-                String name = path[++index];
-                path = Arrays.copyOfRange(path, ++index, path.length);
-                DataComponent param = parent.getParameterComponent(name);
-                return SWEHelper.findComponentByPath(param, path);
-            }
-            
-            throw new SMLException("Invalid path " + Arrays.toString(path));
+            DataComponent component = (dataPath != null) ? SWEHelper.findComponentByPath(port, dataPath) : port;
+            return new LinkTarget(process, component);
         }
-        catch (CDMException e)
+        catch (Exception e)
         {
-            throw new SMLException("Invalid path " + Arrays.toString(path), e);
+            StringBuilder path = new StringBuilder();
+            for(String s : dataPath)
+                path.append(s).append(SWEHelper.PATH_SEPARATOR);
+            throw new SMLException(String.format("Cannot find data component '%s'", path.substring(0,path.length()-1)), e);
         }
     }
     
     
     /**
-     * Makes a process executable by instantiating and wrapping an implementation of IProcessExec.<br/>
-     * The actual implementation is found using the method URI.
-     * @param process
-     * @throws SMLException
+     * Constructs the path to link to the specified component
+     * @param process the process where the data component resides
+     * @param component the component to link to
+     * @return
      */
-    public static void makeProcessExecutable(AbstractProcessImpl process) throws SMLException
+    public static String getComponentPath(IProcessExec process, DataComponent component)
     {
-        ProcessLoader processLoader = new ProcessLoader();
-        makeProcessExecutable(process, processLoader);
-    }
-    
-    
-    public static void makeProcessExecutable(AbstractProcessImpl process, ProcessLoader processLoader) throws SMLException
-    {
-        if (process instanceof AggregateProcess)
-        {
-            // make child processes executable recursively
-            for (AbstractProcess childProcess: ((AggregateProcess)process).getComponentList())
-                makeProcessExecutable((AbstractProcessImpl)childProcess, processLoader);
-            
-            process.setExecutableImpl(new ExecutableChainImpl());
-        }
-        else if (process instanceof SimpleProcess)
-        {
-            String processUID = ((SimpleProcess) process).getMethodProperty().getHref();
-            
-            // if method is not set, try typeOf property
-            if (processUID == null)
-                processUID = ((SimpleProcess) process).getTypeOf().getHref();
-            
-            if (processUID == null)
-                throw new SMLException("No executable method specified for process " + process.getId());
-            
-            /*String processUID = null;
-            
-            // try to read typeOf property
-            if (process.isSetTypeOf())
-                processUID = process.getTypeOf().getTitle();
-            
-            // otherwise use local identifier
-            if (processUID == null)
-                processUID = process.getUniqueIdentifier();
-                
-            if (processUID == null)
-                throw new SMLException("No algorithm method found for process " + process.getId());*/
-                
-            ExecutableProcessImpl processExec = (ExecutableProcessImpl)processLoader.loadProcess(processUID);
-            process.setExecutableImpl(processExec);
-        }
-    }
-    
-    
-    /**
-     * Generates a configured instance by copying I/Os definition from parent instance 
-     * (if typeOf property is present), and applying configuration settings.
-     * @param process process with typeOf and configuration settings
-     * @param mergeMetadata if true, parent metadata will also be copied to the new instance
-     * @return new process instance with configuration values set
-     * @throws SMLException if configuration is invalid or cannot be applied
-     */
-    public static AbstractProcess getConfiguredInstance(AbstractProcess process, boolean mergeMetadata) throws SMLException
-    {
-        AbstractProcess baseProcess = null;
+        StringBuilder linkString = new StringBuilder();
         
-        // retrieve parent instance by resolving typeOf reference
-        String typeOfUrl = process.getTypeOf().getHref();
-        if (typeOfUrl != null)
-        {
-            // TODO load base process
-            
-            // merge metadata
-            
-            // apply config
-            Settings settings = (Settings)process.getConfiguration();
-            applyConfig(baseProcess, settings);
-        }
-                
-        return baseProcess;
-    }
-    
-    
-    /**
-     * Applies a configuration on a base process
-     * @param process
-     * @param settings
-     * @throws SMLException 
-     */
-    public static void applyConfig(AbstractProcess process, Settings settings) throws SMLException
-    {
-        // value settings
-        for (ValueSetting setting: settings.getSetValueList())
-        {
-            String refPath = setting.getRef();
-            DataComponent comp = SMLHelper.findComponentByPath(process, refPath);
-            
-            if (comp instanceof ScalarComponent)
-                comp.getData().setStringValue(setting.getValue());
-            else if (comp instanceof RangeComponent)
-            {
-                String[] minMax = setting.getValue().split(" ");
-                comp.getData().setStringValue(0, minMax[0]);
-                comp.getData().setStringValue(1, minMax[1]);
-            }
-            else
-                throw new SMLException("A value setting can only target a scalar or range component");
-        }
+        // find parent port
+        DataComponent parentPort = SWEHelper.getRootComponent(component);
         
-        // array settings
+        // append port type
+        if (process.getInputList().contains(parentPort))
+            linkString.append("inputs/");
+        else if (process.getOutputList().contains(parentPort))
+            linkString.append("outputs/");
+        else if (process.getParameterList().contains(parentPort))
+            linkString.append("parameters/");
+        else
+            throw new IllegalArgumentException("Cannot find data component in the specified process");
         
-        
-        // constraint settings
-        for (ConstraintSetting setting: settings.getSetConstraintList())
-        {
-            String refPath = setting.getRef();
-            DataComponent comp = SMLHelper.findComponentByPath(process, refPath);
-            
-            if (comp instanceof HasConstraints)
-            {
-                try
-                {
-                    // TODO restrict constraint instead of replacing
-                    ((HasConstraints<DataConstraint>)comp).setConstraint(setting.getValue());
-                }
-                catch (Exception e)
-                {
-                    throw new SMLException("Invalid constraint for component " + refPath, e);
-                }
-            }
-            else
-                throw new SMLException("A constraint setting can only target a non-boolean simple component");
-        }
+        // append path within port structure
+        linkString.append(SWEHelper.getComponentPath(component));
+        return linkString.toString();
     }
 }
