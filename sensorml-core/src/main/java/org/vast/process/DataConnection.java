@@ -135,7 +135,7 @@ public class DataConnection
     public void transferDataBlocks()
     {
         DataBlock srcBlock = sourceComponent.getData();
-        DataBlock destBlock = destinationComponent.getData();
+        DataBlock destBlock = destinationComponent.hasData() ? destinationComponent.getData() : null;
         
         // apply unit conversion if needed
         if (!componentConverters.isEmpty())
