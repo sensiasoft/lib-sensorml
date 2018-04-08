@@ -14,6 +14,7 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package net.opengis.sensorml.v20.impl;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import net.opengis.OgcPropertyList;
@@ -31,6 +32,7 @@ import net.opengis.sensorml.v20.EventList;
 import net.opengis.sensorml.v20.IdentifierList;
 import net.opengis.sensorml.v20.KeywordList;
 import org.isotc211.v2005.gmd.MDLegalConstraints;
+import com.google.common.collect.Range;
 
 
 /**
@@ -211,6 +213,32 @@ public abstract class DescribedObjectImpl extends AbstractFeatureImpl implements
     }
     
     
+    @Override
+    public Range<Instant> getValidTime()
+    {
+        if (validTimeList.isEmpty())
+            return null;
+        
+        AbstractTimeGeometricPrimitive timePrim = validTimeList.get(0);
+        
+        if (timePrim instanceof TimePeriod)
+        {
+            TimePeriod timePeriod = (TimePeriod)timePrim;
+            Instant begin = Instant.ofEpochMilli((long)(timePeriod.getBeginPosition().getDecimalValue()*1000.0));
+            Instant end = Instant.ofEpochMilli((long)(timePeriod.getEndPosition().getDecimalValue()*1000.0));
+            return Range.closed(begin, end);
+        }
+        else if (timePrim instanceof TimeInstant)
+        {
+            TimeInstant timeInstant = (TimeInstant)timePrim;
+            Instant time = Instant.ofEpochMilli((long)(timeInstant.getTimePosition().getDecimalValue()*1000.0));
+            return Range.singleton(time);
+        }
+        
+        return null;
+    }
+    
+    
     /**
      * Adds a new validTimeAsTimePeriod property
      */
@@ -229,8 +257,8 @@ public abstract class DescribedObjectImpl extends AbstractFeatureImpl implements
     {
         this.validTimeList.add(validTime);
     }
-    
-    
+
+
     /**
      * Gets the list of securityConstraints properties
      */
