@@ -796,7 +796,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         
         if ("AllowedTimes".equals(localName))
         {
-            AllowedTimes constraint = ns1Bindings.readAllowedTimes(reader);
+            AllowedTimes constraint = ns1Bindings.readAllowedTimes(reader, false);
             bean.setValueAsAllowedTimes(constraint);
         }
         else if ("AllowedTokens".equals(localName))

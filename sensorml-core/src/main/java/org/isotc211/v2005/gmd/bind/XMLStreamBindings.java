@@ -14,13 +14,13 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package org.isotc211.v2005.gmd.bind;
 
+import java.time.OffsetDateTime;
 import java.util.Map;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import net.opengis.AbstractXMLStreamBindings;
-import net.opengis.IDateTime;
 import net.opengis.OgcProperty;
 import net.opengis.OgcPropertyImpl;
 import org.isotc211.v2005.gco.CodeListValue;
@@ -337,7 +337,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
         if (found)
         {
             reader.nextTag();
-            IDateTime editionDate = ns1Bindings.readDateTime(reader);
+            OffsetDateTime editionDate = ns1Bindings.readDateTime(reader);
             if (editionDate != null)
                 bean.setEditionDate(editionDate);
             
@@ -1352,7 +1352,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
             
             if (localName.equals("DateTime"))
             {
-                IDateTime date = ns1Bindings.readDateTime(reader);
+                OffsetDateTime date = ns1Bindings.readDateTime(reader);
                 bean.setDate(date);
             }
             else

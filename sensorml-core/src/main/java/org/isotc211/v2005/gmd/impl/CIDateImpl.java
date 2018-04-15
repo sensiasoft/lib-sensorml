@@ -14,7 +14,7 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package org.isotc211.v2005.gmd.impl;
 
-import net.opengis.IDateTime;
+import java.time.OffsetDateTime;
 import org.isotc211.v2005.gco.CodeListValue;
 import org.isotc211.v2005.gco.impl.AbstractObjectImpl;
 import org.isotc211.v2005.gmd.CIDate;
@@ -28,7 +28,7 @@ import org.isotc211.v2005.gmd.CIDate;
 public class CIDateImpl extends AbstractObjectImpl implements CIDate
 {
     private static final long serialVersionUID = 6850359308276013387L;
-    protected IDateTime date;
+    protected OffsetDateTime date;
     protected CodeListValue dateType;
     
     
@@ -41,7 +41,7 @@ public class CIDateImpl extends AbstractObjectImpl implements CIDate
      * Gets the date property
      */
     @Override
-    public IDateTime getDate()
+    public OffsetDateTime getDate()
     {
         return date;
     }
@@ -51,7 +51,7 @@ public class CIDateImpl extends AbstractObjectImpl implements CIDate
      * Sets the date property
      */
     @Override
-    public void setDate(IDateTime date)
+    public void setDate(OffsetDateTime date)
     {
         this.date = date;
     }

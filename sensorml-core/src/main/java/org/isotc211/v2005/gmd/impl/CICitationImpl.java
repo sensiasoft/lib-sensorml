@@ -14,9 +14,9 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package org.isotc211.v2005.gmd.impl;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import net.opengis.IDateTime;
 import net.opengis.OgcProperty;
 import net.opengis.OgcPropertyImpl;
 import net.opengis.OgcPropertyList;
@@ -41,7 +41,7 @@ public class CICitationImpl extends AbstractObjectImpl implements CICitation
     protected ArrayList<String> alternateTitleList = new ArrayList<String>();
     protected OgcPropertyList<CIDate> dateList = new OgcPropertyList<CIDate>();
     protected String edition;
-    protected IDateTime editionDate;
+    protected OffsetDateTime editionDate;
     protected OgcPropertyList<MDIdentifier> identifierList = new OgcPropertyList<MDIdentifier>();
     protected OgcPropertyList<CIResponsibleParty> citedResponsiblePartyList = new OgcPropertyList<CIResponsibleParty>();
     protected ArrayList<CodeListValue> presentationFormList = new ArrayList<CodeListValue>();
@@ -175,7 +175,7 @@ public class CICitationImpl extends AbstractObjectImpl implements CICitation
      * Gets the editionDate property
      */
     @Override
-    public IDateTime getEditionDate()
+    public OffsetDateTime getEditionDate()
     {
         return editionDate;
     }
@@ -195,7 +195,7 @@ public class CICitationImpl extends AbstractObjectImpl implements CICitation
      * Sets the editionDateAsDateTime property
      */
     @Override
-    public void setEditionDate(IDateTime editionDate)
+    public void setEditionDate(OffsetDateTime editionDate)
     {
         this.editionDate = editionDate;
     }

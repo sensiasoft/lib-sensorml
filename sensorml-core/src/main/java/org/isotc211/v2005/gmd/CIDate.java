@@ -14,7 +14,7 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package org.isotc211.v2005.gmd;
 
-import net.opengis.IDateTime;
+import java.time.OffsetDateTime;
 import org.isotc211.v2005.gco.AbstractObject;
 import org.isotc211.v2005.gco.CodeListValue;
 
@@ -31,13 +31,13 @@ public interface CIDate extends AbstractObject
     /**
      * Gets the date property
      */
-    public IDateTime getDate();
+    public OffsetDateTime getDate();
     
     
     /**
      * Sets the date property
      */
-    public void setDate(IDateTime date);
+    public void setDate(OffsetDateTime date);
     
     
     /**

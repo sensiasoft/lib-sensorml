@@ -14,8 +14,8 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package org.isotc211.v2005.gmd;
 
+import java.time.OffsetDateTime;
 import java.util.List;
-import net.opengis.IDateTime;
 import net.opengis.OgcProperty;
 import net.opengis.OgcPropertyList;
 import org.isotc211.v2005.gco.AbstractObject;
@@ -100,7 +100,7 @@ public interface CICitation extends AbstractObject
     /**
      * Gets the editionDate property
      */
-    public IDateTime getEditionDate();
+    public OffsetDateTime getEditionDate();
     
     
     /**
@@ -112,7 +112,7 @@ public interface CICitation extends AbstractObject
     /**
      * Sets the editionDateAsDateTime property
      */
-    public void setEditionDate(IDateTime editionDate);
+    public void setEditionDate(OffsetDateTime editionDate);
     
     
     /**

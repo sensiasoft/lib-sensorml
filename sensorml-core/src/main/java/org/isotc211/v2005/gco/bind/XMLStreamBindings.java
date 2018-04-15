@@ -14,12 +14,12 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 
 package org.isotc211.v2005.gco.bind;
 
+import java.time.OffsetDateTime;
 import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import net.opengis.AbstractXMLStreamBindings;
-import net.opengis.IDateTime;
 import net.opengis.OgcProperty;
 import net.opengis.OgcPropertyImpl;
 import org.isotc211.v2005.gco.AbstractObject;
@@ -851,7 +851,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     /**
      * Read method for Date elements
      */
-    public IDateTime readDateTime(XMLStreamReader reader) throws XMLStreamException
+    public OffsetDateTime readDateTime(XMLStreamReader reader) throws XMLStreamException
     {
         boolean found = checkElementName(reader, "Date");
         if (!found)
@@ -865,7 +865,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     /**
      * Write method for Date element
      */
-    public void writeDateTime(XMLStreamWriter writer, IDateTime bean) throws XMLStreamException
+    public void writeDateTime(XMLStreamWriter writer, OffsetDateTime bean) throws XMLStreamException
     {
         writer.writeStartElement(NS_URI, "Date");
         this.writeNamespaces(writer);
@@ -1055,7 +1055,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     /**
      * Read method for GTS TM_PeriodDuration elements
      */
-    public IDateTime readTMPeriodDuration(XMLStreamReader reader) throws XMLStreamException
+    public OffsetDateTime readTMPeriodDuration(XMLStreamReader reader) throws XMLStreamException
     {
         boolean found = checkElementName(reader, "TM_PeriodDuration");
         if (!found)
@@ -1069,7 +1069,7 @@ public class XMLStreamBindings extends AbstractXMLStreamBindings
     /**
      * Write method for GTS TM_PeriodDuration element
      */
-    public void writeTMPeriodDuration(XMLStreamWriter writer, IDateTime bean) throws XMLStreamException
+    public void writeTMPeriodDuration(XMLStreamWriter writer, OffsetDateTime bean) throws XMLStreamException
     {
         writer.writeStartElement("http://www.isotc211.org/2005/gts", "TM_PeriodDuration");
         this.writeNamespaces(writer);
