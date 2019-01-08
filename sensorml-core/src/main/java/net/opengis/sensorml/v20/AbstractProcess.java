@@ -15,6 +15,7 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 package net.opengis.sensorml.v20;
 
 import java.util.List;
+import net.opengis.gml.v32.AbstractGeometry;
 import net.opengis.gml.v32.Reference;
 import net.opengis.swe.v20.AbstractSWEIdentifiable;
 import net.opengis.swe.v20.DataComponent;
@@ -249,4 +250,22 @@ public interface AbstractProcess extends DescribedObject
      * Checks if the process is executable
      */
     public boolean isExecutable();
+    
+    
+    public default AbstractGeometry getLocation()
+    {
+        return getGeometry();
+    }
+    
+    
+    public default boolean isSetLocation()
+    {
+        return isSetGeometry();
+    }
+    
+    
+    public default void setLocation(AbstractGeometry geom)
+    {
+        setGeometry(geom);
+    }
 }
