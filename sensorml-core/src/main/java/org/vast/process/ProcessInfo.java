@@ -21,7 +21,7 @@ package org.vast.process;
  * on the classpath
  * </p>
  *
- * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @author Alex Robin
  * @since May 5, 2017
  */
 public class ProcessInfo

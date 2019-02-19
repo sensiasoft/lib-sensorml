@@ -24,7 +24,7 @@ import org.vast.process.ProcessException;
  * implementation for use in executable processing chains
  * </p>
  *
- * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @author Alex Robin
  * @since May 16, 2017
  */
 public interface IProcessFactory

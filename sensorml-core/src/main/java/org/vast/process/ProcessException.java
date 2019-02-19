@@ -21,7 +21,7 @@ package org.vast.process;
  * {@link IProcessExec} implementations
  * </p>
  *
- * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @author Alex Robin
  * @since May 9, 2017
  */
 public class ProcessException extends Exception

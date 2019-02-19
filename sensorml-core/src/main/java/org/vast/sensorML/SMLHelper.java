@@ -41,7 +41,7 @@ import net.opengis.swe.v20.DataStream;
  * SensorML instance programmatically.
  * </p>
  *
- * @author Alex Robin <alex.robin@sensiasoftware.com>
+ * @author Alex Robin
  * @since May 16, 2017
  */
 public class SMLHelper extends SMLFactory
