@@ -112,7 +112,7 @@ public class SMLHelper extends SMLFactory
     }
     
     
-    protected SMLHelper(AbstractProcess process)
+    public SMLHelper(AbstractProcess process)
     {
         this.process = process;
     }
