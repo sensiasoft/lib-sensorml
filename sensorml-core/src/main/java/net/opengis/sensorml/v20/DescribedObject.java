@@ -16,11 +16,12 @@ package net.opengis.sensorml.v20;
 
 import java.util.List;
 import net.opengis.OgcPropertyList;
+import net.opengis.gml.v32.AbstractFeature;
 import net.opengis.gml.v32.AbstractTimeGeometricPrimitive;
 import net.opengis.gml.v32.TimeInstant;
 import net.opengis.gml.v32.TimePeriod;
 import org.isotc211.v2005.gmd.MDLegalConstraints;
-import org.vast.ogc.gml.TemporalFeature;
+import org.vast.ogc.gml.ITemporalFeature;
 
 
 /**
@@ -29,7 +30,7 @@ import org.vast.ogc.gml.TemporalFeature;
  * This is a complex type.
  */
 @SuppressWarnings("javadoc")
-public interface DescribedObject extends TemporalFeature
+public interface DescribedObject extends AbstractFeature, ITemporalFeature
 {
     public final static String DEFAULT_NS_URI = "http://www.opengis.net/sensorml/2.0";
     

@@ -15,6 +15,7 @@ Copyright (C) 2012-2015 Sensia Software LLC. All Rights Reserved.
 package net.opengis.sensorml.v20;
 
 import java.util.List;
+import org.vast.ogc.om.IProcedure;
 import net.opengis.gml.v32.AbstractGeometry;
 import net.opengis.gml.v32.Reference;
 import net.opengis.swe.v20.AbstractSWEIdentifiable;
@@ -27,7 +28,7 @@ import net.opengis.swe.v20.DataComponent;
  * This is a complex type.
  */
 @SuppressWarnings("javadoc")
-public interface AbstractProcess extends DescribedObject
+public interface AbstractProcess extends DescribedObject, IProcedure
 {
     
     /**
