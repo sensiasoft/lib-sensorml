@@ -225,6 +225,8 @@ public abstract class DescribedObjectImpl extends AbstractFeatureImpl implements
         {
             TimePeriod timePeriod = (TimePeriod)timePrim;
             Instant begin = Instant.ofEpochMilli((long)(timePeriod.getBeginPosition().getDecimalValue()*1000.0));
+            if (timePeriod.getEndPosition().isSetIndeterminatePosition())
+                return Range.greaterThan(begin);
             Instant end = Instant.ofEpochMilli((long)(timePeriod.getEndPosition().getDecimalValue()*1000.0));
             return Range.closed(begin, end);
         }
