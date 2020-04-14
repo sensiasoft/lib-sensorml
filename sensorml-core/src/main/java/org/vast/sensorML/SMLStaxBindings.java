@@ -55,7 +55,7 @@ import org.vast.ogc.gml.IFeatureStaxBindings;
  * @author Alex Robin
  * @since Sep 25, 2014
  */
-public class SMLStaxBindings extends XMLStreamBindings implements IFeatureStaxBindings
+public class SMLStaxBindings extends XMLStreamBindings implements IFeatureStaxBindings<AbstractFeature>
 {
 
     public SMLStaxBindings()
@@ -87,6 +87,7 @@ public class SMLStaxBindings extends XMLStreamBindings implements IFeatureStaxBi
     protected void setupProcessResolver(String baseURI, final OgcProperty prop)
     {
         prop.setHrefResolver(new HrefResolverXML(baseURI) {
+            @SuppressWarnings("unchecked")
             @Override
             public void parseContent(XMLStreamReader reader) throws XMLStreamException
             {
